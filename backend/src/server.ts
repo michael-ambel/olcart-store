@@ -2,12 +2,16 @@ import express, { Application } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db";
+import { errorHandler, notFound } from "./middleware/errorMiddleware";
 
 dotenv.config();
 const app: Application = express();
 
 app.use(cors());
 app.use(express.json());
+
+app.use(notFound);
+app.use(errorHandler);
 
 connectDB();
 
