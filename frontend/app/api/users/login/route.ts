@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
-import { headers } from "next/headers";
 
 const BASE_URL = "http://localhost:5000/api/users/login";
 

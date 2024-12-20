@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
-import { headers } from "next/headers";
 
 const BASE_URL = "http://localhost:5000/api/users/logout";
 
 export async function POST(req: Request) {
   try {
-    const resp = await axios.post(BASE_URL, {
+    const body = req.json();
+    const resp = await axios.post(BASE_URL, body, {
       headers: { "Content-Type": "application/json" },
     });
     return NextResponse.json(resp.data, { status: resp.status });

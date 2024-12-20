@@ -1,22 +1,11 @@
 {
   "version": 2,
   "builds": [
-    {
-      "src": "frontend/package.json",
-      "use": "@vercel/next"
-    },
-    {
-      "src": "backend/src/**/*.ts",
-      "use": "@vercel/node",
-      "config": {
-        "maxDuration": 60
-      }
-    }
+    { "src": "frontend/package.json", "use": "@vercel/next" },
+    { "src": "backend/src/server.ts", "use": "@vercel/node" }
   ],
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/backend/src/api/$1"
-    }
+    { "src": "/api/(.*)", "dest": "/backend/src/$1" },
+    { "src": "/(.*)", "dest": "/frontend/$1" }
   ]
 }
