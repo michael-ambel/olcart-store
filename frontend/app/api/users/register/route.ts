@@ -1,16 +1,20 @@
-// Import Axios
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 import axios from "axios";
 
 const BASE_URL = "http://localhost:5000/api/users/register";
 
 // register user
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
+export async function POST(req: Request) {
+  const body = await req.json();
+  console.log(body);
   try {
-    const resp = await axios.post(BASE_URL, req.body);
-    res.status(resp.status).json(resp.data);
+    const resp = await axios.post(BASE_URL, body);
+    return NextResponse.json(resp.data, { status: resp.status });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    const message =
+      axios.isAxiosError(error) && error.response
+        ? error.response.data
+        : (error as Error).message;
+    return NextResponse.json({ message }, { status: 500 });
   }
 }

@@ -1,15 +1,22 @@
 import { configureStore } from "@reduxjs/toolkit";
+
 import { productApiSlice } from "./apiSlices/productApiSlice";
 import { userApiSlice } from "./apiSlices/userApiSlice";
+import { categoryApiSlice } from "./apiSlices/categoryApiSlice";
+
 import productSlice from "./slices/productSlice";
+import userSlice from "./slices/userSlice";
+import categorySlice from "./slices/categorySlice";
 
 const store = configureStore({
   reducer: {
     [productApiSlice.reducerPath]: productApiSlice.reducer,
     [userApiSlice.reducerPath]: userApiSlice.reducer,
+    [categoryApiSlice.reducerPath]: categoryApiSlice.reducer,
 
     product: productSlice.reducer,
-    user: userApiSlice.reducer,
+    user: userSlice.reducer,
+    category: categoryApiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
