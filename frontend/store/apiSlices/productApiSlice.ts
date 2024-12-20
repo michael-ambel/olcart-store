@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Product } from "../types/productTypes";
 
-export const productApi = createApi({
+export const productApiSlice = createApi({
   reducerPath: "productApi",
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/api" }),
   tagTypes: ["Product"],
@@ -61,4 +61,4 @@ export const {
   useCreateProductMutation,
   useUpdateProductMutation,
   useDeleteProductMutation,
-} = productApi;
+} = productApiSlice;

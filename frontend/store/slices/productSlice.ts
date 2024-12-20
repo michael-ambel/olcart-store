@@ -40,4 +40,4 @@ export const {
   setLoading,
   setDefaultResultOrder,
 } = productSlice.actions;
-export default productSlice.reducer;
+export default productSlice;

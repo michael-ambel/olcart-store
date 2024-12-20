@@ -35,6 +35,20 @@ export const loginUser: RequestHandler = async (req: any, res: any) => {
   }
 };
 
+// Get users
+export const getUsers: RequestHandler = async (req, res) => {
+  try {
+    const user = await User.find();
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+};
+
 // Get user by ID
 export const getUser: RequestHandler = async (req, res) => {
   try {

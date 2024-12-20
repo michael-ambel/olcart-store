@@ -1,14 +1,20 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { productApi } from "./apiSlices/productApiSlice";
+import { productApiSlice } from "./apiSlices/productApiSlice";
+import { userApiSlice } from "./apiSlices/userApiSlice";
 import productSlice from "./slices/productSlice";
 
 const store = configureStore({
   reducer: {
-    [productApi.reducerPath]: productApi.reducer,
-    product: productSlice,
+    [productApiSlice.reducerPath]: productApiSlice.reducer,
+    [userApiSlice.reducerPath]: userApiSlice.reducer,
+
+    product: productSlice.reducer,
+    user: userApiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(productApi.middleware),
+    getDefaultMiddleware()
+      .concat(productApiSlice.middleware)
+      .concat(userApiSlice.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
