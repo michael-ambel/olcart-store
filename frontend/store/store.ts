@@ -12,11 +12,11 @@ const store = configureStore({
   reducer: {
     [productApiSlice.reducerPath]: productApiSlice.reducer,
     [userApiSlice.reducerPath]: userApiSlice.reducer,
-    [categoryApiSlice.reducerPath]: categoryApiSlice.reducer,
+    [categoryApiSlice.reducerPath]: categorySlice.reducer,
 
     product: productSlice.reducer,
     user: userSlice.reducer,
-    category: categoryApiSlice.reducer,
+    category: categorySlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
