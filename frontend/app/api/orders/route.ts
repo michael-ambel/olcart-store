@@ -4,7 +4,8 @@ import axios from "axios";
 //..place orders
 export async function POST(req: Request) {
   try {
-    const body = req.json();
+    const body = await req.json();
+
     const resp = await axios.post("http://localhost:5000/api/orders", body);
     return NextResponse.json(resp.data, { status: resp.status });
   } catch (error) {

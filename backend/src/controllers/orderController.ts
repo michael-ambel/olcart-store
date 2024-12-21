@@ -21,10 +21,30 @@ export const userOrders: RequestHandler = async (req, res) => {
   }
 };
 
+// Get order
+export const getOrder: RequestHandler = async (req, res) => {
+  try {
+    const orders = await Order.find({ _id: req.params.orderId });
+    res.status(200).json(orders);
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+};
+
 // Get all orders
 export const allOrders: RequestHandler = async (req, res) => {
   try {
     const orders = await Order.find();
+    res.status(200).json(orders);
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+};
+
+// Delete order
+export const deleteOrder: RequestHandler = async (req, res) => {
+  try {
+    const orders = await Order.findOneAndDelete({ _id: req.params.orderId });
     res.status(200).json(orders);
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
