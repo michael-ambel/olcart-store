@@ -9,8 +9,8 @@ import Image from "next/image";
 const Navbar: FC = () => {
   // Access user and cart from Redux state
   const user = useSelector((state: RootState) => state.user.user);
-  const cartItemsCount =
-    user?.cart?.reduce((count, item) => count + item.quantity, 0) || 0;
+  // const cartItemsCount =
+  //   user?.cart?.reduce((count, item) => count + item.quantity, 0) || 0;
 
   return (
     <nav className="flex flex-col items-center justify-between h-[112px]  mt-[30px]  mx-[84px]">
