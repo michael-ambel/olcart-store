@@ -12,7 +12,6 @@ const Card: FC = () => {
           alt=""
           width={500}
           height={500}
-          layout="intrinsic"
           className=" w-[160px] "
         />
       </div>
@@ -36,7 +35,6 @@ const Card: FC = () => {
                   alt=""
                   width={500}
                   height={500}
-                  layout="intrinsic"
                   className=" w-[15px] "
                 />
               </div>

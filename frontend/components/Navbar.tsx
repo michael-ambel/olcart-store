@@ -23,7 +23,6 @@ const Navbar: FC = () => {
               alt="LOGO"
               width={500}
               height={500}
-              layout="intrinsic"
               className="w-[50px]"
             />
             <p className="text-[20px] text-mb font-poetsen">
@@ -46,7 +45,6 @@ const Navbar: FC = () => {
               alt="LOGO"
               width={500}
               height={500}
-              layout="intrinsic"
               className="w-[34px]"
             />
           </button>
@@ -60,7 +58,6 @@ const Navbar: FC = () => {
                 alt="LOGO"
                 width={500}
                 height={500}
-                layout="intrinsic"
                 className="w-[34px]"
               />
 
@@ -77,7 +74,6 @@ const Navbar: FC = () => {
                 alt="LOGO"
                 width={500}
                 height={500}
-                layout="intrinsic"
                 className="w-[30px]"
               />
 
@@ -96,7 +92,6 @@ const Navbar: FC = () => {
                 alt="LOGO"
                 width={500}
                 height={500}
-                layout="intrinsic"
                 className="w-[29px] ml-[20px]"
               />
             </Link>

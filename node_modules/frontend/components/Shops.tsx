@@ -12,15 +12,13 @@ const Shops: FC = () => {
             alt=""
             width={300}
             height={300}
-            layout="intrinsic"
-            className="absolute left-10 bottom-0 w-[357px]"
+            className="absolute left-10 bottom-[20px] w-[357px]"
           />
           <Image
             src="/products/jbl.png"
             alt=""
             width={500}
             height={500}
-            layout="intrinsic"
             className="absolute left-[36%] bottom-4 w-[367px]"
           />
           <Image
@@ -28,7 +26,6 @@ const Shops: FC = () => {
             alt=""
             width={300}
             height={300}
-            layout="intrinsic"
             className="absolute bottom-0 right-0 w-[279px]"
           />
           <h2 className="absolute text-[20px] font-semibold ml-[22px] mt-[86px]">
@@ -42,7 +39,6 @@ const Shops: FC = () => {
               alt=""
               width={300}
               height={300}
-              layout="intrinsic"
               className="absolute left-10 bottom-6 w-[175px]"
             />
             <Image
@@ -50,7 +46,6 @@ const Shops: FC = () => {
               alt=""
               width={500}
               height={500}
-              layout="intrinsic"
               className="absolute left-[42%] top-0 w-[139px]"
             />
             <Image
@@ -58,7 +53,6 @@ const Shops: FC = () => {
               alt=""
               width={300}
               height={300}
-              layout="intrinsic"
               className="absolute top-0 right-6 w-[145px]"
             />
             <h2 className="absolute text-[20px] font-semibold ml-[22px] mt-[86px]">
@@ -71,7 +65,6 @@ const Shops: FC = () => {
               alt=""
               width={300}
               height={300}
-              layout="intrinsic"
               className="absolute left-10 bottom-6 w-[175px]"
             />
             <Image
@@ -79,7 +72,6 @@ const Shops: FC = () => {
               alt=""
               width={500}
               height={500}
-              layout="intrinsic"
               className="absolute right-10 bottom-0 w-[256px]"
             />
             <h2 className="absolute text-[20px] font-semibold ml-[22px] mt-[36px]">

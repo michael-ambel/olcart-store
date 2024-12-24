@@ -18,7 +18,6 @@ const CategoryBar: FC = () => {
           alt=""
           width={500}
           height={500}
-          layout="intrinsic"
           className="w-[20px]"
         />
         All Category
@@ -27,7 +26,6 @@ const CategoryBar: FC = () => {
           alt=""
           width={500}
           height={500}
-          layout="intrinsic"
           className="w-[20px]"
         />
       </button>
