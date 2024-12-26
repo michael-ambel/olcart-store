@@ -23,7 +23,7 @@ const MainCard: FC = () => {
   };
 
   const slideInTop = {
-    initial: { y: -100, opacity: 0 },
+    initial: { y: -200, opacity: 0 },
     animate: {
       y: 0,
       opacity: 1,
@@ -33,7 +33,7 @@ const MainCard: FC = () => {
   };
 
   const slideInRight = {
-    initial: { x: 100, opacity: 0 },
+    initial: { x: 200, opacity: 0 },
     animate: {
       x: 0,
       opacity: 1,
@@ -62,9 +62,9 @@ const MainCard: FC = () => {
               <h2 className="text-[24px] font-bold ">{event.title}</h2>
               <p className="text-[18px] ">{event.description}</p>
               <button
-                className={`w-[150px] h-[52px]  rounded-full ${event.buttonStyle}`}
+                className={`w-[120px] h-[52px]  rounded-full ${event.buttonStyle}`}
               >
-                shop now
+                Shop
               </button>
             </motion.div>
           )}

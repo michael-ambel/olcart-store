@@ -11,7 +11,7 @@ const CategoryBar: FC = () => {
     "Jewelry",
   ];
   return (
-    <div className="flex justify-between items-end mx-[84px] my-[40px] gap-6">
+    <div className="flex z-50 justify-between items-end mx-[84px] my-[40px] gap-6">
       <button className="flex items-center justify-between font-bold w-[200px] h-[46px] px-[16px]  bg-fades rounded-[4px]">
         <Image
           src="./icons/menu.svg"

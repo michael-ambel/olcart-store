@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "npm run build --workspace=frontend && npm run build --workspace=backend",
+    "vercel-build": "npm run build --workspace=frontend && npm run build --workspace=backend",
     "dev": "concurrently \"npm start --workspace=backend\" \"npm run dev --workspace=frontend\"",
     "start": "npm start --workspace=frontend",
     "test": "echo \"Error: no test specified\" && exit 1"
