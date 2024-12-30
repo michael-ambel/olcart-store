@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Poetsen_One, Poppins } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
 import { ReduxProvider } from "@/store/Provider";
-import Footer from "@/components/Footer";
 
 const poetsOne = Poetsen_One({
   variable: "--font-poetsen-one",
@@ -30,13 +28,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${poetsOne.variable} ${poppins.variable} antialiased font-poppins text-bl`}
+        className={`${poetsOne.variable} ${poppins.variable} antialiased font-poppins text-bl bg-bg`}
       >
-        <ReduxProvider>
-          <Navbar />
-          {children}
-          <Footer />
-        </ReduxProvider>
+        <ReduxProvider>{children}</ReduxProvider>
       </body>
     </html>
   );

@@ -4,7 +4,7 @@ export interface Category {
   _id: string;
   name: string;
   slug: string;
-  parentCategory?: string;
+  parentCategory?: string | null;
 }
 
 export interface CreateCategoryRequest {
@@ -18,4 +18,11 @@ export interface UpdateCategoryRequest {
   name?: string;
   slug?: string;
   parentCategory?: string;
+}
+
+export interface CategoryTree {
+  _id: string;
+  name: string;
+  slug: string;
+  subCategories?: CategoryTree[]; // Recursive structure
 }

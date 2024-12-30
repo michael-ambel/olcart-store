@@ -11,8 +11,10 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        bg: "#FFFFFF",
-        bgs: "#F5F5F5",
+        bg: "#ffffff",
+        bgs: "#D9D9D9",
+        bgt: "#F5F5F5",
+        bgq: "#B8B8B8",
         card: "#D9D9D9",
         fade: "#9F9F9F",
         fades: "#B8B8B8",

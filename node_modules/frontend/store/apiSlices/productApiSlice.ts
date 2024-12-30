@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Product } from "../types/productTypes";
+import { Product, GetProductsResponse } from "../types/productTypes";
 
 export const productApiSlice = createApi({
   reducerPath: "productApi",
@@ -8,7 +8,7 @@ export const productApiSlice = createApi({
 
   endpoints: (builder) => ({
     //get all
-    getProducts: builder.query<Product[], void>({
+    getProducts: builder.query<GetProductsResponse, void>({
       //Product[]: The type of data that the query will return,
       //void: The type of the query argument.
       query: () => "/products",
@@ -22,7 +22,7 @@ export const productApiSlice = createApi({
     }),
 
     //create
-    createProduct: builder.mutation<Product, Partial<Product>>({
+    createProduct: builder.mutation<Product, FormData>({
       query: (newProduct) => ({
         url: "/products",
         method: "POST",

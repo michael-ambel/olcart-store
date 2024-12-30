@@ -4,18 +4,19 @@ import {
   Category,
   CreateCategoryRequest,
   UpdateCategoryRequest,
+  CategoryTree,
 } from "../types/categoryTypes";
 
 export const categoryApiSlice = createApi({
   reducerPath: "categoryApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/categories",
+    baseUrl: "http://localhost:3000/api/categories",
   }),
   tagTypes: ["Category"],
 
   endpoints: (builder) => ({
     //..get categories
-    getCategories: builder.query<Category[], void>({
+    getCategories: builder.query<CategoryTree[], void>({
       query: () => "/",
       providesTags: ["Category"],
     }),

@@ -17,6 +17,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use("/uploads", express.static("uploads"));
+
 // app.use(notFound);
 // app.use(errorHandler);
 
@@ -24,6 +26,7 @@ app.use(express.json());
 connectDB();
 
 // Routes
+
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
