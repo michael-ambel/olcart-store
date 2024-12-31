@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { useCreateProductMutation } from "@/store/apiSlices/productApiSlice";
 import { CategoryTree } from "@/store/types/categoryTypes";
 import { useGetCategoriesQuery } from "@/store/apiSlices/categoryApiSlice";
-import { Product } from "@/store/types/productTypes";
 import Image from "next/image";
 
 const ProductCreateForm: React.FC = () => {

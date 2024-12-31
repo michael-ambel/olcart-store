@@ -7,6 +7,7 @@ export const addNewCategory: RequestHandler = async (req, res) => {
     const category = await Category.create(req.body);
     res.status(201).json(category);
   } catch (err) {
+    console.log(err);
     res.status(400).json({ error: (err as Error).message });
   }
 };

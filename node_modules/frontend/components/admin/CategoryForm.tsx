@@ -7,18 +7,27 @@ import { CreateCategoryRequest } from "@/store/types/categoryTypes";
 const CategoryForm: React.FC = () => {
   const [name, setName] = useState<string>("");
   const [slug, setSlug] = useState<string>("");
-  const [parentCategory, setParentCategory] = useState<string | undefined>(""); // Allow manual ID input
+  const [parentCategory, setParentCategory] = useState<string | undefined>(); // Allow manual ID input
   const [addCategory, { isLoading, error }] = useAddCategoryMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    let newCategory;
+
     // Prepare the data to send to the API
-    const newCategory: CreateCategoryRequest = {
-      name,
-      slug,
-      parentCategory,
-    };
+    if (parentCategory) {
+      newCategory = {
+        name,
+        slug,
+        parentCategory,
+      };
+    } else {
+      newCategory = {
+        name,
+        slug,
+      };
+    }
 
     // Call the API to add the category
     try {

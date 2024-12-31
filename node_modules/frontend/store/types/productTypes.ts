@@ -7,6 +7,7 @@ export interface Product {
   price: number;
   category: string[];
   stock: number;
+  averageRating?: number;
   tags: string[];
   images: File[] | string[]; // Include both File and string (for URLs)
 }
