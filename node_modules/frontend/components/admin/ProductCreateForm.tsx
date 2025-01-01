@@ -123,29 +123,6 @@ const ProductCreateForm: React.FC = () => {
     setTags((prevTags) => prevTags.filter((tag) => tag !== tagToRemove));
   };
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-
-  //   const productData: Partial<Product> = {
-  //     name,
-  //     description,
-  //     price: typeof price === "number" ? price : 0,
-  //     category: selectedPath.map((category) => category._id),
-  //     // category: selectedPath.map((category) => category._id).join("/"),
-  //     stock: typeof stock === "number" ? stock : 0,
-  //     tags,
-  //     images,
-  //   };
-
-  //   try {
-  //     await createProduct(productData);
-
-  //     alert("Product created successfully!");
-  //   } catch (error) {
-  //     console.error("Error creating product:", error);
-  //   }
-  // };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -157,11 +134,10 @@ const ProductCreateForm: React.FC = () => {
     formData.append("stock", stock.toString());
     formData.append("tags", JSON.stringify(tags));
 
-    // Append category without stringifying, just as an array of ObjectIds
     selectedPath.forEach((category) => {
       formData.append("category", category._id);
     });
-    // Append images to FormData
+
     if (images && images.length > 0) {
       images.forEach((imageFile) => {
         formData.append("images", imageFile);
@@ -169,13 +145,11 @@ const ProductCreateForm: React.FC = () => {
     }
 
     try {
-      console.log(formData);
-      // Use your API function to send FormData
       await createProduct(formData);
-
       alert("Product created successfully!");
     } catch (error) {
       console.error("Error creating product:", error);
+      alert("Product is not created!");
     }
   };
 

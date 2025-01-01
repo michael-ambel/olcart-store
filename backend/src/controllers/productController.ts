@@ -7,7 +7,7 @@ import path from "path";
 import slugify from "slugify";
 import mongoose from "mongoose";
 
-// Setup Multer for image upload
+// Setup Multer for image upload - defines how Multer should store uploaded files
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/images"); // Folder for uploaded images
@@ -87,7 +87,8 @@ const handleImageUpload = (req: Request, res: Response, callback: Function) => {
 export const createProduct = async (req: Request, res: Response) => {
   handleImageUpload(req, res, async () => {
     try {
-      const { name, description, price, category, stock, tags } = req.body;
+      const { name, description, price, category, stock, slug, tags } =
+        req.body;
 
       const files = req.files as Express.Multer.File[];
       const images = files
@@ -95,8 +96,6 @@ export const createProduct = async (req: Request, res: Response) => {
             (file) => `http://localhost:5000/uploads/images/${file.filename}`
           )
         : [];
-
-      const slug = slugify(name, { lower: true, strict: true });
 
       const product = await Product.create({
         name,

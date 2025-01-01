@@ -1,15 +1,22 @@
+// Register API route
 import { NextResponse } from "next/server";
 import axios from "axios";
 
 const BASE_URL = "http://localhost:5000/api/users/register";
 
-// register user
 export async function POST(req: Request) {
-  const body = await req.json();
-  console.log(body);
   try {
-    const resp = await axios.post(BASE_URL, body);
-    return NextResponse.json(resp.data, { status: resp.status });
+    const body = await req.json();
+    const resp = await axios.post(BASE_URL, body, { withCredentials: true });
+
+    const token = resp.headers["set-cookie"];
+
+    const response = NextResponse.json(resp.data, { status: resp.status });
+
+    if (token) {
+      response.headers.set("Set-Cookies", token.join(";"));
+    }
+    return response;
   } catch (error) {
     const message =
       axios.isAxiosError(error) && error.response
