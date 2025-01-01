@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     const response = NextResponse.json(resp.data, { status: resp.status });
 
     if (token) {
-      response.headers.set("Set-Cookies", token.join(";"));
+      response.headers.set("Set-Cookie", token.join(";"));
     }
     return response;
   } catch (error) {

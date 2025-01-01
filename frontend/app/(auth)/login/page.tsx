@@ -4,6 +4,9 @@ import { useState } from "react";
 import { useLoginUserMutation } from "@/store/apiSlices/userApiSlice";
 import Link from "next/link";
 import Image from "next/image";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/store/slices/userSlice";
+import LogoutButton from "@/components/main/LogoutButton";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -12,6 +15,7 @@ export default function LoginPage() {
   const [success, setSuccess] = useState<string | null>(null);
 
   const [loginUser] = useLoginUserMutation();
+  const dispatch = useDispatch();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,12 +28,13 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const response = await loginUser({
+      const resp = await loginUser({
         email: formData.email,
         password: formData.password,
       }).unwrap();
 
-      console.log("Login successful", response);
+      dispatch(setUser(resp.user));
+      localStorage.setItem("user", JSON.stringify(resp.user));
       setSuccess("Login successful!");
       setError(null);
       setFormData({ email: "", password: "" });
@@ -102,6 +107,7 @@ export default function LoginPage() {
           Register
         </Link>
       </p>
+      <LogoutButton />
     </div>
   );
 }
