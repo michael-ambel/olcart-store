@@ -9,12 +9,12 @@ export async function POST(req: Request) {
     const body = await req.json();
     const resp = await axios.post(BASE_URL, body, { withCredentials: true });
 
-    const token = resp.headers["set-cookie"]; // Get the cookie from backend response
+    const token = resp.headers["set-cookie"];
 
     const response = NextResponse.json(resp.data, { status: resp.status });
 
     if (token) {
-      response.headers.set("Set-Cookie", token.join("; ")); // Set the cookie for the browser
+      response.headers.set("Set-Cookie", token.join("; "));
     }
 
     return response;

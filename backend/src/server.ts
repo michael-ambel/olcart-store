@@ -8,6 +8,7 @@ import productRoutes from "./routes/productRoutes";
 import orderRoutes from "./routes/orderRoutes";
 import categoryRoutes from "./routes/categoryRoutes";
 import connectDB from "./config/db";
+import "./types/express";
 
 dotenv.config();
 

@@ -6,13 +6,14 @@ import {
   updateProduct,
   deleteProduct,
 } from "../controllers/productController";
+import { protectAdmin, protectCustomer } from "../utils/ProtectMiddleware";
 
 const router = express.Router();
 
-router.post("/", createProduct);
-router.get("/", getProducts);
+router.post("/", protectAdmin, createProduct);
+router.get("/", protectCustomer, getProducts);
 router.get("/:id", getProduct);
-router.put("/:id", updateProduct);
+router.put("/:id", protectAdmin, updateProduct);
 router.delete("/:id", deleteProduct);
 
 export default router;

@@ -117,18 +117,24 @@ export const createProduct = async (req: Request, res: Response) => {
 };
 
 // Get all products with pagination and filters
-export const getProducts: RequestHandler = async (req, res) => {
+export const getProducts = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const { page = 1, limit = 10, category } = req.query;
-    const filter: any = {};
-    if (category) filter.category = category;
+    if (req.user?.role === "admin" || "customer") {
+      const { page = 1, limit = 10, category } = req.query;
+      const filter: any = {};
+      if (category) filter.category = category;
 
-    const products = await Product.find(filter)
-      .skip((+page - 1) * +limit)
-      .limit(+limit);
-    const total = await Product.countDocuments(filter);
+      const products = await Product.find(filter)
+        .skip((+page - 1) * +limit)
+        .limit(+limit);
+      const total = await Product.countDocuments(filter);
 
-    res.status(200).json({ products, total });
+      res.status(200).json({ products, total });
+      return;
+    }
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }

@@ -3,7 +3,10 @@ import { Product, GetProductsResponse } from "../types/productTypes";
 
 export const productApiSlice = createApi({
   reducerPath: "productApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/api" }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://localhost:3000/api",
+    credentials: "include",
+  }),
   tagTypes: ["Product"],
 
   endpoints: (builder) => ({

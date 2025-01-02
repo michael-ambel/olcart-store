@@ -8,7 +8,7 @@ export const userApiSlice = createApi({
 
   endpoints: (builder) => ({
     //.. regi user
-    registerUser: builder.mutation<IUser, Partial<IUser>>({
+    registerUser: builder.mutation<UserLoginResponse, Partial<IUser>>({
       query: (user) => ({
         url: "/register",
         method: "POST",

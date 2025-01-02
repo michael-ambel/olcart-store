@@ -1,11 +1,27 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
+import * as cookie from "cookie";
 
 const BASE_URL = "http://localhost:5000/api/products";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const resp = await axios.get(BASE_URL);
+    const cookies = cookie.parse(req.headers.get("cookie") || "");
+    const token = cookies.jwt;
+
+    if (!token) {
+      return NextResponse.json(
+        { message: "Authentication error: please log in again" },
+        { status: 401 }
+      );
+    }
+
+    const resp = await axios.get(BASE_URL, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
     return NextResponse.json(resp.data, { status: resp.status });
   } catch (error) {
     const message =

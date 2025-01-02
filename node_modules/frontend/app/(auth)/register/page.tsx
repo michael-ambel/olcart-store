@@ -4,6 +4,9 @@ import { useState } from "react";
 import { useRegisterUserMutation } from "@/store/apiSlices/userApiSlice";
 import Link from "next/link";
 import Image from "next/image";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/store/slices/userSlice";
+import LogoutButton from "@/components/main/LogoutButton";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -17,6 +20,7 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [registerUser] = useRegisterUserMutation();
+  const dispatch = useDispatch();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,11 +38,14 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      const response = await registerUser({
+      const resp = await registerUser({
         name: formData.name,
         email: formData.email,
         password: formData.password,
       }).unwrap();
+
+      dispatch(setUser(resp.user));
+      localStorage.setItem("user", JSON.stringify(resp.user));
 
       setSuccess("Registration successful!");
       setError(null);
@@ -142,6 +149,7 @@ export default function RegisterPage() {
           Login
         </Link>
       </p>
+      <LogoutButton />
     </div>
   );
 }
