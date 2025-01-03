@@ -3,7 +3,7 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:5000/api/products";
 
-// Handle GET request for product by id
+// get product by id
 export async function GET(req: Request) {
   const urlParts = req.url.split("/");
   const id = urlParts[urlParts.length - 1];
@@ -27,7 +27,7 @@ export async function GET(req: Request) {
   }
 }
 
-// Handle PUT request to update product by id
+// update product by id
 export async function PUT(req: Request) {
   const urlParts = req.url.split("/");
   const id = urlParts[urlParts.length - 1];
@@ -54,7 +54,7 @@ export async function PUT(req: Request) {
   }
 }
 
-// Handle DELETE request to delete product by id
+// delete product by id
 export async function DELETE(req: Request) {
   const urlParts = req.url.split("/");
   const id = urlParts[urlParts.length - 1];

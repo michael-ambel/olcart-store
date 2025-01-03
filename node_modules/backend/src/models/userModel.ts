@@ -1,15 +1,18 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import bcrypt, { genSalt } from "bcrypt";
 
+interface ICartItem {
+  product: mongoose.Types.ObjectId;
+  quantity: number;
+  price: number;
+  shippingPrice: number;
+}
 interface IUser extends Document {
   name: string;
   email: string;
   password: string;
   role: "customer" | "admin";
-  cart?: Array<{
-    product: mongoose.Types.ObjectId;
-    quantity: number;
-  }>;
+  cart?: ICartItem[];
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -23,6 +26,8 @@ const UserSchema: Schema<IUser> = new Schema(
       {
         product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
         quantity: { type: Number, default: 1 },
+        price: { type: Number, required: true },
+        shippingPrice: { type: Number, required: true },
       },
     ],
   },
@@ -46,4 +51,4 @@ UserSchema.methods.comparePassword = async function (
 const User: Model<IUser> = mongoose.model<IUser>("User", UserSchema);
 
 export default User;
-export { IUser };
+export { IUser, ICartItem };

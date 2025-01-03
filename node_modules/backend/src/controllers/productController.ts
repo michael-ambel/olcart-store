@@ -6,6 +6,7 @@ import multer from "multer";
 import path from "path";
 import slugify from "slugify";
 import mongoose from "mongoose";
+import User from "../models/userModel";
 
 // Setup Multer for image upload - defines how Multer should store uploaded files
 const storage = multer.diskStorage({
@@ -211,6 +212,103 @@ export const deleteProduct: RequestHandler = async (req, res) => {
       return;
     }
     res.status(200).json({ message: "Product deleted" });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+};
+
+// Get Cart Items
+export const getCartItems: RequestHandler = async (req, res) => {
+  try {
+    const user = await User.findById(req.user?._id).populate(
+      "cart.product",
+      "name price"
+    );
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    if (!user.cart || user.cart.length === 0) {
+      res.status(200).json({ cart: [] });
+      return;
+    }
+
+    res.status(200).json(user.cart);
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+};
+
+// Add Cart Item
+export const addCartItem: RequestHandler = async (req, res) => {
+  try {
+    const { productId, quantity } = req.body;
+    const user = await User.findById(req.user?._id);
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    if (!user.cart) {
+      user.cart = [];
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      res.status(404).json({ message: "Product not found" });
+      return;
+    }
+
+    const { price, shippingPrice } = product;
+    user.cart.push({ product: productId, quantity, price, shippingPrice });
+    await user.save();
+
+    res.status(201).json(user.cart);
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+};
+
+// Update or Remove Cart Item
+export const updateOrRemoveCartItem: RequestHandler = async (req, res) => {
+  try {
+    const { productId, quantity } = req.body;
+    const user = await User.findById(req.user?._id);
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    if (!user.cart) {
+      user.cart = [];
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      res.status(404).json({ message: "Product not found" });
+      return;
+    }
+
+    const cartItemIndex = user.cart.findIndex(
+      (item) => item.product.toString() === productId
+    );
+
+    if (cartItemIndex === -1) {
+      const { price, shippingPrice } = product;
+      user.cart.push({ product: productId, quantity, price, shippingPrice });
+    } else {
+      if (quantity > 0) {
+        user.cart[cartItemIndex].quantity = quantity;
+      } else {
+        user.cart.splice(cartItemIndex, 1);
+      }
+    }
+
+    await user.save();
+    res.status(200).json(user.cart);
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }

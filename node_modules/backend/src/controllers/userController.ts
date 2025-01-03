@@ -1,7 +1,8 @@
-import { RequestHandler } from "express";
+import { Request, RequestHandler } from "express";
 import jwt from "jsonwebtoken";
-import User from "../models/userModel";
+import User, { ICartItem } from "../models/userModel";
 import dotenv from "dotenv";
+import Product from "../models/productModel";
 
 dotenv.config();
 
@@ -112,6 +113,75 @@ export const getUser: RequestHandler = async (req, res) => {
       return;
     }
     res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+};
+
+// Add Cart Item
+export const addCartItem: RequestHandler = async (req, res) => {
+  try {
+    const { productId, quantity } = req.body;
+    const user = await User.findById(req.user?._id);
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    if (!user.cart) {
+      user.cart = [];
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      res.status(404).json({ message: "Product not found" });
+      return;
+    }
+
+    const { price, shippingPrice } = product;
+    user.cart.push({ product: productId, quantity, price, shippingPrice });
+    await user.save();
+
+    res.status(201).json(user.cart);
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+};
+
+// Update or Remove Cart Item
+export const updateOrRemoveCartItem: RequestHandler = async (req, res) => {
+  try {
+    const { productId, quantity } = req.body;
+    const user = await User.findById(req.user?._id);
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    if (!user.cart || user.cart.length === 0) {
+      res.status(400).json({ message: "Cart is empty" });
+      return;
+    }
+
+    const cartItemIndex = user.cart.findIndex(
+      (item) => item.product.toString() === productId
+    );
+
+    if (cartItemIndex === -1) {
+      res.status(404).json({ message: "Item not found in cart" });
+      return;
+    }
+
+    if (quantity > 0) {
+      user.cart[cartItemIndex].quantity = quantity;
+    } else {
+      user.cart.splice(cartItemIndex, 1);
+    }
+
+    await user.save();
+    res.status(200).json(user.cart);
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }

@@ -10,12 +10,9 @@ export interface IUser {
   }>;
 }
 
-export interface UserLoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface UserLoginResponse {
-  user: IUser;
-  token: string;
+export interface ICartItem {
+  product: string;
+  quantity: number;
+  price: number;
+  shippingPrice: number;
 }

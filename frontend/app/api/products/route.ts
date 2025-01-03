@@ -4,6 +4,7 @@ import * as cookie from "cookie";
 
 const BASE_URL = "http://localhost:5000/api/products";
 
+//get all products
 export async function GET(req: NextRequest) {
   try {
     const cookies = cookie.parse(req.headers.get("cookie") || "");
@@ -32,6 +33,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
+//create new product
 export async function POST(req: Request) {
   try {
     const contentType = req.headers.get("Content-Type");

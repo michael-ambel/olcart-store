@@ -1,45 +1,46 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { IOrder } from "../types/orderTypes";
+import { ICartItem } from "../types/userTypes";
 
 export const orderApiSlice = createApi({
   reducerPath: "orderApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/api/orders" }),
+  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/api" }),
   tagTypes: ["Orders"],
 
   endpoints: (builder) => ({
-    //..place order
+    // Place order
     placeOrder: builder.mutation<IOrder, Partial<IOrder>>({
       query: (newOrder) => ({
-        url: "/",
+        url: "/orders",
         method: "POST",
         body: newOrder,
       }),
       invalidatesTags: ["Orders"],
     }),
 
-    //...get orders
+    // Get all orders
     getOrders: builder.query<IOrder[], void>({
-      query: () => "/",
+      query: () => "/orders",
       providesTags: ["Orders"],
     }),
 
-    //..get order
+    // Get specific order
     getOrder: builder.query<IOrder, string>({
-      query: (id) => `/${id}`,
+      query: (id) => `/orders/${id}`,
       providesTags: ["Orders"],
     }),
 
-    //..get user order
-    getUserOrder: builder.query<IOrder, string>({
-      query: (id) => `user/${id}`,
+    // Get user orders
+    getUserOrders: builder.query<IOrder[], string>({
+      query: (userId) => `/orders/user/${userId}`,
       providesTags: ["Orders"],
     }),
 
-    //..update order status
+    // Update order status
     updateOrderStatus: builder.mutation<IOrder, { id: string; status: string }>(
       {
         query: ({ id, status }) => ({
-          url: `/${id}`,
+          url: `/orders/${id}`,
           method: "PUT",
           body: { status },
         }),
@@ -47,16 +48,14 @@ export const orderApiSlice = createApi({
       }
     ),
 
-    //..delete order
+    // Delete order
     deleteOrder: builder.mutation<void, string>({
       query: (id) => ({
-        url: `/${id}`,
+        url: `/orders/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Orders"],
     }),
-
-    //...//
   }),
 });
 
@@ -64,7 +63,7 @@ export const {
   usePlaceOrderMutation,
   useGetOrdersQuery,
   useGetOrderQuery,
-  useGetUserOrderQuery,
+  useGetUserOrdersQuery,
   useUpdateOrderStatusMutation,
   useDeleteOrderMutation,
 } = orderApiSlice;

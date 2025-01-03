@@ -1,10 +1,17 @@
+// Updated Product Model
 import mongoose, { Schema, Document, Model } from "mongoose";
 import slugify from "slugify";
+
+interface ICartedCount {
+  userId: mongoose.Types.ObjectId;
+  count: number;
+}
 
 interface IProduct extends Document {
   name: string;
   description: string;
   price: number;
+  shippingPrice: number;
   discountPrice?: number;
   category: mongoose.Types.ObjectId[];
   tags: string[];
@@ -18,6 +25,7 @@ interface IProduct extends Document {
   brand?: string;
   isFeatured: boolean;
   isActive: boolean;
+  cartedCount: ICartedCount[];
 }
 
 const ProductSchema: Schema<IProduct> = new Schema(
@@ -26,6 +34,7 @@ const ProductSchema: Schema<IProduct> = new Schema(
     slug: { type: String, unique: true },
     description: { type: String, required: true },
     price: { type: Number, required: true, min: 0 },
+    shippingPrice: { type: Number, required: true },
     discountPrice: { type: Number },
     category: [
       {
@@ -54,19 +63,18 @@ const ProductSchema: Schema<IProduct> = new Schema(
     brand: { type: String },
     isFeatured: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
+    cartedCount: [
+      {
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        count: { type: Number, default: 0 },
+      },
+    ],
   },
   { timestamps: true }
 );
 
 ProductSchema.index({ name: 1, price: 1, category: 1 });
 ProductSchema.index({ name: "text", tags: "text" });
-
-ProductSchema.virtual("discountPercentage").get(function () {
-  if (this.discountPrice) {
-    return ((this.price - this.discountPrice) / this.price) * 100;
-  }
-  return 0;
-});
 
 ProductSchema.pre("save", function (next) {
   if (!this.slug) {

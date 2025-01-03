@@ -1,14 +1,14 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { IUser, UserLoginRequest, UserLoginResponse } from "../types/userTypes";
+import { IUser, ICartItem } from "../types/userTypes";
 
 export const userApiSlice = createApi({
   reducerPath: "userApi",
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/api/users" }),
-  tagTypes: ["Users"],
+  tagTypes: ["Users", "Cart"],
 
   endpoints: (builder) => ({
-    //.. regi user
-    registerUser: builder.mutation<UserLoginResponse, Partial<IUser>>({
+    // Register user
+    registerUser: builder.mutation<IUser, Partial<IUser>>({
       query: (user) => ({
         url: "/register",
         method: "POST",
@@ -16,8 +16,8 @@ export const userApiSlice = createApi({
       }),
     }),
 
-    //..login user
-    loginUser: builder.mutation<UserLoginResponse, UserLoginRequest>({
+    // Login user
+    loginUser: builder.mutation<IUser, { email: string; password: string }>({
       query: (credentials) => ({
         url: "/login",
         method: "POST",
@@ -25,7 +25,7 @@ export const userApiSlice = createApi({
       }),
     }),
 
-    //..logout user
+    // Logout user
     logoutUser: builder.mutation<void, void>({
       query: () => ({
         url: "/logout",
@@ -33,35 +33,34 @@ export const userApiSlice = createApi({
       }),
     }),
 
-    //..get all user
-    getUsers: builder.query<IUser[], void>({
-      query: () => "/",
-      providesTags: ["Users"],
+    // Get user cart
+    getUserCart: builder.query<ICartItem[], void>({
+      query: () => "/cart",
+      providesTags: ["Cart"],
     }),
 
-    //...get user by id
-    getUser: builder.query<IUser, string>({
-      query: (id) => `/${id}`,
-    }),
-
-    //...update user
-    updateUser: builder.mutation<IUser, { id: string; user: Partial<IUser> }>({
-      query: ({ id, user }) => ({
-        url: `/${id}`,
-        method: "PUT",
-        body: user,
+    // Add item to user cart
+    updateCartItem: builder.mutation<
+      void,
+      { productId: string; quantity: number }
+    >({
+      query: (cartData) => ({
+        url: "/cart",
+        method: "PATCH",
+        body: cartData,
       }),
+      invalidatesTags: ["Cart"],
     }),
 
-    //..delete user
-    deleteUser: builder.mutation<IUser, string>({
-      query: (id) => ({
-        url: "/",
-        method: "DELETE",
+    // Add new cart item
+    addCartItem: builder.mutation<void, Partial<ICartItem>>({
+      query: (cartItem) => ({
+        url: "/cart",
+        method: "POST",
+        body: cartItem,
       }),
+      invalidatesTags: ["Cart"],
     }),
-
-    //......
   }),
 });
 
@@ -69,8 +68,7 @@ export const {
   useRegisterUserMutation,
   useLoginUserMutation,
   useLogoutUserMutation,
-  useGetUsersQuery,
-  useGetUserQuery,
-  useUpdateUserMutation,
-  useDeleteUserMutation,
+  useGetUserCartQuery,
+  useUpdateCartItemMutation,
+  useAddCartItemMutation,
 } = userApiSlice;

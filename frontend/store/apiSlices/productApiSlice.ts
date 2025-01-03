@@ -1,33 +1,31 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Product, GetProductsResponse } from "../types/productTypes";
+import { Product, GetProductsResponse, IPCart } from "../types/productTypes";
 
 export const productApiSlice = createApi({
   reducerPath: "productApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000/api",
+    baseUrl: "http://localhost:3000/api/products",
     credentials: "include",
   }),
-  tagTypes: ["Product"],
+  tagTypes: ["Product", "Cart"],
 
   endpoints: (builder) => ({
-    //get all
-    getProducts: builder.query<GetProductsResponse, void>({
-      //Product[]: The type of data that the query will return,
-      //void: The type of the query argument.
-      query: () => "/products",
+    // Get all products
+    getProducts: builder.query<Product[], void>({
+      query: () => "/",
       providesTags: ["Product"],
     }),
 
-    //get single
+    // Get single product
     getProduct: builder.query<Product, string>({
-      query: (id) => `/products/${id}`,
+      query: (id) => `/${id}`,
       providesTags: (result, error, id) => [{ type: "Product", id }],
     }),
 
     //create
     createProduct: builder.mutation<Product, FormData>({
       query: (newProduct) => ({
-        url: "/products",
+        url: "/",
         method: "POST",
         body: newProduct,
       }),
@@ -40,7 +38,7 @@ export const productApiSlice = createApi({
       { id: string; data: Partial<Product> }
     >({
       query: ({ id, data }) => ({
-        url: `/products/${id}`,
+        url: `/${id}`,
         method: "PUT",
         body: data,
       }),
@@ -50,10 +48,33 @@ export const productApiSlice = createApi({
     //delete
     deleteProduct: builder.mutation<void, string>({
       query: (id) => ({
-        url: `/products/${id}`,
+        url: `/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: (result, error, id) => [{ type: "Product", id }],
+    }),
+
+    // Add carted item
+    addCartedItem: builder.mutation<void, IPCart>({
+      query: (cartedItem) => ({
+        url: "/cart",
+        method: "POST",
+        body: cartedItem,
+      }),
+      invalidatesTags: ["Cart"],
+    }),
+
+    // Update or remove carted item
+    updateCartedItem: builder.mutation<
+      void,
+      { productId: string; quantity: number }
+    >({
+      query: (cartData) => ({
+        url: "/cart",
+        method: "PATCH",
+        body: cartData,
+      }),
+      invalidatesTags: ["Cart"],
     }),
   }),
 });

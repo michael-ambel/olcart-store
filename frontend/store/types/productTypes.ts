@@ -16,3 +16,9 @@ export interface GetProductsResponse {
   products: Product[];
   total: number;
 }
+
+export interface IPCart {
+  productId: string;
+  quantity: number;
+  userId: string;
+}
