@@ -84,8 +84,8 @@ const PopularProduct: FC = () => {
   }, [xOffset, productList.length]);
 
   return (
-    <div className="relative flex flex-col justify-between w-full h-[250px] px-[84px] my-[40px]">
-      <h2 className="text-[24px] font-bold">Popular Products</h2>
+    <div className="relative flex flex-col justify-between w-full h-[250px] px-[0] my-[40px]">
+      <h2 className="text-[24px] ml-[84px] font-bold">Popular Products</h2>
       <div
         ref={containerRef}
         className="flex w-full justify-between overflow-x-hidden "

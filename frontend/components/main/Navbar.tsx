@@ -9,6 +9,7 @@ import Image from "next/image";
 const Navbar: FC = () => {
   // Access user from Redux state
   const user = useSelector((state: RootState) => state.user.user);
+  const cart = useSelector((state: RootState) => state.user.cart.length);
 
   return (
     <nav
@@ -60,8 +61,8 @@ const Navbar: FC = () => {
                 height={500}
                 className="w-[34px]"
               />
-              <span className="absolute bottom-0 right-0 w-[21px] h-[21px] items-center text-center text-[15] text-bl bg-mo font-semibold rounded-full">
-                8
+              <span className="absolute bottom-0 right-0 w-[21px] h-[21px] items-center text-center text-[14] text-bg bg-mo font-semibold rounded-full">
+                {cart}
               </span>
             </div>
           </Link>

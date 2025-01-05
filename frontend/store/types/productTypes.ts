@@ -7,6 +7,8 @@ export interface Product {
   price: number;
   category: string[];
   stock: number;
+  shippingPrice: number;
+  carted: IPCart[];
   averageRating?: number;
   tags: string[];
   images: File[] | string[]; // Include both File and string (for URLs)
@@ -18,7 +20,6 @@ export interface GetProductsResponse {
 }
 
 export interface IPCart {
-  productId: string;
+  _id: string;
   quantity: number;
-  userId: string;
 }

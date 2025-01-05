@@ -22,7 +22,7 @@ export const registerUser: RequestHandler = async (req, res) => {
 
     const user = await User.create({ name, email, password, role });
 
-    const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
+    const token = jwt.sign({ _id: user._id, role: user.role }, JWT_SECRET, {
       expiresIn: maxAge,
     });
 
@@ -35,7 +35,12 @@ export const registerUser: RequestHandler = async (req, res) => {
       })
       .status(201)
       .json({
-        user: { id: user._id, email: user.email, role: user.role },
+        user: {
+          name: user.name,
+          _id: user._id,
+          email: user.email,
+          role: user.role,
+        },
       });
     return;
   } catch (err) {
@@ -54,7 +59,7 @@ export const loginUser: RequestHandler = async (req, res) => {
       return;
     }
 
-    const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
+    const token = jwt.sign({ _id: user._id, role: user.role }, JWT_SECRET, {
       expiresIn: maxAge,
     });
 
@@ -67,7 +72,12 @@ export const loginUser: RequestHandler = async (req, res) => {
       })
       .status(200)
       .json({
-        user: { id: user._id, email: user.email, role: user.role },
+        user: {
+          name: user.name,
+          _id: user._id,
+          email: user.email,
+          role: user.role,
+        },
       });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
@@ -118,14 +128,20 @@ export const getUser: RequestHandler = async (req, res) => {
   }
 };
 
-// Add Cart Item
-export const addCartItem: RequestHandler = async (req, res) => {
+//update cart
+export const updateCart: RequestHandler = async (req, res) => {
   try {
-    const { productId, quantity } = req.body;
+    const { _id, quantity } = req.body;
     const user = await User.findById(req.user?._id);
 
     if (!user) {
       res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    const product = await Product.findById(_id);
+    if (!product) {
+      res.status(404).json({ message: "Product not found" });
       return;
     }
 
@@ -133,54 +149,27 @@ export const addCartItem: RequestHandler = async (req, res) => {
       user.cart = [];
     }
 
-    const product = await Product.findById(productId);
-    if (!product) {
-      res.status(404).json({ message: "Product not found" });
-      return;
-    }
-
-    const { price, shippingPrice } = product;
-    user.cart.push({ product: productId, quantity, price, shippingPrice });
-    await user.save();
-
-    res.status(201).json(user.cart);
-  } catch (err) {
-    res.status(500).json({ error: (err as Error).message });
-  }
-};
-
-// Update or Remove Cart Item
-export const updateOrRemoveCartItem: RequestHandler = async (req, res) => {
-  try {
-    const { productId, quantity } = req.body;
-    const user = await User.findById(req.user?._id);
-
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
-    }
-
-    if (!user.cart || user.cart.length === 0) {
-      res.status(400).json({ message: "Cart is empty" });
-      return;
-    }
-
     const cartItemIndex = user.cart.findIndex(
-      (item) => item.product.toString() === productId
+      (item) => item._id.toString() === _id
     );
 
-    if (cartItemIndex === -1) {
-      res.status(404).json({ message: "Item not found in cart" });
-      return;
-    }
-
-    if (quantity > 0) {
-      user.cart[cartItemIndex].quantity = quantity;
-    } else {
-      user.cart.splice(cartItemIndex, 1);
+    if (cartItemIndex !== -1) {
+      if (quantity === 0) {
+        // Remove item if quantity is 0
+        user.cart.splice(cartItemIndex, 1);
+      } else {
+        // Update item quantity
+        user.cart[cartItemIndex].quantity = quantity;
+      }
+    } else if (quantity > 0) {
+      // Add new item if quantity > 0
+      const { price, shippingPrice } = product;
+      user.cart.push({ _id, quantity, price, shippingPrice });
     }
 
     await user.save();
+
+    // Return the updated cart to the client
     res.status(200).json(user.cart);
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });

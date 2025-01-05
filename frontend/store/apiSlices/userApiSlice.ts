@@ -39,25 +39,12 @@ export const userApiSlice = createApi({
       providesTags: ["Cart"],
     }),
 
-    // Add item to user cart
-    updateCartItem: builder.mutation<
-      void,
-      { productId: string; quantity: number }
-    >({
+    // adding, updating, and removing cart items
+    updateCart: builder.mutation<ICartItem[], Partial<ICartItem>>({
       query: (cartData) => ({
         url: "/cart",
         method: "PATCH",
         body: cartData,
-      }),
-      invalidatesTags: ["Cart"],
-    }),
-
-    // Add new cart item
-    addCartItem: builder.mutation<void, Partial<ICartItem>>({
-      query: (cartItem) => ({
-        url: "/cart",
-        method: "POST",
-        body: cartItem,
       }),
       invalidatesTags: ["Cart"],
     }),
@@ -69,6 +56,5 @@ export const {
   useLoginUserMutation,
   useLogoutUserMutation,
   useGetUserCartQuery,
-  useUpdateCartItemMutation,
-  useAddCartItemMutation,
+  useUpdateCartMutation,
 } = userApiSlice;

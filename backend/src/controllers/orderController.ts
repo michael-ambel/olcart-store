@@ -19,37 +19,35 @@ export const placeOrder: RequestHandler = async (req, res) => {
     // Validate products in the cart
     const items = [];
     let itemsPrice = 0;
-    let shippingPrice = 0;
+    let itemShippingPrice = 0;
 
     for (const cartItem of user.cart) {
-      const product = await Product.findById(cartItem.product._id);
+      const product = await Product.findById(cartItem._id);
       if (!product) {
-        res
-          .status(404)
-          .json({ message: `Product not found: ${cartItem.product}` });
+        res.status(404).json({ message: `Product not found: ${cartItem._id}` });
         return;
       }
 
-      const { price, shippingPrice: productShippingPrice } = product;
+      const { price, shippingPrice } = product;
 
       items.push({
         product: product._id,
         quantity: cartItem.quantity,
         price,
-        shippingPrice: productShippingPrice,
+        shippingPrice,
       });
 
       itemsPrice += cartItem.quantity * price;
-      shippingPrice += cartItem.quantity * productShippingPrice;
+      itemShippingPrice += cartItem.quantity * shippingPrice;
     }
 
-    const totalAmount = itemsPrice + shippingPrice;
+    const totalAmount = itemsPrice + itemShippingPrice;
 
     const order = await Order.create({
       user: req.user?._id,
       items,
       itemsPrice,
-      shippingPrice,
+      itemShippingPrice,
       totalAmount,
       shippingAddress,
       status: "Pending",
@@ -126,7 +124,7 @@ export const deleteOrder: RequestHandler = async (req, res) => {
 // Update Carted Count
 export const updateCartedCount: RequestHandler = async (req, res) => {
   try {
-    const { productId, userId, count } = req.body;
+    const { productId, userId, quantity } = req.body;
 
     if (
       !mongoose.Types.ObjectId.isValid(productId) ||
@@ -142,14 +140,14 @@ export const updateCartedCount: RequestHandler = async (req, res) => {
       return;
     }
 
-    const existingCarted = product.cartedCount.find(
-      (c) => c.userId.toString() === userId
+    const existingCarted = product.carted.find(
+      (c) => c._id.toString() === userId
     );
 
     if (existingCarted) {
-      existingCarted.count += count;
+      existingCarted.quantity += quantity;
     } else {
-      product.cartedCount.push({ userId, count });
+      product.carted.push({ _id: productId, quantity });
     }
 
     await product.save();

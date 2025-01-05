@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import * as cookie from "cookie";
 
-const BASE_URL = "http://localhost:5000/api/user/cart";
+const BASE_URL = "http://localhost:5000/api/users/cart";
 
 function getAuthToken(req: NextRequest) {
   const cookies = cookie.parse(req.headers.get("cookie") || "");
@@ -20,32 +20,18 @@ function handleApiError(error: unknown) {
       : (error as Error).message;
   return NextResponse.json({ message }, { status: 500 });
 }
-//add cart item
-export async function POST(req: NextRequest) {
-  try {
-    const token = getAuthToken(req);
-    const body = await req.json();
-    const response = await axios.post(BASE_URL, body, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return NextResponse.json(response.data, { status: response.status });
-  } catch (error) {
-    return handleApiError(error);
-  }
-}
 
-//update cart items
 export async function PATCH(req: NextRequest) {
   try {
     const token = getAuthToken(req);
     const body = await req.json();
+
     const response = await axios.patch(BASE_URL, body, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
+
     return NextResponse.json(response.data, { status: response.status });
   } catch (error) {
     return handleApiError(error);

@@ -2,9 +2,9 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import slugify from "slugify";
 
-interface ICartedCount {
-  userId: mongoose.Types.ObjectId;
-  count: number;
+interface ICarted {
+  _id: mongoose.Types.ObjectId;
+  quantity: number;
 }
 
 interface IProduct extends Document {
@@ -16,6 +16,7 @@ interface IProduct extends Document {
   category: mongoose.Types.ObjectId[];
   tags: string[];
   stock: number;
+  carted: ICarted[];
   views: number;
   salesCount: number;
   averageRating: number;
@@ -25,7 +26,6 @@ interface IProduct extends Document {
   brand?: string;
   isFeatured: boolean;
   isActive: boolean;
-  cartedCount: ICartedCount[];
 }
 
 const ProductSchema: Schema<IProduct> = new Schema(
@@ -63,10 +63,10 @@ const ProductSchema: Schema<IProduct> = new Schema(
     brand: { type: String },
     isFeatured: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
-    cartedCount: [
+    carted: [
       {
-        userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-        count: { type: Number, default: 0 },
+        _id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        quantity: { type: Number, default: 0 },
       },
     ],
   },

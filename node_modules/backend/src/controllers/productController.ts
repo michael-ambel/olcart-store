@@ -241,19 +241,15 @@ export const getCartItems: RequestHandler = async (req, res) => {
   }
 };
 
-// Add Cart Item
-export const addCartItem: RequestHandler = async (req, res) => {
+// Add or Update Carted Item
+export const updateCartedItem: RequestHandler = async (req, res) => {
   try {
-    const { productId, quantity } = req.body;
-    const user = await User.findById(req.user?._id);
+    const { _id: productId, quantity } = req.body;
+    const userId = req.user?._id;
 
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
+    if (!productId || !userId) {
+      res.status(400).json({ message: "Invalid request data" });
       return;
-    }
-
-    if (!user.cart) {
-      user.cart = [];
     }
 
     const product = await Product.findById(productId);
@@ -262,53 +258,24 @@ export const addCartItem: RequestHandler = async (req, res) => {
       return;
     }
 
-    const { price, shippingPrice } = product;
-    user.cart.push({ product: productId, quantity, price, shippingPrice });
-    await user.save();
-
-    res.status(201).json(user.cart);
-  } catch (err) {
-    res.status(500).json({ error: (err as Error).message });
-  }
-};
-
-// Update or Remove Cart Item
-export const updateOrRemoveCartItem: RequestHandler = async (req, res) => {
-  try {
-    const { productId, quantity } = req.body;
-    const user = await User.findById(req.user?._id);
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
-    }
-
-    if (!user.cart) {
-      user.cart = [];
-    }
-
-    const product = await Product.findById(productId);
-    if (!product) {
-      res.status(404).json({ message: "Product not found" });
-      return;
-    }
-
-    const cartItemIndex = user.cart.findIndex(
-      (item) => item.product.toString() === productId
+    const cartedIndex = product.carted.findIndex(
+      (item) => item._id.toString() === userId.toString()
     );
 
-    if (cartItemIndex === -1) {
-      const { price, shippingPrice } = product;
-      user.cart.push({ product: productId, quantity, price, shippingPrice });
+    if (cartedIndex === -1) {
+      // Add new carted entry
+      product.carted.push({ _id: userId, quantity });
     } else {
       if (quantity > 0) {
-        user.cart[cartItemIndex].quantity = quantity;
+        product.carted[cartedIndex].quantity = quantity;
       } else {
-        user.cart.splice(cartItemIndex, 1);
+        // Remove the entry if quantity is zero
+        product.carted.splice(cartedIndex, 1);
       }
     }
 
-    await user.save();
-    res.status(200).json(user.cart);
+    await product.save();
+    res.status(200).json(product.carted);
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }

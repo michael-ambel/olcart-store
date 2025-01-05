@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Poetsen_One, Poppins } from "next/font/google";
 import "./globals.css";
 import { ReduxProvider } from "@/store/Provider";
-import UserDispatcher from "@/components/UserDispatcher";
+import Initalizer from "@/components/Initalizer";
 
 const poetsOne = Poetsen_One({
   variable: "--font-poetsen-one",
@@ -32,7 +32,7 @@ export default function RootLayout({
         className={`${poetsOne.variable} ${poppins.variable} antialiased font-poppins text-bl bg-bg`}
       >
         <ReduxProvider>
-          <UserDispatcher />
+          <Initalizer />
           {children}
         </ReduxProvider>
       </body>

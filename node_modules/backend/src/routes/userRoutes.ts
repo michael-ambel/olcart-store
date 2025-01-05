@@ -6,10 +6,9 @@ import {
   getUser,
   getUsers,
   logoutUser,
-  addToCart,
   updateCart,
-  removeFromCart,
 } from "../controllers/userController";
+import { protectCustomer } from "../utils/ProtectMiddleware";
 
 const router = express.Router();
 
@@ -18,8 +17,6 @@ router.post("/login", loginUser);
 router.post("/logout", logoutUser);
 router.get("/", getUsers);
 router.get("/:id", getUser);
-router.put("/cart", addToCart);
-router.patch("/cart", updateCart);
-router.patch("/cart/:id", removeFromCart);
+router.patch("/cart", protectCustomer, updateCart);
 
 export default router;

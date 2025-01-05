@@ -4,14 +4,11 @@ export interface IUser {
   email: string;
   password?: string;
   role: "customer" | "admin";
-  cart?: Array<{
-    product: string;
-    quantity: number;
-  }>;
+  cart?: ICartItem[];
 }
 
 export interface ICartItem {
-  product: string;
+  _id: string;
   quantity: number;
   price: number;
   shippingPrice: number;

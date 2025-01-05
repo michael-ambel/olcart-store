@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 import bcrypt, { genSalt } from "bcrypt";
 
 interface ICartItem {
-  product: mongoose.Types.ObjectId;
+  _id: mongoose.Types.ObjectId;
   quantity: number;
   price: number;
   shippingPrice: number;

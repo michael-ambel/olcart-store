@@ -7,11 +7,11 @@ export const productApiSlice = createApi({
     baseUrl: "http://localhost:3000/api/products",
     credentials: "include",
   }),
-  tagTypes: ["Product", "Cart"],
+  tagTypes: ["Product", "Carted"],
 
   endpoints: (builder) => ({
     // Get all products
-    getProducts: builder.query<Product[], void>({
+    getProducts: builder.query<{ products: Product[]; total: number }, void>({
       query: () => "/",
       providesTags: ["Product"],
     }),
@@ -54,27 +54,13 @@ export const productApiSlice = createApi({
       invalidatesTags: (result, error, id) => [{ type: "Product", id }],
     }),
 
-    // Add carted item
-    addCartedItem: builder.mutation<void, IPCart>({
-      query: (cartedItem) => ({
-        url: "/cart",
-        method: "POST",
-        body: cartedItem,
-      }),
-      invalidatesTags: ["Cart"],
-    }),
-
-    // Update or remove carted item
-    updateCartedItem: builder.mutation<
-      void,
-      { productId: string; quantity: number }
-    >({
+    updateCartedItem: builder.mutation<IPCart[], Partial<IPCart>>({
       query: (cartData) => ({
-        url: "/cart",
+        url: "/carted",
         method: "PATCH",
         body: cartData,
       }),
-      invalidatesTags: ["Cart"],
+      invalidatesTags: ["Carted"],
     }),
   }),
 });
@@ -85,4 +71,5 @@ export const {
   useCreateProductMutation,
   useUpdateProductMutation,
   useDeleteProductMutation,
+  useUpdateCartedItemMutation,
 } = productApiSlice;

@@ -28,31 +28,34 @@ const userSlice = createSlice({
       state.cart = action.payload;
     },
 
-    addCartItem(state, action: PayloadAction<ICartItem>) {
-      state.cart.push(action.payload);
+    updateCart(state, action: PayloadAction<ICartItem[]>) {
+      // Replace the entire cart with the updated cart received from the backend
+      state.cart = action.payload;
     },
 
-    updateCartItem(
-      state,
-      action: PayloadAction<{ productId: string; quantity: number }>
-    ) {
-      const { productId, quantity } = action.payload;
-      const existingItem = state.cart.find(
-        (item) => item.product === productId
-      );
+    userInitalizer(state) {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        state.user = JSON.parse(storedUser);
+      }
+    },
 
-      if (existingItem) {
-        if (quantity > 0) {
-          existingItem.quantity = quantity;
-        } else {
-          state.cart = state.cart.filter((item) => item.product !== productId);
-        }
+    cartInitalizer(state) {
+      const storedCart = localStorage.getItem("cart");
+      if (storedCart) {
+        state.cart = JSON.parse(storedCart);
       }
     },
   },
 });
 
-export const { setUser, clearUser, setCart, addCartItem, updateCartItem } =
-  userSlice.actions;
+export const {
+  setUser,
+  clearUser,
+  setCart,
+  updateCart,
+  userInitalizer,
+  cartInitalizer,
+} = userSlice.actions;
 
 export default userSlice;

@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 
 import { Request, Response, NextFunction } from "express";
@@ -5,8 +6,7 @@ import { Request, Response, NextFunction } from "express";
 const JWT_SECRET = process.env.JWT_SECRET!;
 
 export interface DecodeTocken {
-  _id: string;
-  email: string;
+  _id: mongoose.Types.ObjectId;
   role: "admin" | "customer";
 }
 
@@ -30,7 +30,7 @@ export const protectAdmin = async (
       return;
     }
 
-    req.user = { _id: decoded._id, email: decoded.email, role: decoded.role };
+    req.user = { _id: decoded._id, role: decoded.role };
     next();
   } catch (error) {
     res.status(401).json({ message: "Invalid or expired token" });
@@ -56,7 +56,7 @@ export const protectCustomer = (
       return;
     }
 
-    req.user = { _id: decoded._id, email: decoded.email, role: decoded.role };
+    req.user = { _id: decoded._id, role: decoded.role };
     next();
   } catch (error) {
     res.status(401).json({ message: "Invalid or expired token" });
