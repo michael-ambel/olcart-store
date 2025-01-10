@@ -62,6 +62,16 @@ export const productApiSlice = createApi({
       }),
       invalidatesTags: ["Carted"],
     }),
+
+    // Get product details by IDs
+    getProductsByIds: builder.query<Product[], string[]>({
+      query: (productIds) => ({
+        url: "/cart",
+        method: "POST",
+        body: { productIds },
+      }),
+      providesTags: ["Product"],
+    }),
   }),
 });
 
@@ -72,4 +82,5 @@ export const {
   useUpdateProductMutation,
   useDeleteProductMutation,
   useUpdateCartedItemMutation,
+  useGetProductsByIdsQuery,
 } = productApiSlice;

@@ -23,3 +23,14 @@ export interface IPCart {
   _id: string;
   quantity: number;
 }
+
+export interface ICartDetail {
+  _id: string;
+  name: string;
+  quantity: number;
+  stock: number;
+  price: number;
+  shippingPrice: number;
+  image: string;
+  checked: boolean;
+}

@@ -18,7 +18,6 @@ function handleApiError(error: unknown) {
     axios.isAxiosError(error) && error.response
       ? error.response.data
       : (error as Error).message;
-  console.log(message);
   return NextResponse.json({ message }, { status: 500 });
 }
 
@@ -32,8 +31,6 @@ export async function PATCH(req: NextRequest) {
         Authorization: `Bearer ${token}`,
       },
     });
-
-    console.log(response.data);
 
     return NextResponse.json(response.data, { status: response.status });
   } catch (error) {

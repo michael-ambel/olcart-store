@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { IUser, ICartItem } from "../types/userTypes";
+import { IUser, ICartItem, IShippingAddress } from "../types/userTypes";
 
 export const userApiSlice = createApi({
   reducerPath: "userApi",
@@ -48,6 +48,46 @@ export const userApiSlice = createApi({
       }),
       invalidatesTags: ["Cart"],
     }),
+
+    // Shipping address endpoints
+    // Add a new shipping address
+    addShippingAddress: builder.mutation<IShippingAddress[], IShippingAddress>({
+      query: (address) => ({
+        url: "/shipping-address",
+        method: "POST",
+        body: address,
+      }),
+      invalidatesTags: ["Users"],
+    }),
+
+    // Get user shipping addresses
+    getShippingAddresses: builder.query<IShippingAddress[], void>({
+      query: () => "/shipping-address",
+      providesTags: ["Users"],
+    }),
+
+    // Update an existing shipping address
+    updateShippingAddress: builder.mutation<
+      IShippingAddress[],
+      IShippingAddress
+    >({
+      query: (address) => ({
+        url: "/shipping-address",
+        method: "PATCH",
+        body: address,
+      }),
+      invalidatesTags: ["Users"],
+    }),
+
+    // Delete a shipping address
+    deleteShippingAddress: builder.mutation<void, { _id: string }>({
+      query: ({ _id }) => ({
+        url: "/shipping-address",
+        method: "DELETE",
+        body: { _id },
+      }),
+      invalidatesTags: ["Users"],
+    }),
   }),
 });
 
@@ -57,4 +97,8 @@ export const {
   useLogoutUserMutation,
   useGetUserCartQuery,
   useUpdateCartMutation,
+  useAddShippingAddressMutation,
+  useGetShippingAddressesQuery,
+  useUpdateShippingAddressMutation,
+  useDeleteShippingAddressMutation,
 } = userApiSlice;

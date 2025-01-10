@@ -1,7 +1,7 @@
 import { Request, RequestHandler } from "express";
 import jwt from "jsonwebtoken";
 import User, { ICartItem } from "../models/userModel";
-import dotenv from "dotenv";
+import dotenv, { config } from "dotenv";
 import Product from "../models/productModel";
 
 dotenv.config();
@@ -149,9 +149,7 @@ export const updateCart: RequestHandler = async (req, res) => {
       user.cart = [];
     }
 
-    const cartItemIndex = user.cart.findIndex(
-      (item) => item._id.toString() === _id
-    );
+    const cartItemIndex = user.cart.findIndex((item) => item._id === _id);
 
     if (cartItemIndex !== -1) {
       if (quantity === 0) {
@@ -163,14 +161,175 @@ export const updateCart: RequestHandler = async (req, res) => {
       }
     } else if (quantity > 0) {
       // Add new item if quantity > 0
-      const { price, shippingPrice } = product;
-      user.cart.push({ _id, quantity, price, shippingPrice });
+      user.cart.push({
+        _id,
+        quantity,
+        price: product.price,
+        shippingPrice: product.shippingPrice,
+        checked: true,
+      });
     }
 
     await user.save();
 
     // Return the updated cart to the client
     res.status(200).json(user.cart);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: (err as Error).message });
+  }
+};
+
+//getCartItems
+export const getCartItems: RequestHandler = async (req, res) => {
+  try {
+    const user = await User.findById(req.user?._id);
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+    res.status(200).json(user.cart);
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+};
+
+// Add a new shipping address
+export const addShippingAddress: RequestHandler = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+    const { name, phone, address, city, postalCode, country, isDefault } =
+      req.body;
+
+    if (!name || !phone || !address || !city || !postalCode || !country) {
+      res.status(400).json({ message: "All fields are required" });
+      return;
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+    if (isDefault) {
+      user.shippingAddresses.forEach((addr) => (addr.isDefault = false));
+    }
+
+    user.shippingAddresses.push({
+      name,
+      phone,
+      address,
+      city,
+      postalCode,
+      country,
+      isDefault,
+    });
+
+    await user.save();
+    res.status(201).json({
+      message: "Address added successfully",
+      addresses: user.shippingAddresses,
+    });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+};
+
+// Update a shipping address
+export const updateShippingAddress: RequestHandler = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+    const { _id, name, phone, address, city, postalCode, country, isDefault } =
+      req.body;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    const addressIndex = user.shippingAddresses.findIndex((addr) =>
+      addr._id?.equals(_id)
+    );
+    if (addressIndex === -1) {
+      res.status(404).json({ message: "Address not found" });
+      return;
+    }
+
+    const updatedAddress = user.shippingAddresses[addressIndex];
+    if (name) updatedAddress.name = name;
+    if (phone) updatedAddress.phone = phone;
+    if (address) updatedAddress.address = address;
+    if (city) updatedAddress.city = city;
+    if (postalCode) updatedAddress.postalCode = postalCode;
+    if (country) updatedAddress.country = country;
+
+    if (isDefault) {
+      user.shippingAddresses.forEach((addr) => (addr.isDefault = false));
+      updatedAddress.isDefault = true;
+    }
+
+    await user.save();
+    res.status(200).json({
+      message: "Address updated successfully",
+      addresses: user.shippingAddresses,
+    });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+};
+
+// Get all shipping addresses
+export const getShippingAddresses: RequestHandler = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+    const user = await User.findById(userId).select("shippingAddresses");
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    // Sort the addresses so that the default address comes first
+    const sortedAddresses = user.shippingAddresses.sort(
+      (a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0)
+    );
+
+    res.status(200).json(sortedAddresses);
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+};
+
+// Delete a shipping address
+export const deleteShippingAddress: RequestHandler = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+    const { _id } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+    user.shippingAddresses = user.shippingAddresses.filter(
+      (addr) => !addr._id?.equals(_id)
+    );
+
+    // Ensure at least one address remains default if there are addresses left
+    if (
+      user.shippingAddresses.length > 0 &&
+      !user.shippingAddresses.some((addr) => addr.isDefault)
+    ) {
+      user.shippingAddresses[0].isDefault = true;
+    }
+
+    await user.save();
+    res.status(200).json({
+      message: "Address deleted successfully",
+      addresses: user.shippingAddresses,
+    });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }

@@ -24,15 +24,11 @@ function handleApiError(error: unknown) {
   return NextResponse.json({ message }, { status: 500 });
 }
 
-// Get User's Orders
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { userId: string } }
-) {
+// Get Orders for Logged-in User (GET /user)
+export async function GET(req: NextRequest) {
   try {
     const token = getAuthToken(req);
-    const { userId } = params;
-    const response = await axios.get(`${BASE_URL}/user/${userId}`, {
+    const response = await axios.get(`${BASE_URL}/user`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return NextResponse.json(response.data, { status: response.status });

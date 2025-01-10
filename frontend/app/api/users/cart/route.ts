@@ -25,13 +25,25 @@ export async function PATCH(req: NextRequest) {
   try {
     const token = getAuthToken(req);
     const body = await req.json();
-
     const response = await axios.patch(BASE_URL, body, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
+    return NextResponse.json(response.data, { status: response.status });
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    console.log(BASE_URL);
+    const token = getAuthToken(req);
+    const response = await axios.get(BASE_URL, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return NextResponse.json(response.data, { status: response.status });
   } catch (error) {
     return handleApiError(error);

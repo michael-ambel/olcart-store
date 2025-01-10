@@ -1,46 +1,49 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { IOrder } from "../types/orderTypes";
-import { ICartItem } from "../types/userTypes";
+import { IOrder, IOrderItem } from "../types/orderTypes";
+import { ICartItem, IShippingAddress } from "../types/userTypes";
 
 export const orderApiSlice = createApi({
   reducerPath: "orderApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/api" }),
+  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/api/orders" }),
   tagTypes: ["Orders"],
 
   endpoints: (builder) => ({
-    // Place order
-    placeOrder: builder.mutation<IOrder, Partial<IOrder>>({
-      query: (newOrder) => ({
-        url: "/orders",
+    // Place an order
+    placeOrder: builder.mutation<
+      IOrder,
+      { items: IOrderItem[]; shippingAddress: IShippingAddress }
+    >({
+      query: (orderData) => ({
+        url: "/",
         method: "POST",
-        body: newOrder,
+        body: orderData,
       }),
       invalidatesTags: ["Orders"],
     }),
 
-    // Get all orders
-    getOrders: builder.query<IOrder[], void>({
-      query: () => "/orders",
+    // Get orders for the logged-in user
+    getUserOrders: builder.query<IOrder[], void>({
+      query: () => "/user",
       providesTags: ["Orders"],
     }),
 
-    // Get specific order
+    // Get a specific order by ID
     getOrder: builder.query<IOrder, string>({
-      query: (id) => `/orders/${id}`,
+      query: (orderId) => `/${orderId}`,
       providesTags: ["Orders"],
     }),
 
-    // Get user orders
-    getUserOrders: builder.query<IOrder[], string>({
-      query: (userId) => `/orders/user/${userId}`,
+    // Get all orders (Admin only)
+    getOrders: builder.query<IOrder[], void>({
+      query: () => "/",
       providesTags: ["Orders"],
     }),
 
-    // Update order status
+    // Update order status (Admin only)
     updateOrderStatus: builder.mutation<IOrder, { id: string; status: string }>(
       {
         query: ({ id, status }) => ({
-          url: `/orders/${id}`,
+          url: `/${id}`,
           method: "PUT",
           body: { status },
         }),
@@ -48,10 +51,10 @@ export const orderApiSlice = createApi({
       }
     ),
 
-    // Delete order
+    // Delete an order (Admin only)
     deleteOrder: builder.mutation<void, string>({
-      query: (id) => ({
-        url: `/orders/${id}`,
+      query: (orderId) => ({
+        url: `/${orderId}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Orders"],
@@ -61,9 +64,9 @@ export const orderApiSlice = createApi({
 
 export const {
   usePlaceOrderMutation,
-  useGetOrdersQuery,
-  useGetOrderQuery,
   useGetUserOrdersQuery,
+  useGetOrderQuery,
+  useGetOrdersQuery,
   useUpdateOrderStatusMutation,
   useDeleteOrderMutation,
 } = orderApiSlice;

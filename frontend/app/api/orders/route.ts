@@ -24,35 +24,28 @@ function handleApiError(error: unknown) {
   return NextResponse.json({ message }, { status: 500 });
 }
 
-// Place Order
+// Place an Order (POST)
 export async function POST(req: NextRequest) {
   try {
     const token = getAuthToken(req);
-
-    const body = await req.json();
-    const response = await axios.post(BASE_URL, body, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+    const orderData = await req.json();
+    const response = await axios.post(BASE_URL, orderData, {
+      headers: { Authorization: `Bearer ${token}` },
     });
-
+    console.log(response.data);
     return NextResponse.json(response.data, { status: response.status });
   } catch (error) {
     return handleApiError(error);
   }
 }
 
-// Get All Orders
-export async function GET(req: NextRequest) {
+// Get All Orders (Admin only)
+export async function GET_ALL(req: NextRequest) {
   try {
     const token = getAuthToken(req);
-
     const response = await axios.get(BASE_URL, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
-
     return NextResponse.json(response.data, { status: response.status });
   } catch (error) {
     return handleApiError(error);

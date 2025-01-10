@@ -263,13 +263,11 @@ export const updateCartedItem: RequestHandler = async (req, res) => {
     );
 
     if (cartedIndex === -1) {
-      // Add new carted entry
       product.carted.push({ _id: userId, quantity });
     } else {
       if (quantity > 0) {
         product.carted[cartedIndex].quantity = quantity;
       } else {
-        // Remove the entry if quantity is zero
         product.carted.splice(cartedIndex, 1);
       }
     }
@@ -278,5 +276,26 @@ export const updateCartedItem: RequestHandler = async (req, res) => {
     res.status(200).json(product.carted);
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
+  }
+};
+
+// Get product details by an array of product IDs
+export const getProductsByIds: RequestHandler = async (req, res) => {
+  try {
+    const { productIds } = req.body; // Expect an array of product IDs in the request body
+
+    if (!Array.isArray(productIds) || productIds.length === 0) {
+      res.status(400).json({ message: "Invalid or empty product IDs array" });
+      return;
+    }
+
+    // Find products matching the provided IDs and select only necessary fields
+    const products = await Product.find({ _id: { $in: productIds } }).select(
+      "name price stock shippingPrice images"
+    );
+
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
   }
 };

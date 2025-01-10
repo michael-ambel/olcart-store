@@ -1,8 +1,7 @@
 // src/types/orderTypes.ts
 export interface IOrderItem {
-  product: string; // Product ID
+  _id: string; // Product ID
   quantity: number;
-  price: number;
 }
 
 export interface IOrder {

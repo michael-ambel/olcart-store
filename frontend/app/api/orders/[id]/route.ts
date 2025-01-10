@@ -24,15 +24,15 @@ function handleApiError(error: unknown) {
   return NextResponse.json({ message }, { status: 500 });
 }
 
-// Get Specific Order by ID
-export async function GET(
+// Get a Specific Order by ID (GET /:orderId)
+export async function GET_ORDER(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { orderId: string } }
 ) {
   try {
     const token = getAuthToken(req);
-    const { id } = params;
-    const response = await axios.get(`${BASE_URL}/${id}`, {
+    const { orderId } = params;
+    const response = await axios.get(`${BASE_URL}/${orderId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return NextResponse.json(response.data, { status: response.status });
@@ -41,33 +41,37 @@ export async function GET(
   }
 }
 
-// Update Order Status
+// Update Order Status (Admin only) (PUT /:orderId)
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { orderId: string } }
 ) {
   try {
     const token = getAuthToken(req);
-    const { id } = params;
-    const body = await req.json();
-    const response = await axios.put(`${BASE_URL}/${id}`, body, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const { orderId } = params;
+    const { status } = await req.json();
+    const response = await axios.put(
+      `${BASE_URL}/${orderId}`,
+      { status },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
     return NextResponse.json(response.data, { status: response.status });
   } catch (error) {
     return handleApiError(error);
   }
 }
 
-// Delete Order
+// Delete an Order (Admin only) (DELETE /:orderId)
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { orderId: string } }
 ) {
   try {
     const token = getAuthToken(req);
-    const { id } = params;
-    const response = await axios.delete(`${BASE_URL}/${id}`, {
+    const { orderId } = params;
+    const response = await axios.delete(`${BASE_URL}/${orderId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return NextResponse.json(response.data, { status: response.status });

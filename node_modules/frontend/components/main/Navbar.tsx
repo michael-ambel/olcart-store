@@ -20,7 +20,7 @@ const Navbar: FC = () => {
         <div className="items-baseline ">
           <Link href="/">
             <Image
-              src="/logo.png"
+              src="/logo.svg"
               alt="LOGO"
               width={500}
               height={500}

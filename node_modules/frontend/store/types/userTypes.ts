@@ -12,4 +12,16 @@ export interface ICartItem {
   quantity: number;
   price: number;
   shippingPrice: number;
+  checked: boolean;
+}
+
+export interface IShippingAddress {
+  _id?: string;
+  name: string;
+  phone: string;
+  address: string;
+  city: string;
+  postalCode: string;
+  country: string;
+  isDefault?: boolean;
 }

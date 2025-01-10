@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { events } from "./data";
+import { events } from "../data";
 
 const EventCard = () => {
   const [currentEvent, setCurrentEvent] = useState(0);
