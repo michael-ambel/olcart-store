@@ -14,7 +14,7 @@ const router = express.Router();
 
 router.post("/", protectCustomer, placeOrder);
 router.post("/summary", getOrderSummary);
-router.get("/user", userOrders);
+router.get("/user", protectCustomer, userOrders);
 router.get("/", allOrders);
 router.get("/:orderId", getOrder);
 router.delete("/:orderId", deleteOrder);

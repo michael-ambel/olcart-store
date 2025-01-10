@@ -158,15 +158,15 @@ export const placeOrder: RequestHandler = async (req, res) => {
 // 3. Get Orders for a Specific User
 export const userOrders: RequestHandler = async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.user?._id }).populate(
-      "items.product"
-    );
+    const orders = await Order.find({ user: req.user?._id });
+    console.log(orders);
     if (!orders.length) {
       res.status(404).json({ message: "No orders found." });
       return;
     }
     res.status(200).json(orders);
   } catch (error: any) {
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 };
