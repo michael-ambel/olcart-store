@@ -27,6 +27,7 @@ interface IOrder extends Document {
     isDefault?: boolean;
   };
   paymentStatus: "Pending" | "Completed" | "Failed";
+  orderPaymentId: String;
   timestamps: {
     placedAt: Date;
     processedAt?: Date;
@@ -76,6 +77,7 @@ const OrderSchema: Schema<IOrder> = new Schema(
       enum: ["Pending", "Completed", "Failed"],
       default: "Pending",
     },
+    orderPaymentId: { type: String, default: "" },
     timestamps: {
       placedAt: { type: Date, default: Date.now },
       processedAt: Date,

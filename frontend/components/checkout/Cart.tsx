@@ -48,7 +48,6 @@ const Cart = () => {
         );
 
         if (productDetail) {
-          // Ensure that the image is a string (URL), not a File.
           const image =
             typeof productDetail.images[0] === "string"
               ? productDetail.images[0]
@@ -61,11 +60,10 @@ const Cart = () => {
             price: cartItem.price,
             shippingPrice: cartItem.shippingPrice,
             checked: cartItem.checked,
-            image: image, // Ensures image is a string (URL).
+            image: image,
           };
         }
 
-        // If no matching product
         return {
           _id: cartItem._id,
           name: "Unknown Product",
@@ -79,7 +77,6 @@ const Cart = () => {
       });
       setProducts(updatedProducts);
 
-      // Dispatch the initially checked items to the currentOrder after products are fetched
       const initialOrderItems = updatedProducts
         .filter((product) => product.checked)
         .map((product) => ({
@@ -88,7 +85,7 @@ const Cart = () => {
         }));
 
       setOrderItems(initialOrderItems);
-      dispatch(setCurrentOrder(initialOrderItems)); // Dispatch the order items
+      dispatch(setCurrentOrder(initialOrderItems));
     }
   }, [fetchedProducts, cartList, dispatch]);
 
@@ -121,7 +118,7 @@ const Cart = () => {
       }));
 
     setOrderItems(newOrderItems);
-    dispatch(setCurrentOrder(newOrderItems)); // Dispatch updated order items
+    dispatch(setCurrentOrder(newOrderItems));
   };
 
   const handleCheckout = () => {
@@ -132,7 +129,6 @@ const Cart = () => {
     router.push("/shipping-address");
   };
 
-  // Calculate subtotals, total shipping, and total price
   const subtotal = products.reduce((acc, product) => {
     if (product.checked) {
       acc += product.price * product.quantity;
@@ -155,6 +151,20 @@ const Cart = () => {
 
   if (isCartError || isProductsError) {
     return <div>Error loading cart or products. Please try again later.</div>;
+  }
+
+  if (!cart || cart.length === 0) {
+    return (
+      <div className="flex justify-center items-center h-screen text-lg text-gray-500 flex-col">
+        <p>Your cart is currently empty. Feel free to explore our products!</p>
+        <button
+          onClick={() => router.push("/")}
+          className="mt-4 px-6 py-2 bg-mo text-white rounded-lg"
+        >
+          Go to Home
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -185,7 +195,7 @@ const Cart = () => {
                   onChange={() => handleCheckboxChange(index)}
                 />
               </div>
-              <div className="flex items-center justify-center w-[74px]  bg-bgt rounded-[6px]">
+              <div className="flex items-center justify-center w-[74px] bg-bgt rounded-[6px]">
                 {product.image ? (
                   <Image
                     src={product.image}
@@ -242,7 +252,7 @@ const Cart = () => {
         })}
       </div>
       {/* Calculator Box */}
-      <div className="flex flex-col items-center fixed right-[46px] top- w-[260px]  justify-end">
+      <div className="flex flex-col items-center fixed right-[46px] top- w-[260px] justify-end">
         <div className="flex justify-between w-[240px] my-[10px]">
           <div className="flex justify-start">Subtotal:</div>
           <div className="flex justify-end font-semibold">${subtotal}</div>
@@ -257,7 +267,7 @@ const Cart = () => {
         </div>
         <button
           onClick={handleCheckout}
-          className="flex  my-[20px] w-[240px] py-[10px] justify-center rounded-[8px] bg-mo text-bg"
+          className="flex my-[20px] w-[240px] py-[10px] justify-center rounded-[8px] bg-mo text-bg"
         >
           Checkout
         </button>

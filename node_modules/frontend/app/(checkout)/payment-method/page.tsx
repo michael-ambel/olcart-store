@@ -1,9 +1,10 @@
 import CheckOutProgress from "@/components/checkout/CheckOutProgress";
+import PaymentPage from "@/components/checkout/PaymentPage";
 
 export default function Home() {
   return (
     <div>
-      <main className="flex flex-col z-10 mt-[20px] mx-[84px] items-center ">
+      <main className="flex flex-col z-10 mt-[20px] mx-[0px] items-center ">
         <CheckOutProgress
           cart={true}
           shippingInfo={true}
@@ -11,6 +12,7 @@ export default function Home() {
           placeOrder={false}
           success={false}
         />
+        <PaymentPage />
       </main>
     </div>
   );

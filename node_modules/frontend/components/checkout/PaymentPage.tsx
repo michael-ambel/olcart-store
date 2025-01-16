@@ -1,12 +1,33 @@
 "use client";
 
-import React, { useState } from "react";
-import { useGetUserOrdersQuery } from "@/store/apiSlices/orderApiSlice";
+import React, { useState, useEffect } from "react";
+import {
+  useGetUserOrdersQuery,
+  useCreatePaymentSessionMutation,
+} from "@/store/apiSlices/orderApiSlice";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { showToast } from "../ToastNotifications";
 
 export default function PaymentPage() {
-  const { data: orders, isLoading, isError } = useGetUserOrdersQuery();
   const [selectedOrders, setSelectedOrders] = useState<any[]>([]);
+  const [createPaymentSession, { isLoading: isPaying }] =
+    useCreatePaymentSessionMutation();
+  const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
+
+  const { data: orders, isLoading, isError } = useGetUserOrdersQuery();
+  const router = useRouter();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get("status");
+
+    if (status === "success") {
+      setPaymentStatus("Payment successful! Thank you.");
+    } else if (status === "failed") {
+      setPaymentStatus("Payment failed. Please try again.");
+    }
+  }, []);
 
   const handleOrderSelect = (order: any) => {
     setSelectedOrders((prev) =>
@@ -26,6 +47,31 @@ export default function PaymentPage() {
     );
   };
 
+  const handlePayment = async (paymentMethod: "paypal" | "stripe") => {
+    try {
+      if (selectedOrders.length === 0) {
+        showToast("error", "Please select at least one order");
+
+        return;
+      }
+
+      const orderIds = selectedOrders?.map((order) => order._id);
+
+      const { paymentUrl } = await createPaymentSession({
+        orderIds,
+        paymentMethod,
+      }).unwrap();
+
+      if (paymentUrl) {
+        window.location.href = paymentUrl;
+      } else {
+        showToast("error", "Failed to create payment session.");
+      }
+    } catch (error) {
+      showToast("error", "Failed to create payment session. Please try again.");
+    }
+  };
+
   if (isLoading) {
     return <p className="text-center text-gray-600">Loading orders...</p>;
   }
@@ -38,10 +84,23 @@ export default function PaymentPage() {
     );
   }
 
+  if (!orders || orders.length === 0) {
+    return (
+      <div className="flex justify-center items-center h-screen  text-lg text-gray-500 flex-col">
+        <p>No orders to pay for yet. Please add some orders to proceed!</p>
+        <button
+          onClick={() => router.push("/")}
+          className="mt-4 px-6 py-2 bg-mo text-white rounded-lg"
+        >
+          Go to Home
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col z-10 mt-[96px] mx-[0px] items-center">
       <div className="flex gap-[26px] mt-8">
-        {/* Order Summary Section */}
         <div className="space-y-6 ml-[20px] mr-[460px]">
           <h1 className="text-xl font-bold mb-6 text-center">Order Summary</h1>
           {orders?.map((order: any) => (
@@ -60,7 +119,6 @@ export default function PaymentPage() {
                 />
                 <h2 className="text-lg font-semibold">Order ID: {order._id}</h2>
               </div>
-
               <div className="grid grid-cols-3 gap-6">
                 {order.items.map((item: any) => (
                   <div
@@ -88,7 +146,6 @@ export default function PaymentPage() {
                   </div>
                 ))}
               </div>
-
               <div className="mt-4">
                 <p className="text-sm">
                   Shipping:{" "}
@@ -98,14 +155,29 @@ export default function PaymentPage() {
                   Item Price:{" "}
                   <span className="font-medium">${order.totalAmount}</span>
                 </p>
+                <p className="text-sm">
+                  Status: <span className="font-medium">{order.status}</span>
+                </p>
+                <p className="text-sm">
+                  Payment Status:{" "}
+                  <span
+                    className={`font-medium ${
+                      order.paymentStatus === "Failed"
+                        ? "text-red-600"
+                        : order.paymentStatus === "Pending"
+                        ? "text-yellow-600"
+                        : "text-green-600"
+                    }`}
+                  >
+                    {order.paymentStatus}
+                  </span>
+                </p>
               </div>
             </div>
           ))}
-          ``
         </div>
 
-        {/* Payment Options Section */}
-        <div className="fixed right-[30px] top-[140px] p-6 border border-gray-300 rounded-lg shadow-sm space-y-6">
+        <div className="fixed right-[30px] top-[140px] w-[400px] p-6 border border-gray-300 rounded-lg shadow-sm space-y-6">
           <h2 className="text-[22px] font-bold mb-2">Select Payment Option</h2>
           <div className="flex flex-col text-[16px] font-medium gap-2 mb-4">
             <p className="">Selected Orders: {selectedOrders.length}</p>
@@ -114,18 +186,22 @@ export default function PaymentPage() {
             </p>
             <p className="">Grand Total: ${calculateTotal().totalAmount}</p>
           </div>
-          <button
-            className="w-full py-3 px-6 bg-mb text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition"
-            disabled={selectedOrders.length === 0}
-          >
-            Pay with PayPal
-          </button>
-          <button
-            className="w-full py-3 px-6 bg-gray-800 text-white font-semibold rounded-lg shadow-md hover:bg-gray-900 transition"
-            disabled={selectedOrders.length === 0}
-          >
-            Pay with Stripe
-          </button>
+          <div className="flex flex-col gap-4 text-bg text-[18px]">
+            <button
+              disabled={isPaying}
+              onClick={() => handlePayment("paypal")}
+              className="pay-button w-full rounded-[8px] bg-blue-800 h-[44px]"
+            >
+              Pay with PayPal
+            </button>
+            <button
+              disabled={isPaying}
+              onClick={() => handlePayment("stripe")}
+              className="pay-button w-full rounded-[8px] bg-mb h-[44px]"
+            >
+              Pay with Stripe
+            </button>
+          </div>
         </div>
       </div>
     </div>

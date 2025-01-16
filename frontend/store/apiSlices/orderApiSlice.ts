@@ -59,6 +59,18 @@ export const orderApiSlice = createApi({
       }),
       invalidatesTags: ["Orders"],
     }),
+
+    // Create payment session (Stripe/PayPal)
+    createPaymentSession: builder.mutation<
+      { paymentUrl: string },
+      { orderIds: string[]; paymentMethod: "paypal" | "stripe" }
+    >({
+      query: ({ orderIds, paymentMethod }) => ({
+        url: `/payment-session`,
+        method: "POST",
+        body: { orderIds, paymentMethod },
+      }),
+    }),
   }),
 });
 
@@ -69,4 +81,5 @@ export const {
   useGetOrdersQuery,
   useUpdateOrderStatusMutation,
   useDeleteOrderMutation,
+  useCreatePaymentSessionMutation,
 } = orderApiSlice;

@@ -17,7 +17,7 @@ const CheckOutProgress = ({
   success,
 }: Progress) => {
   return (
-    <div className="fixed top-[0px] z-50 flex  w-full justify-around items-center h-[100px] bg-bgs">
+    <div className="fixed top-[0px] z-20 flex  w-full justify-around items-center h-[100px] bg-bgs">
       <Link
         href="/cart"
         className={`${cart === true ? "text-bl" : "text-fade"} px-[10px]`}
@@ -39,19 +39,19 @@ const CheckOutProgress = ({
           paymentMethod === true ? "text-bl" : "text-fade"
         } px-[10px]`}
       >
-        Payment Method
+        Payment
       </Link>
       <Link
-        href="/place-order"
+        href="/orders"
         className={`${placeOrder === true ? "text-bl" : "text-fade"} px-[10px]`}
       >
-        Place Order
+        Orders
       </Link>
       <Link
-        href="/success"
+        href="/processed"
         className={`${success === true ? "text-bl" : "text-fade"} px-[10px]`}
       >
-        Success
+        Processed
       </Link>
     </div>
   );

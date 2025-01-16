@@ -1,4 +1,3 @@
-// src/app.ts
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -10,18 +9,24 @@ import categoryRoutes from "./routes/categoryRoutes";
 import connectDB from "./config/db";
 import "./types/express";
 
+import bodyParser from "body-parser";
+import { handlePaymentWebhook } from "./controllers/orderController";
+
 dotenv.config();
 
 const app = express();
 
 // Middleware
 app.use(cors());
+app.post(
+  "/api/orders/payment-webhook",
+  bodyParser.raw({ type: "application/json" }),
+  handlePaymentWebhook
+);
+
 app.use(express.json());
 
 app.use("/uploads", express.static("uploads"));
-
-// app.use(notFound);
-// app.use(errorHandler);
 
 // MongoDB connection
 connectDB();

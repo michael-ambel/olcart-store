@@ -4,10 +4,18 @@ export interface IOrderItem {
   quantity: number;
 }
 
+export interface Item {
+  _id: string;
+  name: string;
+  price: number;
+  shippingPrice: number;
+  quantity: number;
+  images: string[];
+}
 export interface IOrder {
   _id?: string;
   user: string; // User ID
-  items: IOrderItem[];
+  items: Item[];
   totalAmount: number;
   status?: "Pending" | "Processing" | "Shipped" | "Delivered" | "Cancelled";
   createdAt?: string;
