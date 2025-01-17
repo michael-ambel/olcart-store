@@ -42,10 +42,10 @@ const CheckOutProgress = ({
         Payment
       </Link>
       <Link
-        href="/orders"
+        href="/processing"
         className={`${placeOrder === true ? "text-bl" : "text-fade"} px-[10px]`}
       >
-        Orders
+        Processing
       </Link>
       <Link
         href="/processed"

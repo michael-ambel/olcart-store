@@ -17,19 +17,19 @@ const Navbar: FC = () => {
     >
       <div className="flex justify-between w-full items-end">
         {/* Logo */}
-        <div className="items-baseline ">
+        <div className="items-baseline mr-[30px] ">
           <Link href="/">
             <Image
               src="/logo.svg"
               alt="LOGO"
               width={500}
               height={500}
-              className="w-[50px]"
+              className="w-[80px]"
             />
-            <p className="text-[20px] text-mb font-poetsen">
+            {/* <p className="text-[20px] text-mb font-poetsen">
               olcart<span className="text-mo text-[18px]">.</span>
               <span className="text-bl text-[10px]">store</span>
-            </p>
+            </p> */}
           </Link>
         </div>
 

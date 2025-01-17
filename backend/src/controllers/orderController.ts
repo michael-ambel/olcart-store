@@ -586,3 +586,47 @@ export const handlePaymentWebhook: RequestHandler = async (req, res) => {
 
   res.status(400).send("Invalid signature");
 };
+
+// Fetch processing orders for the logged-in user
+export const getUserProcessingOrders: RequestHandler = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized access." });
+      return;
+    }
+
+    const orders = await Order.find({
+      user: userId,
+      status: { $in: ["Pending", "Processing", "Shipped"] },
+    }).sort({ "timestamps.placedAt": -1 });
+
+    res.status(200).json(orders);
+  } catch (error: any) {
+    console.error("Error fetching processing orders:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+// Fetch processed orders for the logged-in user
+export const getUserProcessedOrders: RequestHandler = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized access." });
+      return;
+    }
+
+    const orders = await Order.find({
+      user: userId,
+      status: { $in: ["Delivered", "Cancelled"] },
+    }).sort({ "timestamps.deliveredAt": -1 });
+
+    res.status(200).json(orders);
+  } catch (error: any) {
+    console.error("Error fetching processed orders:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};

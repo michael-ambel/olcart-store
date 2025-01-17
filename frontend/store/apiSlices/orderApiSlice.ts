@@ -71,6 +71,18 @@ export const orderApiSlice = createApi({
         body: { orderIds, paymentMethod },
       }),
     }),
+
+    // Get processing orders
+    getUserProcessingOrders: builder.query<IOrder[], void>({
+      query: () => "/user/processing",
+      providesTags: ["Orders"],
+    }),
+
+    // Get processed orders
+    getUserProcessedOrders: builder.query<IOrder[], void>({
+      query: () => "/user/processed",
+      providesTags: ["Orders"],
+    }),
   }),
 });
 
@@ -82,4 +94,6 @@ export const {
   useUpdateOrderStatusMutation,
   useDeleteOrderMutation,
   useCreatePaymentSessionMutation,
+  useGetUserProcessingOrdersQuery,
+  useGetUserProcessedOrdersQuery,
 } = orderApiSlice;
