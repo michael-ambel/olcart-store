@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Product, GetProductsResponse, IPCart } from "../types/productTypes";
+import { Product, IPCart } from "../types/productTypes";
 
 export const productApiSlice = createApi({
   reducerPath: "productApi",
@@ -72,6 +72,46 @@ export const productApiSlice = createApi({
       }),
       providesTags: ["Product"],
     }),
+    // Search products
+    searchProducts: builder.query<
+      {
+        products: Product[];
+        success: Boolean;
+        pagination: {
+          total: number;
+          page: number;
+          limit: number;
+          totalPages: number;
+        };
+      },
+      {
+        query?: string;
+        category?: string;
+        priceMin?: number;
+        priceMax?: number;
+        tags?: string[];
+        sort?: string;
+        page?: number;
+        limit?: number;
+      }
+    >({
+      query: ({
+        query,
+        category,
+        priceMin,
+        priceMax,
+        tags,
+        sort = "popularity",
+        page = 1,
+        limit = 10,
+      }) =>
+        `/search?query=${query || ""}&category=${category || ""}&priceMin=${
+          priceMin || ""
+        }&priceMax=${priceMax || ""}&tags=${tags ? tags.join(",") : ""}&sort=${
+          sort || ""
+        }&page=${page}&limit=${limit}&timestamp=${Date.now()}`,
+      providesTags: ["Product"],
+    }),
   }),
 });
 
@@ -83,4 +123,5 @@ export const {
   useDeleteProductMutation,
   useUpdateCartedItemMutation,
   useGetProductsByIdsQuery,
+  useSearchProductsQuery,
 } = productApiSlice;

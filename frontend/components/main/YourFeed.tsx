@@ -16,8 +16,8 @@ const YourFeed: FC = () => {
   }, [data]);
 
   return (
-    <div className="flex w-full px-[84px] my-[40px]">
-      <div className="flex flex-col min-h-[200px] w-full px-[22px] pt-[40px]  bg-bgt rounded-[20px]">
+    <div className="flex w-full  my-[40px]">
+      <div className="flex flex-col min-h-vh w-full mx-[40px] px-[20px] pt-[20px]  bg-bgt rounded-[20px]">
         <h2 className="text-[24px] font-bold">Your Feed...</h2>
         <div className="grid grid-cols-5 gap-[36px] w-full  my-[30px]">
           {isLoading && <div>Loading...</div>}

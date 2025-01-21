@@ -36,6 +36,15 @@ export async function GET(req: NextRequest) {
 //create new product
 export async function POST(req: Request) {
   try {
+    const cookies = cookie.parse(req.headers.get("cookie") || "");
+    const token = cookies.jwt;
+
+    if (!token) {
+      return NextResponse.json(
+        { message: "Authentication error: please log in again" },
+        { status: 401 }
+      );
+    }
     const contentType = req.headers.get("Content-Type");
     if (contentType && contentType.includes("multipart/form-data")) {
       const formData = new FormData();
@@ -59,7 +68,8 @@ export async function POST(req: Request) {
 
       const resp = await axios.post(BASE_URL, formData, {
         headers: {
-          "Content-Type": "multipart/form-data", // Ensure the correct content type is set
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -75,6 +85,7 @@ export async function POST(req: Request) {
       axios.isAxiosError(error) && error.response
         ? error.response.data
         : (error as Error).message;
+
     return NextResponse.json({ message }, { status: 500 });
   }
 }

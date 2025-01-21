@@ -3,7 +3,7 @@ import { FC } from "react";
 
 const Shops: FC = () => {
   return (
-    <div className="w-full px-[84px] h-auto my-[40px] flex  ">
+    <div className="w-full px-[40px] h-auto my-[80px] flex  ">
       <div className="flex flex-col w-full h-auto">
         <h2 className="text-[24px] font-bold mb-[30px]">Shops...</h2>
         <div className="flex relative h-[300px] bg-shopp rounded-[12px] mb-[50px]">

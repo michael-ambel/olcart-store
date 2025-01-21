@@ -102,6 +102,7 @@ export const createProduct = async (req: Request, res: Response) => {
         name,
         description,
         price,
+        shippingPrice: 0,
         category,
         stock,
         tags: JSON.parse(tags || "[]"),
@@ -124,7 +125,7 @@ export const getProducts = async (
 ): Promise<void> => {
   try {
     if (req.user?.role === "admin" || "customer") {
-      const { page = 1, limit = 10, category } = req.query;
+      const { page = 1, limit = 100, category } = req.query;
       const filter: any = {};
       if (category) filter.category = category;
 
@@ -297,5 +298,82 @@ export const getProductsByIds: RequestHandler = async (req, res) => {
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
+  }
+};
+
+// Search for products
+export const searchProducts: RequestHandler = async (req, res) => {
+  try {
+    const { query, category, priceMin, priceMax, tags, sort, page, limit } =
+      req.query;
+
+    const filters: any = {};
+
+    if (query) {
+      filters.$or = [
+        { name: { $regex: query as string, $options: "i" } },
+        { description: { $regex: query as string, $options: "i" } },
+        { tags: { $regex: query as string, $options: "i" } },
+      ];
+    }
+
+    if (tags) {
+      filters.tags = { $regex: tags as string, $options: "i" };
+    }
+
+    if (category) {
+      const categoryIds = (category as string)
+        .split(",")
+        .map((id) => new mongoose.Types.ObjectId(id.trim()));
+      filters.category = { $all: categoryIds };
+    }
+
+    if (priceMin || priceMax) {
+      filters.price = {};
+      if (priceMin) filters.price.$gte = parseFloat(priceMin as string);
+      if (priceMax) filters.price.$lte = parseFloat(priceMax as string);
+    }
+
+    let sortOptions: any = {};
+    switch (sort) {
+      case "price_asc":
+        sortOptions = { price: 1, _id: 1 }; // Secondary sort by _id important for products that have same balue for sorting
+        break;
+      case "price_desc":
+        sortOptions = { price: -1, _id: 1 };
+        break;
+      case "popularity":
+        sortOptions = { salesCount: -1, _id: 1 };
+        break;
+      case "rating":
+        sortOptions = { averageRating: -1, _id: 1 };
+        break;
+      default:
+        sortOptions = { _id: 1 }; // Default sort by _id
+    }
+
+    // Pagination calculation
+    const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
+    console.log(page, limit, skip);
+    const products = await Product.find(filters)
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(parseInt(limit as string));
+
+    const total = await Product.countDocuments(filters);
+
+    res.status(200).json({
+      success: true,
+      products,
+      pagination: {
+        total,
+        page: parseInt(page as string),
+        limit: parseInt(limit as string),
+        totalPages: Math.ceil(total / parseInt(limit as string)),
+      },
+    });
+  } catch (error) {
+    console.error("Error in searchProducts:", error);
+    res.status(500).json({ success: false, message: "Server Error" });
   }
 };

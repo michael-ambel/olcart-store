@@ -582,3 +582,102 @@ export const categoriesData: CategoryTree[] = [
     ],
   },
 ];
+
+[
+  {
+    category: "Electronics",
+    products: [
+      { name: "iPhone 14 128GB", slug: "iphone-14-128gb" }, // Electronics, Smartphone, Apple, iPhone 14, iPhone 14 128GB
+      { name: "iPhone 14 Pro Max", slug: "iphone-14-pro-max" }, // Electronics, Smartphone, Apple, iPhone 14, iPhone 14 Pro Max
+      { name: "iPhone 13 Mini", slug: "iphone-13-mini" }, // Electronics, Smartphone, Apple, iPhone 13, iPhone 13 Mini
+      { name: "Galaxy S22 16GB RAM", slug: "galaxy-s22-16gb-ram" }, // Electronics, Smartphone, Samsung, Galaxy S22, Galaxy S22 16GB RAM
+      { name: "Galaxy S22 32GB RAM", slug: "galaxy-s22-32gb-ram" }, // Electronics, Smartphone, Samsung, Galaxy S22, Galaxy S22 32GB RAM
+      { name: "Galaxy Note 20 Ultra", slug: "galaxy-note-20-ultra" }, // Electronics, Smartphone, Samsung, Galaxy Note 20, Galaxy Note 20 Ultra
+      { name: "MacBook Pro M1 16-inch", slug: "macbook-pro-m1" }, // Electronics, Laptop, Apple, MacBook Pro, MacBook Pro M1 16-inch
+      { name: "MacBook Air M2", slug: "macbook-air-m2" }, // Electronics, Laptop, Apple, MacBook Air, MacBook Air M2
+      { name: "Dell XPS 13", slug: "dell-xps-13" }, // Electronics, Laptop, Dell, XPS Series, Dell XPS 13
+      { name: "HP Spectre x360", slug: "hp-spectre-x360" }, // Electronics, Laptop, HP, Spectre Series, HP Spectre x360
+      { name: "Bluetooth Headphones", slug: "bluetooth-headphones" }, // Electronics, Accessories, Audio, Bluetooth Headphones
+      { name: "Noise Cancelling Earbuds", slug: "noise-cancelling-earbuds" }, // Electronics, Accessories, Audio, Noise Cancelling Earbuds
+    ],
+  },
+  {
+    category: "Fashion",
+    products: [
+      { name: "Men's Slim Fit T-Shirt", slug: "mens-slim-fit-tshirt" }, // Fashion, Men's Clothing, Tops, T-Shirts, Slim Fit T-Shirt
+      { name: "Men's Bomber Jacket", slug: "mens-bomber-jacket" }, // Fashion, Men's Clothing, Outerwear, Jackets, Bomber Jacket
+      { name: "Men's Distressed Jeans", slug: "mens-distressed-jeans" }, // Fashion, Men's Clothing, Bottoms, Jeans, Distressed Jeans
+      { name: "Men's Casual Sneakers", slug: "mens-casual-sneakers" }, // Fashion, Men's Footwear, Casual Shoes, Sneakers
+      { name: "Men's Hiking Boots", slug: "mens-hiking-boots" }, // Fashion, Men's Footwear, Outdoor, Hiking Boots
+      { name: "Women's Maxi Dress", slug: "womens-maxi-dress" }, // Fashion, Women's Clothing, Dresses, Maxi Dress
+      { name: "Women's Crop Top", slug: "womens-crop-top" }, // Fashion, Women's Clothing, Tops, Crop Top
+      { name: "Women's Leather Jacket", slug: "womens-leather-jacket" }, // Fashion, Women's Clothing, Outerwear, Jackets, Leather Jacket
+      { name: "Women's Pencil Skirt", slug: "womens-pencil-skirt" }, // Fashion, Women's Clothing, Bottoms, Skirts, Pencil Skirt
+      { name: "Women's Heeled Sandals", slug: "womens-heeled-sandals" }, // Fashion, Women's Footwear, Dress Shoes, Heeled Sandals
+      { name: "Men's Formal Shoes", slug: "mens-formal-shoes" }, // Fashion, Men's Footwear, Dress Shoes, Formal Shoes
+      { name: "Women's Flats", slug: "womens-flats" }, // Fashion, Women's Footwear, Casual Shoes, Flats
+    ],
+  },
+  {
+    category: "Vehicles",
+    products: [
+      { name: "Compact Sedan", slug: "compact-sedan" }, // Vehicles, Cars, Sedan, Compact Sedan
+      { name: "Luxury Sedan", slug: "luxury-sedan" }, // Vehicles, Cars, Sedan, Luxury Sedan
+      { name: "Mid-Size SUV", slug: "mid-size-suv" }, // Vehicles, Cars, SUV, Mid-Size SUV
+      { name: "Compact SUV", slug: "compact-suv" }, // Vehicles, Cars, SUV, Compact SUV
+      { name: "Light Duty Truck", slug: "light-duty-truck" }, // Vehicles, Trucks, Light Duty Truck
+      { name: "Heavy Duty Truck", slug: "heavy-duty-truck" }, // Vehicles, Trucks, Heavy Duty Truck
+      { name: "Electric Sedan", slug: "electric-sedan" }, // Vehicles, Cars, Electric, Sedan, Electric Sedan
+      { name: "Electric Truck", slug: "electric-truck" }, // Vehicles, Trucks, Electric, Electric Truck
+      { name: "Hybrid Sedan", slug: "hybrid-sedan" }, // Vehicles, Cars, Hybrid, Sedan, Hybrid Sedan
+      { name: "Hybrid SUV", slug: "hybrid-suv" }, // Vehicles, Cars, Hybrid, SUV, Hybrid SUV
+      { name: "Electric Compact SUV", slug: "electric-compact-suv" }, // Vehicles, Cars, Electric, SUV, Compact SUV
+      { name: "Hybrid Pickup Truck", slug: "hybrid-pickup-truck" }, // Vehicles, Trucks, Hybrid, Pickup Truck
+    ],
+  },
+  {
+    category: "Motorcycles",
+    products: [
+      { name: "Sport Bike 500cc", slug: "sport-bike-500cc" }, // Motorcycles, Sport Bike, 500cc
+      { name: "SuperSport 1000cc", slug: "supersport-1000cc" }, // Motorcycles, SuperSport, 1000cc
+      { name: "Street Bike 600cc", slug: "street-bike-600cc" }, // Motorcycles, Street Bike, 600cc
+      { name: "Touring Cruiser 750cc", slug: "touring-cruiser-750cc" }, // Motorcycles, Cruiser, Touring, 750cc
+      { name: "Power Cruiser 1200cc", slug: "power-cruiser-1200cc" }, // Motorcycles, Cruiser, Power, 1200cc
+      { name: "Motocross Bike 450cc", slug: "motocross-bike-450cc" }, // Motorcycles, Motocross, 450cc
+      { name: "Dual-Sport Bike 650cc", slug: "dual-sport-bike-650cc" }, // Motorcycles, Dual-Sport, 650cc
+      { name: "Street Naked Bike", slug: "street-naked-bike" }, // Motorcycles, Naked Bike, Street
+      { name: "SuperSport R", slug: "supersport-r" }, // Motorcycles, SuperSport, R Model
+      { name: "Adventure Cruiser", slug: "adventure-cruiser" }, // Motorcycles, Cruiser, Adventure
+    ],
+  },
+  {
+    category: "Sport",
+    products: [
+      { name: "Professional Soccer Ball", slug: "professional-soccer-ball" }, // Sport, Soccer, Equipment, Soccer Ball
+      { name: "Basketball Hoop System", slug: "basketball-hoop-system" }, // Sport, Basketball, Equipment, Hoop System
+      { name: "Baseball Glove", slug: "baseball-glove" }, // Sport, Baseball, Equipment, Glove
+      { name: "Tennis Racket Pro", slug: "tennis-racket-pro" }, // Sport, Tennis, Equipment, Racket, Pro Series
+      { name: "Boxing Gloves", slug: "boxing-gloves" }, // Sport, Boxing, Equipment, Gloves
+      { name: "Golf Club Set", slug: "golf-club-set" }, // Sport, Golf, Equipment, Club Set
+      { name: "Running Shoes", slug: "running-shoes" }, // Sport, Running, Footwear, Running Shoes
+      { name: "Cycling Helmet", slug: "cycling-helmet" }, // Sport, Cycling, Gear, Helmet
+      { name: "Swim Goggles", slug: "swim-goggles" }, // Sport, Swimming, Gear, Goggles
+      { name: "Fitness Tracker", slug: "fitness-tracker" }, // Sport, Fitness, Wearable, Tracker
+    ],
+  },
+  {
+    category: "Beauty",
+    products: [
+      { name: "Moisturizer SPF 30", slug: "moisturizer-spf-30" }, // Beauty, Skincare, Moisturizers, SPF 30
+      { name: "Sunscreen Gel SPF 50", slug: "sunscreen-gel-spf-50" }, // Beauty, Skincare, Sunscreen, SPF 50 Gel
+      { name: "Vitamin C Serum", slug: "vitamin-c-serum" }, // Beauty, Skincare, Serums, Vitamin C
+      { name: "Foundation Matte Finish", slug: "foundation-matte-finish" }, // Beauty, Makeup, Foundation, Matte Finish
+      { name: "Mascara Waterproof", slug: "mascara-waterproof" }, // Beauty, Makeup, Mascara, Waterproof
+      { name: "Matte Lipstick", slug: "matte-lipstick" }, // Beauty, Makeup, Lipstick, Matte
+      { name: "Shampoo for Dry Hair", slug: "shampoo-for-dry-hair" }, // Beauty, Haircare, Shampoo, Dry Hair
+      { name: "Conditioner for Volume", slug: "conditioner-for-volume" }, // Beauty, Haircare, Conditioner, Volume
+      { name: "Styling Gel Extra Hold", slug: "styling-gel-extra-hold" }, // Beauty, Haircare, Styling, Gel, Extra Hold
+      { name: "Hair Mask Deep Repair", slug: "hair-mask-deep-repair" }, // Beauty, Haircare, Masks, Deep Repair
+    ],
+  },
+];

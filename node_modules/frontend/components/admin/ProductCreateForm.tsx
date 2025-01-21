@@ -5,6 +5,7 @@ import { useCreateProductMutation } from "@/store/apiSlices/productApiSlice";
 import { CategoryTree } from "@/store/types/categoryTypes";
 import { useGetCategoriesQuery } from "@/store/apiSlices/categoryApiSlice";
 import Image from "next/image";
+import toast, { showToast } from "../ToastNotifications";
 
 const ProductCreateForm: React.FC = () => {
   const [name, setName] = useState<string>("");
@@ -146,10 +147,10 @@ const ProductCreateForm: React.FC = () => {
 
     try {
       await createProduct(formData);
-      alert("Product created successfully!");
+      showToast("success", "Product created successfully!");
+      window.location.reload();
     } catch (error) {
-      console.error("Error creating product:", error);
-      alert("Product is not created!");
+      showToast("error", "Product is not created!");
     }
   };
 

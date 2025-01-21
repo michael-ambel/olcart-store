@@ -84,8 +84,8 @@ const PopularProduct: FC = () => {
   }, [xOffset, productList.length]);
 
   return (
-    <div className="relative flex flex-col justify-between w-full h-[250px] px-[0] my-[40px]">
-      <h2 className="text-[24px] ml-[84px] font-bold">Popular Products</h2>
+    <div className="relative flex flex-col justify-between w-full h-[254px] px-[0] my-[100px]">
+      <h2 className="text-[24px] ml-[40px] font-bold">Popular Products</h2>
       <div
         ref={containerRef}
         className="flex w-full justify-between overflow-x-hidden "
@@ -105,9 +105,9 @@ const PopularProduct: FC = () => {
           {productList.map((p, i) => (
             <div
               key={i}
-              className="flex items-center justify-center p-[0px] w-[200px] h-[200px] rounded-full"
+              className="flex items-center justify-center p-[0px] w-[200px] h-[200px] "
             >
-              <div className="flex items-center justify-center  w-[160px] h-[160px] rounded-full bg-fades">
+              <div className="flex items-center justify-center  w-[160px] h-[160px] rounded-[22px] bg-bgs">
                 <Image
                   src={p.image}
                   alt=""

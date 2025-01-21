@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IPCart, Product } from "../types/productTypes";
+import { Filters, IPCart, Product } from "../types/productTypes";
 
 interface ProductState {
   products: Product[];
@@ -7,6 +7,8 @@ interface ProductState {
   selectedProduct: Product | null;
   isLoading: boolean;
   error: string | null;
+  searchQuery: string;
+  filters: Filters;
 }
 
 const initialState: ProductState = {
@@ -15,6 +17,15 @@ const initialState: ProductState = {
   selectedProduct: null,
   isLoading: false,
   error: null,
+  searchQuery: "",
+  filters: {
+    category: "",
+    priceMin: 0,
+    tags: [],
+    sort: "popularity",
+    page: 1,
+    limit: 20,
+  },
 };
 
 const productSlice = createSlice({
@@ -36,6 +47,12 @@ const productSlice = createSlice({
     setError(state, action: PayloadAction<string | null>) {
       state.error = action.payload;
     },
+    setSearchQuery(state, action: PayloadAction<string>) {
+      state.searchQuery = action.payload;
+    },
+    setFilters(state, action: PayloadAction<Filters>) {
+      state.filters = action.payload;
+    },
   },
 });
 
@@ -45,5 +62,7 @@ export const {
   setSelectedProduct,
   setLoading,
   setError,
+  setSearchQuery,
+  setFilters,
 } = productSlice.actions;
 export default productSlice;

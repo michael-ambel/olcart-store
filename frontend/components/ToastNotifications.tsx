@@ -5,7 +5,7 @@ const ToastNotifications: React.FC = () => {
   return (
     <div className="z-50">
       <Toaster
-        position="bottom-right"
+        position="top-right"
         reverseOrder={false}
         toastOptions={toastOptions} // Global Toast Options
       />
@@ -42,7 +42,7 @@ export const showToast = (
 ) => {
   const toastStyles = {
     success: {
-      backgroundColor: "#34D399", // Tailwind green-400 for success
+      backgroundColor: "#008000", // Tailwind green-400 for success
       color: "#fff",
     },
     error: {

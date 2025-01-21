@@ -51,7 +51,7 @@ export const protectCustomer = (
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as DecodeTocken;
-    if (decoded.role !== "customer") {
+    if (decoded.role.length === 0) {
       res.status(403).json({ message: "Insufficient permissions" });
       return;
     }

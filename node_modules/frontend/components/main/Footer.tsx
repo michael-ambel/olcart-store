@@ -1,5 +1,6 @@
 "use client"; // Ensure this component is client-side
 
+import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 
 type FeedbackFormData = {
@@ -14,6 +15,8 @@ const Footer: FC = () => {
     contact: "",
     message: "",
   });
+
+  const pathname = usePathname();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -34,8 +37,12 @@ const Footer: FC = () => {
   };
 
   return (
-    <footer className="w-full px-[84px] my-[80px]">
-      <div className="flex flex-col w-full bg-bgs px-[35px] py-[20px]">
+    <footer
+      className={`${
+        pathname.includes("/search") ? "hidden" : "w-full  mt-[120px]"
+      } `}
+    >
+      <div className="flex flex-col w-full bg-bgs px-[35px] pt-[60px] pb-[80px]">
         <h2 className="text-[24px] font-bold my-[20px]">Lets connect...</h2>
         <div className="flex justify-between w-full">
           <div className="flex flex-col gap-[6px] text-[14px]">

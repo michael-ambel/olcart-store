@@ -8,6 +8,7 @@ import Image from "next/image";
 import { FC } from "react";
 import { ICartItem } from "@/store/types/userTypes";
 import { useUpdateCartedItemMutation } from "@/store/apiSlices/productApiSlice";
+import { showToast } from "../ToastNotifications";
 
 interface CardProp {
   product: Product;
@@ -37,26 +38,30 @@ const Card: FC<CardProp> = ({ product }) => {
         _id: product._id,
         quantity: 1,
       });
-      console.log("Cart updated successfully");
+      showToast("success", `${product.name} Successfully Carted !`);
     } catch (error) {
       console.error("Failed to update cart:", error);
+      showToast("error", `${product.name} Not Carted!`);
     }
   };
 
   return (
     <div className="flex flex-col w-[190px] h-auto text-[12px]">
-      <div className="relative flex items-center justify-center w-[190px] h-[190px]  bg-bgs rounded-[12px]">
-        <Image
-          src={
-            product.images && product.images.length > 0
-              ? `${product.images[0]}`
-              : ""
-          }
-          alt={product.name || "Product"}
-          width={500}
-          height={500}
-          className=" w-[160px] "
-        />
+      <div className="relative flex items-center justify-center w-[190px] h-[190px]  bg-bg rounded-[12px]">
+        <div className="relative flex items-center justify-center w-[190px] h-[190px] ">
+          <Image
+            src={
+              product.images && product.images.length > 0
+                ? `${product.images[0]}`
+                : ""
+            }
+            alt={product.name || "Product"}
+            layout="fill"
+            objectFit="contain" // E
+            className="rounded-[12px]"
+          />
+        </div>
+
         <button
           onClick={addCartHandler}
           disabled={isLoading}

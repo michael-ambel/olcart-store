@@ -33,8 +33,8 @@ const createCategoryTree = (categories: Category[]) => {
 export async function GET() {
   try {
     const response = await fetch(BASE_URL, {
-      cache: "force-cache", // Cache the response for subsequent requests
-      next: { revalidate: 100 }, // Revalidate the data every 1 hour
+      cache: "force-cache",
+      next: { revalidate: 100 },
     });
 
     if (!response.ok) {
@@ -43,7 +43,6 @@ export async function GET() {
 
     const categories = await response.json();
 
-    // Transform flat list into category tree
     const categoryTree = createCategoryTree(categories);
 
     return NextResponse.json(categoryTree, { status: 200 });

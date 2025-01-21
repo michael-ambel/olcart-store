@@ -34,3 +34,24 @@ export interface ICartDetail {
   image: string;
   checked: boolean;
 }
+
+export interface ISearchProduct {
+  query?: string;
+  category?: string;
+  priceMin?: number;
+  priceMax?: number;
+  tags?: string[];
+  sort?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface Filters {
+  category?: string;
+  priceMin?: number;
+  priceMax?: number;
+  tags?: string[];
+  sort?: string;
+  page?: number;
+  limit?: number;
+}

@@ -1,4 +1,4 @@
-// Updated Product Model
+// Product Model
 import mongoose, { Schema, Document, Model } from "mongoose";
 import slugify from "slugify";
 
@@ -73,8 +73,12 @@ const ProductSchema: Schema<IProduct> = new Schema(
   { timestamps: true }
 );
 
-ProductSchema.index({ name: 1, price: 1, category: 1 });
-ProductSchema.index({ name: "text", tags: "text" });
+ProductSchema.index(
+  { name: "text", tags: "text", description: "text" },
+  { weights: { name: 10, tags: 5, description: 1 } }
+);
+
+ProductSchema.index({ category: 1 });
 
 ProductSchema.pre("save", function (next) {
   if (!this.slug) {

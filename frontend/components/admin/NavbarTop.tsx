@@ -5,14 +5,29 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import Link from "next/link";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { showToast } from "../ToastNotifications";
 
 const Navbar: FC = () => {
   // Access user from Redux state
   const user = useSelector((state: RootState) => state.user.user);
   const path = useSearchParams().get("v");
+  const router = useRouter();
 
   const [header, setHeader] = useState("");
+
+  useEffect(() => {
+    if (user === undefined || !user?.role) return; // Wait until user state is defined
+
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    if (user.role !== "admin") {
+      showToast("error", "Only allowed for admins");
+    }
+  }, [user]);
 
   useEffect(() => {
     switch (path) {
@@ -36,23 +51,23 @@ const Navbar: FC = () => {
 
   return (
     <nav
-      className={`flex z-50 fixed top-0 bg-bg flex-col items-center justify-between h-[132px] pt-[32px] w-full px-[40px]`}
+      className={`flex z-50 fixed top-0 bg-bg flex-col items-center justify-between h-[112px] pt-[32px] w-full px-[20px]`}
     >
       <div className="flex justify-between w-full items-end">
         {/* Logo */}
         <div className="items-baseline ">
           <Link href="/">
             <Image
-              src="/logo.png"
+              src="/logo.svg"
               alt="LOGO"
               width={500}
               height={500}
-              className="w-[50px]"
+              className="w-[100px]"
             />
-            <p className="text-[20px] text-mb font-poetsen">
+            {/* <p className="text-[20px] text-mb font-poetsen">
               olcart<span className="text-mo text-[18px]">.</span>
               <span className="text-bl text-[10px]">store</span>
-            </p>
+            </p> */}
           </Link>
         </div>
         <div className="flex items-end justify-start min-w-[140px] pb-[0px] mx-[20px] text-[22px] font-semibold h-[60px]">
