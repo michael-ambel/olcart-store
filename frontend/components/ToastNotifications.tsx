@@ -1,4 +1,3 @@
-// app/components/ToastNotifications.tsx
 import { Toaster, toast, ToastOptions } from "react-hot-toast";
 
 const ToastNotifications: React.FC = () => {
@@ -7,7 +6,7 @@ const ToastNotifications: React.FC = () => {
       <Toaster
         position="top-right"
         reverseOrder={false}
-        toastOptions={toastOptions} // Global Toast Options
+        toastOptions={toastOptions}
       />
     </div>
   );
@@ -16,23 +15,19 @@ const ToastNotifications: React.FC = () => {
 // Customize default toast options
 const toastOptions: ToastOptions = {
   style: {
-    backgroundColor: "#333", // Tailwind dark-gray bg
+    backgroundColor: "#333",
     color: "#fff",
-    borderRadius: "0.375rem", // Tailwind's rounded-md
-    padding: "1rem",
-    fontSize: "1rem",
+    borderRadius: "4px",
+    padding: "8px 20px",
+    fontSize: "15px",
   },
-  duration: 3000, // Default duration for all toasts
-  removeDelay: 0, // No delay before toast removal
+  duration: 3000,
+  removeDelay: 0,
   ariaProps: {
     role: "status",
     "aria-live": "polite",
   },
-  position: "top-right", // Default position
-  iconTheme: {
-    primary: "#fff",
-    secondary: "#fff",
-  },
+  position: "top-right",
 };
 
 // Universal Toast Function (to be used across the app)
@@ -42,19 +37,19 @@ export const showToast = (
 ) => {
   const toastStyles = {
     success: {
-      backgroundColor: "#008000", // Tailwind green-400 for success
+      backgroundColor: "#34c724",
       color: "#fff",
     },
     error: {
-      backgroundColor: "#EF4444", // Tailwind red-500 for error
+      backgroundColor: "#f54a45",
       color: "#fff",
     },
     info: {
-      backgroundColor: "#2563EB", // Tailwind blue-600 for info
+      backgroundColor: "#2563EB",
       color: "#fff",
     },
     loading: {
-      backgroundColor: "#F59E0B", // Tailwind yellow-500 for loading
+      backgroundColor: "#F59E0B",
       color: "#fff",
     },
   };

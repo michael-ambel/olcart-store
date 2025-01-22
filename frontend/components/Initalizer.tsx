@@ -2,15 +2,23 @@
 
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { userInitalizer, cartInitalizer } from "@/store/slices/userSlice";
+import { userInitalizer, updateCart } from "@/store/slices/userSlice";
+import { useGetUserCartQuery } from "@/store/apiSlices/userApiSlice";
 
 const Initalizer = () => {
   const dispatch = useDispatch();
 
+  const { data, isLoading, error } = useGetUserCartQuery();
+
   useEffect(() => {
     dispatch(userInitalizer());
-    dispatch(cartInitalizer());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (data) {
+      dispatch(updateCart(data));
+    }
+  }, [data]);
   return <div></div>;
 };
 

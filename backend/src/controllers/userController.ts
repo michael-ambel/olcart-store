@@ -149,18 +149,17 @@ export const updateCart: RequestHandler = async (req, res) => {
       user.cart = [];
     }
 
-    const cartItemIndex = user.cart.findIndex((item) => item._id === _id);
-
+    const cartItemIndex = user.cart.findIndex((item) => item._id.equals(_id));
+    let message = "";
     if (cartItemIndex !== -1) {
       if (quantity === 0) {
-        // Remove item if quantity is 0
         user.cart.splice(cartItemIndex, 1);
-      } else {
-        // Update item quantity
+        message = "Item removed";
+      } else if (quantity > 0) {
         user.cart[cartItemIndex].quantity = quantity;
+        message = "Item updated";
       }
-    } else if (quantity > 0) {
-      // Add new item if quantity > 0
+    } else {
       user.cart.push({
         _id,
         quantity,
@@ -168,12 +167,12 @@ export const updateCart: RequestHandler = async (req, res) => {
         shippingPrice: product.shippingPrice,
         checked: true,
       });
+      message = "Item added";
     }
-
     await user.save();
 
     // Return the updated cart to the client
-    res.status(200).json(user.cart);
+    res.status(200).json({ cart: user.cart, message });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: (err as Error).message });
@@ -329,6 +328,31 @@ export const deleteShippingAddress: RequestHandler = async (req, res) => {
     res.status(200).json({
       message: "Address deleted successfully",
       addresses: user.shippingAddresses,
+    });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+};
+
+// Update preferences
+export const updatePreferences: RequestHandler = async (req, res) => {
+  try {
+    const { preferences } = req.body; // preferences is expected to be an array of strings (tags, categories, etc.)
+    const user = await User.findById(req.user?._id);
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    // Update preferences
+    user.preferences = preferences;
+
+    await user.save();
+
+    res.status(200).json({
+      message: "Preferences updated successfully",
+      preferences: user.preferences,
     });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });

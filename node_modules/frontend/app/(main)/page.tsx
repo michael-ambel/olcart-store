@@ -9,7 +9,6 @@ export default function Home() {
   return (
     <div>
       <main className="flex flex-col z-10 mt-[113px] items-center ">
-        {/* <CategoryBar /> */}
         <MainCard />
         <PopularProduct />
         <YourFeed />

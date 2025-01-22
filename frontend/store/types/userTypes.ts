@@ -25,3 +25,8 @@ export interface IShippingAddress {
   country: string;
   isDefault?: boolean;
 }
+
+export interface CartResp {
+  cart: ICartItem[];
+  message: string;
+}

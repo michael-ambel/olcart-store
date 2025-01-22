@@ -7,6 +7,7 @@ export interface Product {
   price: number;
   category: string[];
   stock: number;
+  salesCount: number;
   shippingPrice: number;
   carted: IPCart[];
   averageRating?: number;

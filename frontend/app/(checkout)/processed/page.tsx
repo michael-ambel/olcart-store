@@ -17,7 +17,7 @@ const CategorizedOrders: React.FC<{ orders: IOrder[] }> = ({ orders }) => {
     <div className="flex flex-col gap-[60px]  mt-[40px]">
       {Object.entries(categorizedOrders).map(([status, filteredOrders]) => (
         <div key={status}>
-          <h3 className="text-[22px] font-bold text-mo mb-3">{status}</h3>
+          <h3 className="text-[22px] font-bold text-mg mb-3">{status}</h3>
           {filteredOrders.length > 0 ? (
             <ul className="space-y-6">
               {filteredOrders.map((order) => (

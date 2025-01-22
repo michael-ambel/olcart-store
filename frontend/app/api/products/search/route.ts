@@ -3,9 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import * as cookie from "cookie";
 
-const BASE_URL = "http://localhost:5000/api/products/search"; // Adjust this URL to your backend API endpoint
+const BASE_URL = "http://localhost:5000/api/products/search";
 
-// Function to get JWT token from cookies
 function getAuthToken(req: NextRequest) {
   const cookies = cookie.parse(req.headers.get("cookie") || "");
   const token = cookies.jwt;
@@ -41,27 +40,6 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(url.searchParams.get("limit") || "10");
 
     const token = getAuthToken(req);
-    console.log({
-      query: searchQuery,
-      category,
-      priceMin,
-      priceMax,
-      tags,
-      sort,
-      page,
-      limit,
-    });
-
-    console.log({
-      query: searchQuery,
-      category,
-      priceMin,
-      priceMax,
-      tags,
-      sort,
-      page,
-      limit,
-    });
 
     const response = await axios.get(BASE_URL, {
       params: {

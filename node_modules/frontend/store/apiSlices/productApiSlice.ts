@@ -112,6 +112,25 @@ export const productApiSlice = createApi({
         }&page=${page}&limit=${limit}&timestamp=${Date.now()}`,
       providesTags: ["Product"],
     }),
+
+    // Fetch user feed (based on preferences or interactions)
+    getUserFeed: builder.query<
+      {
+        products: Product[];
+        success: boolean;
+        pagination: {
+          total: number;
+          page: number;
+          limit: number;
+          totalPages: number;
+        };
+      },
+      { page?: number; limit?: number }
+    >({
+      query: ({ page, limit }) =>
+        `/userfeed?page=${page}&limit=${limit}&timestamp=${Date.now()}`,
+      providesTags: ["Product"],
+    }),
   }),
 });
 
@@ -124,4 +143,5 @@ export const {
   useUpdateCartedItemMutation,
   useGetProductsByIdsQuery,
   useSearchProductsQuery,
+  useGetUserFeedQuery,
 } = productApiSlice;

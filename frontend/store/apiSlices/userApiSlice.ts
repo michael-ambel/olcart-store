@@ -1,5 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { IUser, ICartItem, IShippingAddress } from "../types/userTypes";
+import {
+  IUser,
+  ICartItem,
+  IShippingAddress,
+  CartResp,
+} from "../types/userTypes";
 
 export const userApiSlice = createApi({
   reducerPath: "userApi",
@@ -40,7 +45,7 @@ export const userApiSlice = createApi({
     }),
 
     // adding, updating, and removing cart items
-    updateCart: builder.mutation<ICartItem[], Partial<ICartItem>>({
+    updateCart: builder.mutation<CartResp, Partial<ICartItem>>({
       query: (cartData) => ({
         url: "/cart",
         method: "PATCH",

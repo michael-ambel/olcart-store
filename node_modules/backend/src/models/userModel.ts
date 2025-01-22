@@ -25,6 +25,7 @@ interface IUser extends Document {
   email: string;
   password: string;
   role: "customer" | "admin";
+  preferences: string[]; // New field to store preferences (e.g., categories, tags, etc.)
   cart?: ICartItem[];
   shippingAddresses: IShippingAddress[];
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -36,6 +37,7 @@ const UserSchema: Schema<IUser> = new Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, enum: ["customer", "admin"], default: "customer" },
+    preferences: { type: [String], default: [] }, // Add preferences field
     cart: [
       {
         product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },

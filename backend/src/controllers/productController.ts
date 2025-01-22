@@ -377,3 +377,81 @@ export const searchProducts: RequestHandler = async (req, res) => {
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+
+//Fetch user feed considering preferences
+export const getUserFeed: RequestHandler = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    // Fetch user preferences
+    const user = await User.findById(userId);
+    if (!user) {
+      res.status(404).json({ success: false, message: "User not found" });
+      return;
+    }
+
+    const { preferences } = user;
+
+    // Convert preferences to ObjectId where applicable
+    const preferenceObjectIds = preferences.map((p) =>
+      mongoose.Types.ObjectId.isValid(p) ? new mongoose.Types.ObjectId(p) : p
+    );
+
+    // Define filters for preference-based products
+    const preferenceFilters =
+      preferences.length > 0
+        ? {
+            $or: [
+              { tags: { $in: preferences } },
+              { category: { $in: preferenceObjectIds } },
+            ],
+          }
+        : {};
+
+    // Total preference-based product count
+    const totalPreferenceProducts = await Product.countDocuments(
+      preferenceFilters
+    );
+
+    // Pagination logic
+    const skip = (page - 1) * limit; // Global skip value
+    const preferenceSkip = Math.min(skip, totalPreferenceProducts); // Skip within preference products
+    const preferenceLimit = Math.min(
+      limit,
+      totalPreferenceProducts - preferenceSkip
+    ); // Limit for preference products
+
+    // Fetch preference-based products
+    const preferenceProducts =
+      preferenceLimit > 0
+        ? await Product.find(preferenceFilters)
+            .sort({
+              averageRating: -1,
+              salesCount: -1,
+              reviewCount: -1,
+              _id: 1, // Secondary sort for consistent ordering
+            })
+            .skip(preferenceSkip)
+            .limit(preferenceLimit)
+        : [];
+
+    // Total product count (only preference products)
+    const total = totalPreferenceProducts;
+
+    res.status(200).json({
+      success: true,
+      products: preferenceProducts,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    console.error("Error in getUserFeed:", error);
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};

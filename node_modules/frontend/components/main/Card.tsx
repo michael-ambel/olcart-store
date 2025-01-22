@@ -5,8 +5,8 @@ import { Product } from "@/store/types/productTypes";
 import { useDispatch } from "react-redux";
 import { updateCart } from "@/store/slices/userSlice";
 import Image from "next/image";
-import { FC } from "react";
-import { ICartItem } from "@/store/types/userTypes";
+import { FC, useState } from "react";
+import { CartResp, ICartItem } from "@/store/types/userTypes";
 import { useUpdateCartedItemMutation } from "@/store/apiSlices/productApiSlice";
 import { showToast } from "../ToastNotifications";
 
@@ -19,36 +19,40 @@ const Card: FC<CardProp> = ({ product }) => {
   const tstar: number[] = [1, 2, 3, 4, 5];
 
   const dispatch = useDispatch();
-  const [updateCartMutation, { isLoading, isError }] = useUpdateCartMutation();
-  const [
-    updateCartedItem,
-    { isLoading: cartedIsLoading, isError: cartedIsError },
-  ] = useUpdateCartedItemMutation();
+  const [updateCartMutation, { isLoading }] = useUpdateCartMutation();
+  const [updateCartedItem, { isLoading: cartedIsLoading }] =
+    useUpdateCartedItemMutation();
+
+  const [buttonAnimation, setButtonAnimation] = useState(false); // State for button animation
 
   const addCartHandler = async () => {
     try {
-      const updatedCart: ICartItem[] = await updateCartMutation({
+      setButtonAnimation(true);
+      const updatedCart: CartResp = await updateCartMutation({
         _id: product._id,
         quantity: 1,
       }).unwrap();
-      console.log(updateCart);
-      dispatch(updateCart(updatedCart));
-      localStorage.setItem("cart", JSON.stringify(updatedCart));
+
+      console.log(updatedCart);
+      dispatch(updateCart(updatedCart.cart));
+
       await updateCartedItem({
         _id: product._id,
         quantity: 1,
       });
-      showToast("success", `${product.name} Successfully Carted !`);
+
+      showToast("success", `${updatedCart.message}`);
     } catch (error) {
-      console.error("Failed to update cart:", error);
-      showToast("error", `${product.name} Not Carted!`);
+      showToast("error", "Failed to Cart!");
+    } finally {
+      setButtonAnimation(false); // Stop animation after the process completes
     }
   };
 
   return (
     <div className="flex flex-col w-[190px] h-auto text-[12px]">
-      <div className="relative flex items-center justify-center w-[190px] h-[190px]  bg-bg rounded-[12px]">
-        <div className="relative flex items-center justify-center w-[190px] h-[190px] ">
+      <div className="relative flex items-center justify-center w-[190px] h-[190px] bg-bg rounded-[12px]">
+        <div className="relative flex items-center justify-center w-[190px] h-[190px]">
           <Image
             src={
               product.images && product.images.length > 0
@@ -57,27 +61,32 @@ const Card: FC<CardProp> = ({ product }) => {
             }
             alt={product.name || "Product"}
             layout="fill"
-            objectFit="contain" // E
+            objectFit="contain"
             className="rounded-[12px]"
           />
         </div>
 
         <button
           onClick={addCartHandler}
-          disabled={isLoading}
-          className="absolute bottom-[6px] right-[10px]"
+          disabled={isLoading || cartedIsLoading} // Disable button during loading
+          className="absolute bottom-[6px] right-[10px] transition-transform duration-400 "
         >
-          <Image
-            src="./icons/addcart.svg"
-            alt=""
-            width={500}
-            height={500}
-            className="  w-[30px] "
-          />
+          {buttonAnimation ? (
+            <div className="w-[30px] h-[30px] border-[6px] border-fade border-t-mo rounded-full animate-spin"></div>
+          ) : (
+            <Image
+              src="./icons/addcart.svg"
+              alt="Add to Cart"
+              width={30}
+              height={30}
+              className="w-[30px]"
+            />
+          )}
         </button>
       </div>
+
       <p className="my-[6px]">{product.name || ""}</p>
-      <div className="flex justify-between ">
+      <div className="flex justify-between">
         <div className="flex justify-between w-[100px]">
           {tstar.map((ts, i) => {
             const src: string =
@@ -94,20 +103,24 @@ const Card: FC<CardProp> = ({ product }) => {
                   alt=""
                   width={500}
                   height={500}
-                  className=" w-[15px] "
+                  className="w-[15px]"
                 />
               </div>
             );
           })}
         </div>
 
-        <p>256 sold</p>
+        <p>{product.salesCount} sold</p>
       </div>
       <div className="flex justify-between my-[4px]">
         <p className="text-[10px] font-semibold">
           US<span className="text-[16px] font-semibold">${product.price}</span>
         </p>
-        <p className="text-mb">free shipping</p>
+        <p className="text-mb">
+          {product.shippingPrice === 0
+            ? "Free Shipping"
+            : `Shipping: $${product.shippingPrice}`}
+        </p>
       </div>
     </div>
   );
