@@ -28,6 +28,9 @@ export default {
         shops: "#BBB5FF",
         shopt: "#D6D6D6",
       },
+      animation: {
+        "spin-slow": "spin 3s linear infinite", // Rotates infinitely
+      },
       fontFamily: {
         poetsen: ["var(--font-poetsen-one)", "sans-serif"],
         poppins: ["var(--font-poppins)", "sans-serif"],

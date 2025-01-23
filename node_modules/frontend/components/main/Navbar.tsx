@@ -85,7 +85,7 @@ const Navbar: FC = () => {
           <Link href="/cart">
             <div className="relative w-[50px] h-[36px]">
               <Image
-                src="./icons/cart.svg"
+                src="/icons/cart.svg"
                 alt="Cart Icon"
                 width={500}
                 height={500}
@@ -100,7 +100,7 @@ const Navbar: FC = () => {
           <Link href="/cart">
             <div className="relative w-[44px] h-[36px]">
               <Image
-                src="./icons/bell.svg"
+                src="/icons/bell.svg"
                 alt="Notifications Icon"
                 width={500}
                 height={500}
@@ -117,7 +117,7 @@ const Navbar: FC = () => {
             <span className="mb-[-6px]">Hi, {user?.name || "Guest"}...</span>
             <Link href="/profile">
               <Image
-                src="./icons/person.svg"
+                src="/icons/person.svg"
                 alt="Profile Icon"
                 width={500}
                 height={500}

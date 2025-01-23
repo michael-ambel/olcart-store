@@ -1,18 +1,32 @@
-// store/productTypes.ts
-
 export interface Product {
   _id: string;
   name: string;
   description: string;
   price: number;
+  discountPrice?: number;
   category: string[];
   stock: number;
-  salesCount: number;
+  salesCount?: number;
   shippingPrice: number;
-  carted: IPCart[];
+  carted?: IPCart[];
   averageRating?: number;
-  tags: string[];
-  images: File[] | string[]; // Include both File and string (for URLs)
+  reviewCount?: number;
+  reviews?: Review[];
+  tags?: string[];
+  images: File[] | string[];
+  specifications?: string[];
+  storeDetails?: string;
+  otherInfo?: string;
+  brand?: string;
+  isFeatured?: boolean;
+  isActive?: boolean;
+}
+
+export interface Review {
+  user: string;
+  rating: number;
+  comment?: string;
+  createdAt: string;
 }
 
 export interface GetProductsResponse {
@@ -56,3 +70,10 @@ export interface Filters {
   page?: number;
   limit?: number;
 }
+
+export type TabKey =
+  | "description"
+  | "specifications"
+  | "reviews"
+  | "store"
+  | "otherInfo";

@@ -9,6 +9,7 @@ import { FC, useState } from "react";
 import { CartResp, ICartItem } from "@/store/types/userTypes";
 import { useUpdateCartedItemMutation } from "@/store/apiSlices/productApiSlice";
 import { showToast } from "../ToastNotifications";
+import Link from "next/link";
 
 interface CardProp {
   product: Product;
@@ -33,7 +34,6 @@ const Card: FC<CardProp> = ({ product }) => {
         quantity: 1,
       }).unwrap();
 
-      console.log(updatedCart);
       dispatch(updateCart(updatedCart.cart));
 
       await updateCartedItem({
@@ -52,18 +52,20 @@ const Card: FC<CardProp> = ({ product }) => {
   return (
     <div className="flex flex-col w-[190px] h-auto text-[12px]">
       <div className="relative flex items-center justify-center w-[190px] h-[190px] bg-bg rounded-[12px]">
-        <div className="relative flex items-center justify-center w-[190px] h-[190px]">
-          <Image
-            src={
-              product.images && product.images.length > 0
-                ? `${product.images[0]}`
-                : ""
-            }
-            alt={product.name || "Product"}
-            layout="fill"
-            objectFit="contain"
-            className="rounded-[12px]"
-          />
+        <div className="relative flex items-center justify-center w-[190px] h-[190px] hover:cursor-pointer">
+          <Link href={`/product/${product._id}`}>
+            <Image
+              src={
+                product.images && product.images.length > 0
+                  ? `${product.images[0]}`
+                  : ""
+              }
+              alt={product.name || "Product"}
+              layout="fill"
+              objectFit="contain"
+              className="bg-white"
+            />
+          </Link>
         </div>
 
         <button

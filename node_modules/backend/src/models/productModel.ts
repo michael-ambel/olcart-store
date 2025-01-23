@@ -1,10 +1,16 @@
-// Product Model
 import mongoose, { Schema, Document, Model } from "mongoose";
 import slugify from "slugify";
 
 interface ICarted {
   _id: mongoose.Types.ObjectId;
   quantity: number;
+}
+
+interface IReview {
+  user: mongoose.Types.ObjectId;
+  rating: number;
+  comment: string;
+  createdAt: Date;
 }
 
 interface IProduct extends Document {
@@ -21,9 +27,13 @@ interface IProduct extends Document {
   salesCount: number;
   averageRating: number;
   reviewCount: number;
+  reviews: IReview[];
   images: string[];
   slug: string;
   brand?: string;
+  specifications: string[];
+  storeDetails: string;
+  otherInfo?: string;
   isFeatured: boolean;
   isActive: boolean;
 }
@@ -49,6 +59,21 @@ const ProductSchema: Schema<IProduct> = new Schema(
     salesCount: { type: Number, default: 0 },
     averageRating: { type: Number, default: 0, min: 0, max: 5 },
     reviewCount: { type: Number, default: 0 },
+    reviews: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        rating: { type: Number, required: true, min: 0, max: 5 },
+        comment: { type: String },
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
+    specifications: { type: [String], default: [] },
+    storeDetails: { type: String, required: true },
+    otherInfo: { type: String },
     images: [
       {
         type: String,
@@ -93,4 +118,4 @@ const Product: Model<IProduct> = mongoose.model<IProduct>(
 );
 
 export default Product;
-export { IProduct };
+export { IProduct, IReview };
