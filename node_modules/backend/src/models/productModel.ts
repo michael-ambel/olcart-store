@@ -6,11 +6,39 @@ interface ICarted {
   quantity: number;
 }
 
+interface IReply {
+  _id?: mongoose.Types.ObjectId;
+  user?: mongoose.Types.ObjectId;
+  username?: string;
+  message?: string;
+  createdAt?: Date;
+}
+
+interface IQuestionAndFeedback {
+  _id?: mongoose.Types.ObjectId;
+  user?: mongoose.Types.ObjectId;
+  username?: string;
+  message?: string;
+  type?: "question" | "feedback" | "reply";
+  createdAt?: Date;
+  repliedAt?: Date;
+  replies?: IReply[];
+}
+
 interface IReview {
-  user: mongoose.Types.ObjectId;
   rating: number;
   comment: string;
   createdAt: Date;
+  updatedAt: Date;
+  isReviewed: boolean;
+}
+
+interface IBuyer {
+  _id: mongoose.Types.ObjectId;
+  username: string;
+  quantity: number;
+  status: "Pending" | "Processing" | "Shipped" | "Delivered" | "Cancelled";
+  reviews?: IReview;
 }
 
 interface IProduct extends Document {
@@ -23,11 +51,12 @@ interface IProduct extends Document {
   tags: string[];
   stock: number;
   carted: ICarted[];
+  buyers: IBuyer[];
   views: number;
   salesCount: number;
   averageRating: number;
   reviewCount: number;
-  reviews: IReview[];
+  questionsAndFeedback: IQuestionAndFeedback[];
   images: string[];
   slug: string;
   brand?: string;
@@ -37,6 +66,31 @@ interface IProduct extends Document {
   isFeatured: boolean;
   isActive: boolean;
 }
+
+const ReplySchema: Schema<IReply> = new Schema({
+  _id: {
+    type: mongoose.Schema.Types.ObjectId,
+    default: () => new mongoose.Types.ObjectId(),
+  },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  username: { type: String },
+  message: { type: String },
+  createdAt: { type: Date, default: Date.now },
+});
+
+const QuestionAndFeedbackSchema: Schema<IQuestionAndFeedback> = new Schema({
+  _id: {
+    type: mongoose.Schema.Types.ObjectId,
+    default: () => new mongoose.Types.ObjectId(),
+  },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  username: { type: String },
+  message: { type: String },
+  type: { type: String, enum: ["question", "feedback", "reply"] },
+  createdAt: { type: Date, default: Date.now },
+  repliedAt: { type: Date },
+  replies: [ReplySchema],
+});
 
 const ProductSchema: Schema<IProduct> = new Schema(
   {
@@ -59,20 +113,8 @@ const ProductSchema: Schema<IProduct> = new Schema(
     salesCount: { type: Number, default: 0 },
     averageRating: { type: Number, default: 0, min: 0, max: 5 },
     reviewCount: { type: Number, default: 0 },
-    reviews: [
-      {
-        user: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-          required: true,
-        },
-        rating: { type: Number, required: true, min: 0, max: 5 },
-        comment: { type: String },
-        createdAt: { type: Date, default: Date.now },
-      },
-    ],
     specifications: { type: [String], default: [] },
-    storeDetails: { type: String, required: true },
+    storeDetails: { type: String },
     otherInfo: { type: String },
     images: [
       {
@@ -94,6 +136,28 @@ const ProductSchema: Schema<IProduct> = new Schema(
         quantity: { type: Number, default: 0 },
       },
     ],
+    buyers: [
+      {
+        _id: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        username: { type: String },
+        quantity: { type: Number },
+        status: {
+          type: String,
+          enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
+        },
+        reviews: {
+          rating: { type: Number, default: 0, min: 0, max: 5 },
+          comment: { type: String },
+          createdAt: { type: Date },
+          updatedAt: { type: Date },
+          isReviewed: { type: Boolean, default: false },
+        },
+      },
+    ],
+    questionsAndFeedback: [QuestionAndFeedbackSchema],
   },
   { timestamps: true }
 );
@@ -118,4 +182,4 @@ const Product: Model<IProduct> = mongoose.model<IProduct>(
 );
 
 export default Product;
-export { IProduct, IReview };
+export { IProduct, IReview, IQuestionAndFeedback, IBuyer, IReply };

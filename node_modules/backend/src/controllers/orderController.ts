@@ -4,10 +4,22 @@ import Product from "../models/productModel";
 import User from "../models/userModel";
 import Stripe from "stripe";
 import paypal from "@paypal/checkout-server-sdk";
-import * as crypto from "crypto";
 import axios from "axios";
 import dotenv from "dotenv";
+import mongoose from "mongoose";
 dotenv.config();
+
+// Stripe configuration
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  apiVersion: "2024-12-18.acacia",
+});
+
+// PayPal configuration
+const environment = new paypal.core.SandboxEnvironment(
+  process.env.PAYPAL_CLIENT_ID as string,
+  process.env.PAYPAL_CLIENT_SECRET as string
+);
+const client = new paypal.core.PayPalHttpClient(environment);
 
 // 1. Get Order Summary
 export const getOrderSummary: RequestHandler = async (req, res) => {
@@ -72,7 +84,15 @@ export const getOrderSummary: RequestHandler = async (req, res) => {
 // 2. Place an Order
 export const placeOrder: RequestHandler = async (req, res) => {
   try {
-    const userId = req.user?._id;
+    // Ensure `userId` is defined
+    const userId = req.user?._id as mongoose.Types.ObjectId | undefined;
+    const username = req.user?.name;
+
+    if (!userId || !username) {
+      res.status(400).json({ message: "User not authenticated." });
+      return;
+    }
+
     const { items, shippingAddress } = req.body;
 
     if (!items || items.length === 0) {
@@ -91,13 +111,40 @@ export const placeOrder: RequestHandler = async (req, res) => {
     const orderItems: IOrderItem[] = await Promise.all(
       items.map(
         async ({ _id, quantity }: { _id: string; quantity: number }) => {
-          const product = await Product.findById(_id).lean();
+          const product = await Product.findById(_id);
+
           if (!product) {
             throw new Error(`Product not found: ${_id}`);
           }
+
           if (product.stock < quantity) {
             throw new Error(`Insufficient stock for product: ${product.name}`);
           }
+
+          // Initialize `buyers` array if it doesn't exist
+          if (!product.buyers) {
+            product.buyers = [];
+          }
+
+          // Check if the user already exists in the buyers list
+          const existingBuyerIndex = product.buyers.findIndex(
+            (buyer) => buyer._id.toString() === userId.toString()
+          );
+
+          if (existingBuyerIndex >= 0) {
+            product.buyers[existingBuyerIndex].quantity += quantity;
+            product.buyers[existingBuyerIndex].status = "Pending";
+          } else {
+            product.buyers.push({
+              _id: userId,
+              username,
+              quantity,
+              status: "Pending",
+            });
+          }
+
+          // Save the updated product
+          await product.save();
 
           const itemTotalPrice = product.price * quantity;
           const itemShippingPrice = product.shippingPrice * quantity;
@@ -135,7 +182,7 @@ export const placeOrder: RequestHandler = async (req, res) => {
     // Update product stock
     for (const { _id, quantity } of orderItems) {
       await Product.findByIdAndUpdate(_id, {
-        $inc: { stock: -quantity, sold: quantity },
+        $inc: { stock: -quantity, salesCount: quantity },
       });
     }
 
@@ -155,7 +202,7 @@ export const placeOrder: RequestHandler = async (req, res) => {
       .status(201)
       .json({ message: "Order placed successfully.", orderId: order._id });
   } catch (error: any) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -205,29 +252,60 @@ export const allOrders: RequestHandler = async (req, res) => {
 // 6. Delete an Order
 export const deleteOrder: RequestHandler = async (req, res) => {
   try {
-    const order = await Order.findByIdAndDelete(req.params.orderId);
+    const { orderId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(orderId)) {
+      res.status(400).json({ message: "Invalid order ID." });
+      return;
+    }
+
+    const order = await Order.findById(orderId);
     if (!order) {
       res.status(404).json({ message: "Order not found." });
       return;
     }
-    res.status(200).json({ message: "Order deleted successfully.", order });
+
+    order.status = "Cancelled";
+
+    for (const item of order.items) {
+      const product = await Product.findById(item._id);
+
+      if (product) {
+        product.stock += item.quantity;
+        product.salesCount -= item.quantity;
+
+        if (product.buyers) {
+          const buyerIndex = product.buyers.findIndex(
+            (buyer) => buyer._id.toString() === order.user.toString()
+          );
+
+          if (buyerIndex !== -1) {
+            const buyerEntry = product.buyers[buyerIndex];
+
+            if (buyerEntry.quantity === item.quantity) {
+              product.buyers[buyerIndex].quantity = 0;
+              product.buyers[buyerIndex].status = "Cancelled";
+            } else if (buyerEntry.quantity > item.quantity) {
+              product.buyers[buyerIndex].quantity -= item.quantity;
+            }
+          }
+        }
+
+        await product.save();
+      }
+    }
+
+    // Save the updated order with the new status
+    await order.save();
+
+    res.status(200).json({ message: "Order cancelled successfully." });
   } catch (error: any) {
+    console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
 
-// Stripe configuration
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: "2024-12-18.acacia",
-});
-
-// PayPal configuration
-const environment = new paypal.core.SandboxEnvironment(
-  process.env.PAYPAL_CLIENT_ID as string,
-  process.env.PAYPAL_CLIENT_SECRET as string
-);
-const client = new paypal.core.PayPalHttpClient(environment);
-
+//7. payment session
 export const createPaymentSession: RequestHandler = async (req, res) => {
   const { orderIds, paymentMethod } = req.body;
 
@@ -321,7 +399,7 @@ export const createPaymentSession: RequestHandler = async (req, res) => {
   }
 };
 
-//backend payment webhook  controller and handler for both PayPal and stripe
+//8.payment webhook PayPal and stripe
 export const handlePaymentWebhook: RequestHandler = async (req, res) => {
   if (req.headers["stripe-signature"]) {
     const stripeSignature = req.headers["stripe-signature"];
@@ -587,7 +665,7 @@ export const handlePaymentWebhook: RequestHandler = async (req, res) => {
   res.status(400).send("Invalid signature");
 };
 
-// Fetch processing orders for the logged-in user
+//9. Fetch processing orders for the logged-in user
 export const getUserProcessingOrders: RequestHandler = async (req, res) => {
   try {
     const userId = req.user?._id;
@@ -609,7 +687,7 @@ export const getUserProcessingOrders: RequestHandler = async (req, res) => {
   }
 };
 
-// Fetch processed orders for the logged-in user
+//10. Fetch processed orders for the logged-in user
 export const getUserProcessedOrders: RequestHandler = async (req, res) => {
   try {
     const userId = req.user?._id;

@@ -455,3 +455,197 @@ export const getUserFeed: RequestHandler = async (req, res) => {
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+
+//Get Top-Selling Products
+export const getTopSellingAndTopRatedProducts: RequestHandler = async (
+  req,
+  res
+) => {
+  try {
+    const products = await Product.find()
+      .sort({ salesCount: -1, averageRating: -1 })
+      .limit(10)
+      .select("_id name price salesCount images averageRating reviewCount");
+    res.status(200).json(products);
+  } catch (error) {
+    console.error("Error in getTopSellingAndTopRatedProducts:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+export const createOrUpdateReview: RequestHandler = async (req, res) => {
+  try {
+    const { productId, rating, username, comment } = req.body;
+    const userId = req.user?._id; // Assuming `req.user` contains the authenticated user
+
+    if (!productId || !rating || !userId) {
+      res.status(400).json({ message: "Invalid request data" });
+      return;
+    }
+
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      res.status(404).json({ message: "Product not found" });
+      return;
+    }
+
+    if (!product.buyers || product.buyers.length === 0) {
+      res.status(400).json({
+        message:
+          "You haven't purchased this product, so you cannot leave a review",
+      });
+      return;
+    }
+
+    const buyer = product.buyers.find(
+      (buyer) => buyer._id.toString() === userId.toString()
+    );
+
+    if (!buyer) {
+      res.status(400).json({ message: "Only buyers can leave a review" });
+      return;
+    }
+
+    if (buyer.status !== "Delivered") {
+      res.status(400).json({
+        message: "You can only review a product after it has been delivered",
+      });
+      return;
+    }
+
+    const now = new Date();
+    let oldRating = 0;
+
+    buyer.username = username;
+    if (buyer.reviews?.isReviewed) {
+      oldRating = buyer.reviews.rating;
+
+      buyer.reviews.rating = rating;
+      buyer.reviews.comment = comment;
+      buyer.reviews.updatedAt = now;
+
+      product.averageRating = parseFloat(
+        (
+          ((product.averageRating || 0) * product.reviewCount -
+            oldRating +
+            rating) /
+          product.reviewCount
+        ).toFixed(2)
+      );
+    } else {
+      buyer.reviews = {
+        rating,
+        comment,
+        createdAt: now,
+        updatedAt: now,
+        isReviewed: true,
+      };
+
+      // Recalculate averageRating and increment reviewCount
+      product.averageRating = parseFloat(
+        (
+          ((product.averageRating || 0) * product.reviewCount + rating) /
+          (product.reviewCount + 1)
+        ).toFixed(2)
+      );
+      product.reviewCount += 1;
+    }
+
+    product.averageRating = Math.min(Math.max(product.averageRating, 0), 5);
+
+    await product.save();
+
+    res.status(200).json({
+      message: buyer.reviews.isReviewed
+        ? "Review updated successfully"
+        : "Review added successfully",
+      buyer,
+    });
+  } catch (error) {
+    console.error("Error in createOrUpdateReview:", error);
+    res.status(500).json({ error: (error as Error).message });
+  }
+};
+
+// Create a Question, Feedback, or Reply
+export const handleQuestionAndFeedback: RequestHandler = async (req, res) => {
+  try {
+    const { productId, message, type, username, replyTo } = req.body;
+    const userId = req.user?._id;
+
+    if (!productId || !message || !type || !username || !userId) {
+      res.status(400).json({ message: "Invalid request data" });
+      return;
+    }
+
+    if (!["question", "feedback", "replay"].includes(type)) {
+      res.status(400).json({
+        message: "Invalid type. Must be 'question', 'feedback', or 'reply'.",
+      });
+      return;
+    }
+
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      res.status(404).json({ message: "Product not found" });
+      return;
+    }
+
+    if (type === "replay") {
+      // Handle replies by adding them to an existing question/feedback
+      const parentEntry = product.questionsAndFeedback.find(
+        (entry) => entry?._id?.toString() === replyTo?.toString()
+      );
+
+      if (!parentEntry) {
+        res.status(404).json({ message: "Parent question/feedback not found" });
+        return;
+      }
+      console.log(productId, message, type, username, replyTo);
+      // Add the reply to the replies array
+      const newReply = {
+        _id: new mongoose.Types.ObjectId(),
+        user: new mongoose.Types.ObjectId(userId),
+        username,
+        message,
+        createdAt: new Date(),
+      };
+
+      if (!parentEntry.replies) {
+        parentEntry.replies = [];
+      }
+
+      parentEntry.replies.push(newReply);
+      parentEntry.repliedAt = new Date();
+      await product.save();
+
+      res
+        .status(201)
+        .json({ message: "Reply added successfully", reply: newReply });
+      return;
+    }
+
+    // Handle new question/feedback creation
+    const newEntry = {
+      _id: new mongoose.Types.ObjectId(),
+      user: new mongoose.Types.ObjectId(userId),
+      username,
+      message,
+      type,
+      createdAt: new Date(),
+      replies: [],
+    };
+
+    product.questionsAndFeedback.push(newEntry);
+    await product.save();
+
+    res.status(201).json({
+      message: "Question/Feedback added successfully",
+      entry: newEntry,
+    });
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
+  }
+};

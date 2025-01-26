@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Product, IPCart } from "../types/productTypes";
+import { Product, IPCart, Review } from "../types/productTypes";
 
 export const productApiSlice = createApi({
   reducerPath: "productApi",
@@ -113,6 +113,12 @@ export const productApiSlice = createApi({
       providesTags: ["Product"],
     }),
 
+    // Fetch top selling and rated products
+    getTopSellingAndRatedProducts: builder.query<Partial<Product>[], void>({
+      query: () => "/topselling-rated",
+      providesTags: ["Product"],
+    }),
+
     // Fetch user feed (based on preferences or interactions)
     getUserFeed: builder.query<
       {
@@ -131,6 +137,42 @@ export const productApiSlice = createApi({
         `/userfeed?page=${page}&limit=${limit}&timestamp=${Date.now()}`,
       providesTags: ["Product"],
     }),
+
+    // Create or Update Review
+    createOrUpdateReview: builder.mutation<
+      { message: string; review: Review },
+      { productId: string; username: string; rating: number; comment?: string }
+    >({
+      query: ({ productId, username, rating, comment }) => ({
+        url: `/reviews`,
+        method: "POST", // POST used for create or update
+        body: { productId, username, rating, comment },
+      }),
+      invalidatesTags: (result, error, { productId }) => [
+        { type: "Product", _id: productId },
+      ],
+    }),
+
+    // Create or Update Question/Feedback
+    createOrUpdateQuestionAndFeedback: builder.mutation<
+      { message: string },
+      {
+        productId: string;
+        username: string; // Updated to match `IReply` property
+        message: string; // Updated to match `IReply` property
+        type: "question" | "feedback" | "replay";
+        replyTo?: string; // Optional for handling replies
+      }
+    >({
+      query: ({ productId, username, message, type, replyTo }) => ({
+        url: `/questions-and-feedback`,
+        method: "POST", // POST used for create or update
+        body: { productId, username, message, type, replyTo }, // Adjusted to match backend logic
+      }),
+      invalidatesTags: (result, error, { productId }) => [
+        { type: "Product", id: productId },
+      ],
+    }),
   }),
 });
 
@@ -144,4 +186,7 @@ export const {
   useGetProductsByIdsQuery,
   useSearchProductsQuery,
   useGetUserFeedQuery,
+  useCreateOrUpdateReviewMutation,
+  useCreateOrUpdateQuestionAndFeedbackMutation,
+  useGetTopSellingAndRatedProductsQuery,
 } = productApiSlice;

@@ -11,7 +11,7 @@ export interface Product {
   carted?: IPCart[];
   averageRating?: number;
   reviewCount?: number;
-  reviews?: Review[];
+  buyers?: IBuyer[];
   tags?: string[];
   images: File[] | string[];
   specifications?: string[];
@@ -20,15 +20,46 @@ export interface Product {
   brand?: string;
   isFeatured?: boolean;
   isActive?: boolean;
+  questionsAndFeedback?: IQuestionAndFeedback[];
 }
 
-export interface Review {
+export interface IQuestionAndFeedback {
+  _id?: string;
+  user?: string;
+  username: string;
+  message: string;
+  type: "question" | "feedback" | "replay";
+  createdAt?: string;
+  repliedAt?: string;
+  replies?: IReply[];
+}
+
+export interface IReply {
+  _id?: string;
   user: string;
-  rating: number;
-  comment?: string;
+  username: string;
+  message: string;
   createdAt: string;
 }
 
+export interface Review {
+  _id?: string;
+  user: string;
+  username: string;
+  rating: number;
+  comment?: string;
+  createdAt: string;
+  updatedAt?: string;
+  isReviewed: boolean;
+}
+
+export interface IBuyer {
+  _id: string;
+  username: string;
+  quantity: number;
+  status: "Pending" | "Processing" | "Shipped" | "Delivered" | "Cancelled"; // Purchase status
+  reviews?: Review;
+}
 export interface GetProductsResponse {
   products: Product[];
   total: number;
@@ -76,4 +107,4 @@ export type TabKey =
   | "specifications"
   | "reviews"
   | "store"
-  | "otherInfo";
+  | "qandf";

@@ -26,7 +26,7 @@ interface IOrder extends Document {
     country: string;
     isDefault?: boolean;
   };
-  paymentStatus: "Pending" | "Completed" | "Failed";
+  paymentStatus: "Pending" | "Completed" | "Failed" | "Refunded";
   orderPaymentId: String;
   timestamps: {
     placedAt: Date;

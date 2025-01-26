@@ -12,10 +12,10 @@ import { showToast } from "../ToastNotifications";
 import Link from "next/link";
 
 interface CardProp {
-  product: Product;
+  product: Partial<Product>;
 }
 
-const Card: FC<CardProp> = ({ product }) => {
+const CardTopSelling: FC<CardProp> = ({ product }) => {
   const s = product.averageRating || 0;
   const tstar: number[] = [1, 2, 3, 4, 5];
 
@@ -50,9 +50,9 @@ const Card: FC<CardProp> = ({ product }) => {
   };
 
   return (
-    <div className="flex flex-col w-[190px] h-auto text-[14px]">
-      <div className="relative flex items-center justify-center w-[190px] h-[190px] bg-bg rounded-[12px]">
-        <div className="relative flex items-center justify-center w-[190px] h-[190px] hover:cursor-pointer rounded-[12px]">
+    <div className="flex flex-col group w-[210px] p-[20px] h-auto text-[14px] text-mg font-semibold">
+      <div className="relative flex items-center justify-center w-[170px] h-[170px] bg-bgt rounded-[12px]">
+        <div className="relative flex items-center justify-center w-[170px] h-[170px] hover:cursor-pointer">
           <Link href={`/product/${product._id}`}>
             <Image
               src={
@@ -63,7 +63,7 @@ const Card: FC<CardProp> = ({ product }) => {
               alt={product.name || "Product"}
               layout="fill"
               objectFit="contain"
-              className="bg-bg rounded-[12px]"
+              className=""
             />
           </Link>
         </div>
@@ -81,54 +81,19 @@ const Card: FC<CardProp> = ({ product }) => {
               alt="Add to Cart"
               width={30}
               height={30}
-              className="w-[30px]"
+              className="w-[30px] hidden group-hover:block"
             />
           )}
         </button>
       </div>
-      <p className="my-[6px] text-mg font-semibold">
+
+      <p className="my-[6px]">
         {product.name && product.name.length > 20
-          ? `${product.name.slice(0, 20)}...`
+          ? `${product.name.slice(0, 16)}...`
           : product.name || ""}
-      </p>{" "}
-      <div className="flex justify-between">
-        <div className="flex justify-between w-[100px]">
-          {tstar.map((ts, i) => {
-            const src: string =
-              s >= ts
-                ? "/icons/fstar.svg"
-                : ts - 1 < s && s < ts
-                ? "/icons/hstar.svg"
-                : "/icons/zstar.svg";
-
-            return (
-              <div key={i} className="w-[15px]">
-                <Image
-                  src={src}
-                  alt=""
-                  width={500}
-                  height={500}
-                  className="w-[15px]"
-                />
-              </div>
-            );
-          })}
-        </div>
-
-        <p>{product.salesCount} sold</p>
-      </div>
-      <div className="flex justify-between my-[4px]">
-        <p className="text-[10px] font-semibold">
-          US<span className="text-[16px] font-semibold">${product.price}</span>
-        </p>
-        <p className="text-mb">
-          {product.shippingPrice === 0
-            ? "Free Shipping"
-            : `Shipping: $${product.shippingPrice}`}
-        </p>
-      </div>
+      </p>
     </div>
   );
 };
 
-export default Card;
+export default CardTopSelling;

@@ -1,80 +1,78 @@
 "use client";
-import Image from "next/image";
 import { FC, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-
-const products = [
-  { id: 1, name: "Product 1", image: "/products/earbud.png", price: "$10" },
-  { id: 2, name: "Product 2", image: "/products/usb.png", price: "$20" },
-  { id: 3, name: "Product 3", image: "/products/minifan.png", price: "$30" },
-  { id: 4, name: "Product 4", image: "/products/shoe.png", price: "$40" },
-  { id: 5, name: "Product 5", image: "/products/mouse.png", price: "$50" },
-  { id: 6, name: "Product 6", image: "/products/usb.png", price: "$60" },
-  { id: 7, name: "Product 7", image: "/products/shoe.png", price: "$70" },
-  { id: 8, name: "Product 8", image: "/products/minifan.png", price: "$80" },
-  { id: 9, name: "Product 9", image: "/products/mouse.png", price: "$90" },
-  { id: 10, name: "Product 10", image: "/products/jbl.png", price: "$100" },
-];
+import { useGetTopSellingAndRatedProductsQuery } from "@/store/apiSlices/productApiSlice";
+import CardTopSelling from "./CardTopSelling";
 
 const PopularProduct: FC = () => {
+  const { data, isLoading } = useGetTopSellingAndRatedProductsQuery();
+  const products = data || [];
+
   const productList = [...products, ...products, ...products];
-  const [isHoverd, setIsHovered] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const [xOffset, setXOffset] = useState(0);
   const [popUp, setPopUp] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const scrollSpeed = 1;
+  const scrollSpeed = 2.4;
   const wheelSpeed = 0.8;
-  const itemWidth = 200;
+  const itemWidth = 210;
   const resetThreshold = itemWidth * products.length;
+
+  const animationFrameRef = useRef<number | null>(null);
 
   const handleMouseEnter = () => {
     setIsHovered(true);
     setPopUp(true);
-    setTimeout(() => setPopUp(false), 3000);
-
-    if (containerRef.current) {
-      containerRef.current.style.cursor = "ew-resize";
-    }
+    setTimeout(() => setPopUp(false), 4000);
   };
 
   const handleMouseLeave = () => {
     setIsHovered(false);
-    if (containerRef.current) {
-      containerRef.current.style.cursor = "default";
-    }
   };
 
   const handleWheel = (e: WheelEvent) => {
-    if (!isHoverd) return;
+    if (!isHovered) return;
 
     e.preventDefault();
     const scrollAmount = e.deltaY * wheelSpeed;
     setXOffset((prev) => prev - scrollAmount);
   };
 
-  useEffect(() => {
-    if (!isHoverd) {
-      const interval = setInterval(() => {
-        setXOffset((prev) => prev - scrollSpeed);
-      }, 16);
-
-      return () => clearInterval(interval);
+  const scrollAutomatically = () => {
+    if (!isHovered) {
+      setXOffset((prev) => prev - scrollSpeed);
+      animationFrameRef.current = requestAnimationFrame(scrollAutomatically);
     }
-  }, [isHoverd]);
+  };
 
+  // Start automatic scroll when not hovered
+  useEffect(() => {
+    if (!isHovered) {
+      animationFrameRef.current = requestAnimationFrame(scrollAutomatically);
+    }
+    return () => {
+      if (animationFrameRef.current !== null) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [isHovered]);
+
+  // Adding mouse wheel listener when hovered
   useEffect(() => {
     const container = containerRef.current;
-    if (isHoverd && container) {
+    if (isHovered && container) {
       container.addEventListener("wheel", handleWheel, { passive: false });
     }
+
     return () => {
       if (container) {
         container.removeEventListener("wheel", handleWheel);
       }
     };
-  }, [isHoverd]);
+  }, [isHovered]);
 
+  // Reset the scroll position when reaching the end or beginning
   useEffect(() => {
     if (xOffset <= -resetThreshold * 2) {
       setXOffset((prev) => prev + resetThreshold);
@@ -84,41 +82,47 @@ const PopularProduct: FC = () => {
   }, [xOffset, productList.length]);
 
   return (
-    <div className="relative flex flex-col justify-between w-full h-[254px] px-[0] my-[100px]">
-      <h2 className="text-[24px] ml-[40px] font-bold">Popular Products</h2>
+    <div className="relative flex flex-col justify-between w-full h-[300px] px-[0] my-[100px]">
+      <h2 className="text-[24px] ml-[40px] font-bold">Top-Selling Items</h2>
       <div
         ref={containerRef}
-        className="flex w-full justify-between overflow-x-hidden "
+        className="flex w-full justify-between overflow-x-hidden"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
+        {/* Popup message for user instruction */}
         {popUp && (
-          <div className="absolute z-50 top-20 left-0 p-[10px] text-bg bg-bl w-auto h-outo rounded-full">
+          <div className="absolute z-50 top-0 right-[40px] py-[10px] px-[20px] text-bg bg-mg w-auto h-auto rounded-full">
             Use scroll
           </div>
         )}
 
-        <motion.div
-          className="flex "
-          style={{ transform: `translateX(${xOffset}px)` }}
-        >
-          {productList.map((p, i) => (
-            <div
-              key={i}
-              className="flex items-center justify-center p-[0px] w-[200px] h-[200px] "
-            >
-              <div className="flex items-center justify-center  w-[160px] h-[160px] rounded-[22px] bg-bgs">
-                <Image
-                  src={p.image}
-                  alt=""
-                  width={500}
-                  height={500}
-                  className=" w-[140px] "
-                />
+        {/* Suspense Placeholders */}
+        {isLoading ? (
+          <div className="flex">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <div
+                key={i}
+                className="flex flex-col gap-[12px] w-[210px] p-[20px] h-auto text-[14px] text-mg font-semibold"
+              >
+                <div className="relative flex items-center justify-center w-[150px] h-[150px] bg-bgs rounded-[12px] animate-pulse"></div>
+                <p className="my-[6px] h-[20px] bg-bgs w-3/4 rounded-md animate-pulse"></p>
               </div>
-            </div>
-          ))}
-        </motion.div>
+            ))}
+          </div>
+        ) : (
+          // Scrollable product list
+          <motion.div
+            className="flex"
+            style={{
+              transform: `translateX(${xOffset}px)`,
+            }}
+          >
+            {productList.map((p, i) => (
+              <CardTopSelling key={i} product={p} />
+            ))}
+          </motion.div>
+        )}
       </div>
     </div>
   );

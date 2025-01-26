@@ -2,7 +2,7 @@ import { Toaster, toast, ToastOptions } from "react-hot-toast";
 
 const ToastNotifications: React.FC = () => {
   return (
-    <div className="z-50">
+    <div className="z-50 ">
       <Toaster
         position="top-right"
         reverseOrder={false}
@@ -20,6 +20,7 @@ const toastOptions: ToastOptions = {
     borderRadius: "4px",
     padding: "8px 20px",
     fontSize: "15px",
+    width: "300px",
   },
   duration: 3000,
   removeDelay: 0,
