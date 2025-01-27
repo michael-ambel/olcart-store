@@ -17,7 +17,13 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: ["https://olcart.store"], // Allow your frontend
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    credentials: true,
+  })
+);
 app.post(
   "/api/orders/payment-webhook",
   bodyParser.raw({ type: "application/json" }),
