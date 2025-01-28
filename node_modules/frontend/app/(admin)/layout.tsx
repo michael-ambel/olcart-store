@@ -1,3 +1,5 @@
+"use client";
+
 import NavbarTop from "@/components/admin/NavbarTop";
 import NavbarLeft from "@/components/admin/NavbarLeft";
 

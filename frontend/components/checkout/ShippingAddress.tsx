@@ -12,8 +12,9 @@ import {
 import { setCurrentAddress } from "@/store/slices/orderSlice";
 import { IShippingAddress } from "@/store/types/userTypes";
 import { RootState } from "@/store/store";
-import Link from "next/link";
+
 import PlaceOrderButton from "./PlaceOrderButton";
+import { showToast } from "../ToastNotifications";
 
 const ShippingAddress = () => {
   const {
@@ -104,7 +105,9 @@ const ShippingAddress = () => {
       }
       setIsModalOpen(false);
       setEditingAddressId(null);
-    } catch (error) {
+    } catch {
+      showToast("error", "Error while saving the address:");
+      return;
     } finally {
       setLoadingState((prev) => ({
         ...prev,
@@ -117,7 +120,9 @@ const ShippingAddress = () => {
     try {
       setLoadingState((prev) => ({ ...prev, [addressId]: "deleting" }));
       await deleteShippingAddress({ _id: addressId }).unwrap();
-    } catch (error) {
+    } catch {
+      showToast("error", "Error while deleting the address:");
+      return;
     } finally {
       setLoadingState((prev) => ({ ...prev, [addressId]: "" }));
     }
@@ -133,14 +138,12 @@ const ShippingAddress = () => {
         {addresses.map((address: IShippingAddress) => (
           <div
             key={address._id}
-            className={`relative flex flex-col justify-between text-[15px] gap-1 p-4 mb-2 w-[320px] border-[1.5px] rounded-[8px] bg-bgt ${
-              selectedAddress?._id === address._id ? "border-bg" : "border-bg"
-            }`}
+            className={`relative flex flex-col justify-between text-[15px] gap-1 p-4 mb-2 w-[320px] border-[1.5px] rounded-[8px] bg-bgt border-bg`}
           >
             <label className="flex  items-center">
               <input
                 type="checkbox"
-                checked={selectedAddress?._id === address._id}
+                checked={selectedAddress?._id === address?._id || false}
                 onChange={() => handleSelectAddress(address)}
                 className="absolute flex right-4 top-4 w-[20px] h-[20px] rounded-[4px] border-[1.5px] border-mo  appearance-none   cursor-pointer transition-all duration-300 checked:before:content-['✔'] text-[20px] items-center"
               />

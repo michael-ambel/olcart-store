@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import * as cookie from "cookie";
 
-const BASE_URL = "http://localhost:5000/api/products";
+const BASE_URL = `${process.env.SERVER_URL}/products`;
 
 //get all products
 export async function GET(req: NextRequest) {

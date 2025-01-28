@@ -5,3 +5,44 @@
 body {
   overflow-x: hidden;
 }
+
+/* Global Font Variables */
+:root {
+  --font-poetsen-one: "Poetsen One", sans-serif;
+  --font-poppins: "Poppins", sans-serif;
+}
+
+/* Use these classes to apply fonts */
+.font-poetsen-one {
+  font-family: var(--font-poetsen-one);
+}
+
+.font-poppins {
+  font-family: var(--font-poppins);
+}
+
+/* Poetsen One */
+@font-face {
+  font-family: "Poetsen One";
+  src: url("/fonts/poetsen-one/PoetsenOne-Regular.ttf") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Poppins */
+@font-face {
+  font-family: "Poppins";
+  src: url("/fonts/poppins/Poppins-Regular.ttf") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("/fonts/poppins/Poppins-Bold.ttf") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

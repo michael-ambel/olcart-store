@@ -1,10 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Product, IPCart, Review } from "../types/productTypes";
 
+const url = `${process.env.NEXT_PUBLIC_API_URL}/api/products`;
+
 export const productApiSlice = createApi({
   reducerPath: "productApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000/api/products",
+    baseUrl: url,
     credentials: "include",
   }),
   tagTypes: ["Product", "Carted"],

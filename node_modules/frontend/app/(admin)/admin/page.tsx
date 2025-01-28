@@ -1,6 +1,15 @@
-// app/admin/page.tsx
-export default function AdminHome() {
+// app/(admin)/admin/orders/page.tsx
+"use client";
+import { Suspense } from "react";
+
+export default function AdminOrders() {
   return (
-    <h1 className="pl-[140px] mt-[200px]">Welcome to the Admin Dashboard</h1>
+    <Suspense fallback={<div>Loading...</div>}>
+      <AdminOrdersContent />
+    </Suspense>
   );
+}
+
+function AdminOrdersContent() {
+  return <div>Admin Page</div>;
 }

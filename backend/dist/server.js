@@ -18,7 +18,7 @@ dotenv_1.default.config();
 const app = (0, express_1.default)();
 // Middleware
 app.use((0, cors_1.default)({
-    origin: ["https://olcart.store"], // Allow your frontend
+    origin: ["https://olcart.store", "http://localhost:3000"], // Allow your frontend
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
 }));

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import * as cookie from "cookie";
 
-const BASE_URL = "http://localhost:5000/api/products/carted";
+const BASE_URL = `${process.env.SERVER_URL}/products/carted`;
 
 function getAuthToken(req: NextRequest) {
   const cookies = cookie.parse(req.headers.get("cookie") || "");

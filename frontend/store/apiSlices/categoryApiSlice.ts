@@ -7,10 +7,12 @@ import {
   CategoryTree,
 } from "../types/categoryTypes";
 
+const url = `${process.env.NEXT_PUBLIC_API_URL}/api/categories`;
+
 export const categoryApiSlice = createApi({
   reducerPath: "categoryApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000/api/categories",
+    baseUrl: url,
   }),
   tagTypes: ["Category"],
 

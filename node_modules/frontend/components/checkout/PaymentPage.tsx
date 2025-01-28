@@ -8,12 +8,12 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { showToast } from "../ToastNotifications";
+import { IPaymentOrder, IOrder } from "@/store/types/orderTypes"; // Import both types
 
 export default function PaymentPage() {
-  const [selectedOrders, setSelectedOrders] = useState<any[]>([]);
+  const [selectedOrders, setSelectedOrders] = useState<IPaymentOrder[]>([]);
   const [createPaymentSession, { isLoading: isPaying }] =
     useCreatePaymentSessionMutation();
-  const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
 
   const { data: orders, isLoading, isError } = useGetUserOrdersQuery();
   const router = useRouter();
@@ -23,13 +23,13 @@ export default function PaymentPage() {
     const status = params.get("status");
 
     if (status === "success") {
-      setPaymentStatus("Payment successful! Thank you.");
+      showToast("success", "Payment successful! Thank you.");
     } else if (status === "failed") {
-      setPaymentStatus("Payment failed. Please try again.");
+      showToast("error", "Payment failed. Please try again.");
     }
   }, []);
 
-  const handleOrderSelect = (order: any) => {
+  const handleOrderSelect = (order: IPaymentOrder) => {
     setSelectedOrders((prev) =>
       prev.includes(order)
         ? prev.filter((o) => o._id !== order._id)
@@ -68,7 +68,12 @@ export default function PaymentPage() {
         showToast("error", "Failed to create payment session.");
       }
     } catch (error) {
-      showToast("error", "Failed to create payment session. Please try again.");
+      if (error) {
+        showToast(
+          "error",
+          "Failed to create payment session. Please try again."
+        );
+      }
     }
   };
 
@@ -86,7 +91,7 @@ export default function PaymentPage() {
 
   if (!orders || orders.length === 0) {
     return (
-      <div className="flex justify-center items-center h-screen  text-lg text-gray-500 flex-col">
+      <div className="flex justify-center items-center h-screen text-lg text-gray-500 flex-col">
         <p>No orders to pay for yet. Please add some orders to proceed!</p>
         <button
           onClick={() => router.push("/")}
@@ -103,78 +108,96 @@ export default function PaymentPage() {
       <div className="flex gap-[26px] mt-8">
         <div className="space-y-6 ml-[20px] mr-[460px]">
           <h1 className="text-xl font-bold mb-6 text-center">Order Summary</h1>
-          {orders?.map((order: any) => (
-            <div
-              key={order._id}
-              className={`relative p-6 border border-gray-300 rounded-lg shadow-sm ${
-                selectedOrders.includes(order) ? "bg-bg" : ""
-              }`}
-            >
-              <div className="flex items-center space-x-4 mb-4">
-                <input
-                  type="checkbox"
-                  className="absolute flex right-[30px] w-[20px] h-[20px] rounded-[4px] border-[1.5px] border-bl text-mo  appearance-none   cursor-pointer transition-all duration-300 checked:before:content-['✔'] text-[20px] items-center"
-                  checked={selectedOrders.includes(order)}
-                  onChange={() => handleOrderSelect(order)}
-                />
-                <h2 className="text-lg font-semibold">Order ID: {order._id}</h2>
-              </div>
-              <div className="grid grid-cols-3 gap-6">
-                {order.items.map((item: any) => (
-                  <div
-                    key={item._id}
-                    className="flex items-center space-x-2 border-b pb-2"
-                  >
-                    <div className="flex items-center w-[70px] h-[70px]">
-                      <Image
-                        src={item.images[0]}
-                        alt={item.name}
-                        width={70}
-                        height={70}
-                        className="rounded-md"
-                      />
+          {orders?.map((order: IOrder) => {
+            // Map IOrder to IPaymentOrder
+            const paymentOrder: IPaymentOrder = {
+              ...order,
+              _id: order._id || "", // Ensure _id is a string, provide a fallback if undefined
+              shippingPrice: 10, // Example shipping price (replace with actual logic)
+              paymentStatus: "Pending", // Example payment status
+              status: order.status || "Pending", // Ensure status exists with a fallback
+            };
+
+            return (
+              <div
+                key={paymentOrder._id}
+                className={`relative p-6 border border-gray-300 rounded-lg shadow-sm ${
+                  selectedOrders.includes(paymentOrder) ? "bg-bg" : ""
+                }`}
+              >
+                <div className="flex items-center space-x-4 mb-4">
+                  <input
+                    type="checkbox"
+                    className="absolute flex right-[30px] w-[20px] h-[20px] rounded-[4px] border-[1.5px] border-bl text-mo appearance-none cursor-pointer transition-all duration-300 checked:before:content-['✔'] text-[20px] items-center"
+                    checked={selectedOrders.includes(paymentOrder)}
+                    onChange={() => handleOrderSelect(paymentOrder)}
+                  />
+                  <h2 className="text-lg font-semibold">
+                    Order ID: {paymentOrder._id}
+                  </h2>
+                </div>
+                <div className="grid grid-cols-3 gap-6">
+                  {paymentOrder.items.map((item) => (
+                    <div
+                      key={item._id}
+                      className="flex items-center space-x-2 border-b pb-2"
+                    >
+                      <div className="flex items-center w-[70px] h-[70px]">
+                        <Image
+                          src={item.images[0]}
+                          alt={item.name}
+                          width={70}
+                          height={70}
+                          className="rounded-md"
+                        />
+                      </div>
+                      <div>
+                        <h3 className="text-md font-semibold">{item.name}</h3>
+                        <p className="text-sm text-gray-600">
+                          Quantity: {item.quantity}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Price: ${item.price}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-md font-semibold">{item.name}</h3>
-                      <p className="text-sm text-gray-600">
-                        Quantity: {item.quantity}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        Price: ${item.price}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+                <div className="mt-4">
+                  <p className="text-sm">
+                    Shipping:{" "}
+                    <span className="font-medium">
+                      ${paymentOrder.shippingPrice}
+                    </span>
+                  </p>
+                  <p className="text-sm">
+                    Item Price:{" "}
+                    <span className="font-medium">
+                      ${paymentOrder.totalAmount}
+                    </span>
+                  </p>
+                  <p className="text-sm">
+                    Status:{" "}
+                    <span className="font-medium">{paymentOrder.status}</span>
+                  </p>
+                  <p className="text-sm">
+                    Payment Status:{" "}
+                    <span
+                      className={`font-medium ${
+                        paymentOrder.paymentStatus === "Failed"
+                          ? "text-red-600"
+                          : paymentOrder.paymentStatus === "Pending"
+                          ? "text-yellow-600"
+                          : "text-green-600"
+                      }`}
+                    >
+                      {paymentOrder.paymentStatus}
+                    </span>
+                  </p>
+                </div>
               </div>
-              <div className="mt-4">
-                <p className="text-sm">
-                  Shipping:{" "}
-                  <span className="font-medium">${order.shippingPrice}</span>
-                </p>
-                <p className="text-sm">
-                  Item Price:{" "}
-                  <span className="font-medium">${order.totalAmount}</span>
-                </p>
-                <p className="text-sm">
-                  Status: <span className="font-medium">{order.status}</span>
-                </p>
-                <p className="text-sm">
-                  Payment Status:{" "}
-                  <span
-                    className={`font-medium ${
-                      order.paymentStatus === "Failed"
-                        ? "text-red-600"
-                        : order.paymentStatus === "Pending"
-                        ? "text-yellow-600"
-                        : "text-green-600"
-                    }`}
-                  >
-                    {order.paymentStatus}
-                  </span>
-                </p>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="fixed right-[30px] top-[140px] w-[400px] p-6 border border-gray-300 rounded-lg shadow-sm space-y-6">

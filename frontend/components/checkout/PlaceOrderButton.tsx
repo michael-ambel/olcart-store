@@ -4,8 +4,7 @@ import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 
 const PlaceOrderButton = () => {
-  const [placeOrder, { isLoading: placeOrderLoading }] =
-    usePlaceOrderMutation();
+  const [placeOrder] = usePlaceOrderMutation();
   const currentOrder = useSelector((state: RootState) => state.order);
 
   const router = useRouter();
@@ -30,7 +29,7 @@ const PlaceOrderButton = () => {
       await placeOrder(orderData).unwrap();
       alert("Order placed successfully!");
       setTimeout(() => router.push("/payment-method"), 2000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Failed to place order:", error);
     }
   };

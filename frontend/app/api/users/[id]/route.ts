@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
 
-const BASE_URL = "http://localhost:5000/api/users";
+const BASE_URL = `${process.env.SERVER_URL}/users`;
 
 //..get user
 export async function GET(req: Request) {

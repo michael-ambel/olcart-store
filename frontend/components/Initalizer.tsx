@@ -8,7 +8,7 @@ import { useGetUserCartQuery } from "@/store/apiSlices/userApiSlice";
 const Initalizer = () => {
   const dispatch = useDispatch();
 
-  const { data, isLoading, error } = useGetUserCartQuery();
+  const { data } = useGetUserCartQuery();
 
   useEffect(() => {
     dispatch(userInitalizer());
@@ -18,7 +18,7 @@ const Initalizer = () => {
     if (data) {
       dispatch(updateCart(data));
     }
-  }, [data]);
+  }, [data, dispatch]);
   return <div></div>;
 };
 

@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { updateCart } from "@/store/slices/userSlice";
 import Image from "next/image";
 import { FC, useState } from "react";
-import { CartResp, ICartItem } from "@/store/types/userTypes";
+import { CartResp } from "@/store/types/userTypes";
 import { useUpdateCartedItemMutation } from "@/store/apiSlices/productApiSlice";
 import { showToast } from "../ToastNotifications";
 import Link from "next/link";
@@ -43,7 +43,9 @@ const Card: FC<CardProp> = ({ product }) => {
 
       showToast("success", `${updatedCart.message}`);
     } catch (error) {
-      showToast("error", "Failed to Cart!");
+      if (error) {
+        showToast("error", "Failed to Cart!");
+      }
     } finally {
       setButtonAnimation(false); // Stop animation after the process completes
     }

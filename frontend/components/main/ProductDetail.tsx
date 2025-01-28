@@ -12,7 +12,7 @@ import { updateCart } from "@/store/slices/userSlice";
 import { showToast } from "../ToastNotifications";
 import { CartResp } from "@/store/types/userTypes";
 import { useUpdateCartMutation } from "@/store/apiSlices/userApiSlice";
-import { Review } from "@/store/types/productTypes";
+
 import TabsSection from "./ProductDetailTab";
 
 const ProductDetailPage = () => {
@@ -23,10 +23,8 @@ const ProductDetailPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [buttonAnimation, setButtonAnimation] = useState(false);
 
-  const [updateCartMutation, { isLoading: cartIsLoading }] =
-    useUpdateCartMutation();
-  const [updateCartedItem, { isLoading: cartedIsLoading }] =
-    useUpdateCartedItemMutation();
+  const [updateCartMutation] = useUpdateCartMutation();
+  const [updateCartedItem] = useUpdateCartedItemMutation();
 
   if (isLoading) {
     return (
@@ -122,7 +120,9 @@ const ProductDetailPage = () => {
 
       showToast("success", `${updatedCart.message}`);
     } catch (error) {
-      showToast("error", "Failed to Cart!");
+      if (error) {
+        showToast("error", "Failed to Cart!");
+      }
     } finally {
       setButtonAnimation(false); // Stop animation after the process completes
     }
@@ -134,7 +134,9 @@ const ProductDetailPage = () => {
         <div className="flex  items-start justify-between gap-6">
           <div className="relative flex items-start w-[340px] h-[340px] bg-white shadow-lg rounded-[12px] hover:shadow-2xl transition-shadow duration-300">
             <Image
-              src={product.images[0]}
+              src={
+                typeof product.images[0] === "string" ? product.images[0] : ""
+              }
               alt={product.name}
               layout="fill"
               objectFit="contain"

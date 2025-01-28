@@ -5,7 +5,7 @@ import { useCreateProductMutation } from "@/store/apiSlices/productApiSlice";
 import { CategoryTree } from "@/store/types/categoryTypes";
 import { useGetCategoriesQuery } from "@/store/apiSlices/categoryApiSlice";
 import Image from "next/image";
-import toast, { showToast } from "../ToastNotifications";
+import { showToast } from "../ToastNotifications";
 
 const ProductCreateForm: React.FC = () => {
   const [name, setName] = useState<string>("");
@@ -21,9 +21,8 @@ const ProductCreateForm: React.FC = () => {
   const [categoriesData, setCategoriesData] = useState<CategoryTree[]>([]);
   const [selectedPath, setSelectedPath] = useState<CategoryTree[]>([]);
 
-  const [createProduct, { isLoading, isError, error }] =
-    useCreateProductMutation();
-  const { data, isLoading: isCategoriesLoading } = useGetCategoriesQuery();
+  const [createProduct] = useCreateProductMutation();
+  const { data } = useGetCategoriesQuery();
 
   useEffect(() => {
     if (data) {
@@ -149,8 +148,12 @@ const ProductCreateForm: React.FC = () => {
       await createProduct(formData);
       showToast("success", "Product created successfully!");
       window.location.reload();
-    } catch (error) {
-      showToast("error", "Product is not created!");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        showToast("error", error.message || "Product is not created!");
+      } else {
+        showToast("error", "Product is not created!");
+      }
     }
   };
 
@@ -282,9 +285,8 @@ const ProductCreateForm: React.FC = () => {
             />
             <div className=" flex flex-wrap w-full h-auto gap-2 mt-2">
               {imagePreviews.map((preview, index) => (
-                <div className="relative w-[100px] h-[100px]">
+                <div key={index} className="relative w-[100px] h-[100px]">
                   <Image
-                    key={index}
                     src={preview}
                     width={60}
                     height={60}

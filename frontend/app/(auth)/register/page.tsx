@@ -50,8 +50,8 @@ export default function RegisterPage() {
       setSuccess("Registration successful!");
       setError(null);
       setFormData({ name: "", email: "", password: "", confirmPassword: "" });
-    } catch (err: any) {
-      setError(err?.message || "Registration failed");
+    } catch (err) {
+      setError((err as Error)?.message || "Registration failed");
     } finally {
       setIsLoading(false);
     }

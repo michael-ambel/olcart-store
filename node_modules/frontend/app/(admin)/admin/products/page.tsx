@@ -1,31 +1,27 @@
 "use client";
+
 import ProductButtons from "@/components/admin/ProductButtons";
 import { useGetProductsQuery } from "@/store/apiSlices/productApiSlice";
 import { Product } from "@/store/types/productTypes";
-import { useEffect, useState } from "react";
+
+export const dynamic = "force-dynamic";
 
 export default function Products() {
   const { data, isLoading, error } = useGetProductsQuery();
-  const [products, setProducts] = useState<Product[]>([]);
-
-  useEffect(() => {
-    if (data?.products) {
-      setProducts(data.products);
-      console.log("Products:", data.products);
-    }
-  }, [data]);
 
   if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading products.</div>;
+  if (error || !data?.products) return <div>Error loading products.</div>;
+
+  const products: Product[] = data.products;
 
   return (
     <div className="flex flex-col p-[34px] mt-[130px] ml-[144px] gap-[30px] bg-bgt">
       <ProductButtons />
 
-      <div className="">
+      <div>
         <table className="w-full border-collapse bg-fade gap-2">
           <thead>
-            <tr className="text-left text-bl ">
+            <tr className="text-left text-bl">
               <th className="px-4 py-2 bg-bg rounded-md border-bl border-2">
                 No
               </th>
@@ -43,11 +39,11 @@ export default function Products() {
               </th>
               <th className="px-4 py-2 bg-bg rounded-md border-bl border-2">
                 Total Sales ($)
-              </th>{" "}
+              </th>
               <th className="px-4 py-2 bg-bg rounded-md border-bl border-2">
                 Actions
-              </th>{" "}
-            </tr>{" "}
+              </th>
+            </tr>
           </thead>
           <tbody className="space-y-2">
             {products.map((product, index) => (
@@ -80,9 +76,9 @@ export default function Products() {
                     href={`/admin/products/${product.stock}`}
                     className="text-blue-500 hover:text-blue-700"
                   >
-                    <span>edit</span>
+                    <span>Edit</span>
                   </a>
-                </td>{" "}
+                </td>
               </tr>
             ))}
           </tbody>

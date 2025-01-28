@@ -21,3 +21,15 @@ export interface IOrder {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export interface IPaymentOrder {
+  _id: string; // Ensure it's always a string
+  user: string;
+  items: Item[];
+  totalAmount: number;
+  shippingPrice: number;
+  paymentStatus: "Pending" | "Completed" | "Failed";
+  status: "Pending" | "Processing" | "Shipped" | "Delivered" | "Cancelled"; // Add if missing
+  createdAt?: string;
+  updatedAt?: string;
+}

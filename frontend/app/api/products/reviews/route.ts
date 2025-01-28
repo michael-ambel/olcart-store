@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import * as cookie from "cookie";
 
-const REVIEWS_URL = "http://localhost:5000/api/products/reviews"; // Backend endpoint
+const REVIEWS_URL = `${process.env.SERVER_URL}/products/reviews`;
 
 // Function to get the auth token from cookies
 function getAuthToken(req: NextRequest) {

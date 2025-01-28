@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 interface ICartItem {
   _id: mongoose.Types.ObjectId;
   quantity: number;
@@ -24,7 +24,7 @@ interface IUser extends Document {
   email: string;
   password: string;
   role: "customer" | "admin";
-  preferences: string[]; // New field to store preferences (e.g., categories, tags, etc.)
+  preferences: string[];
   cart?: ICartItem[];
   shippingAddresses: IShippingAddress[];
   comparePassword(candidatePassword: string): Promise<boolean>;

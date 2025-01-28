@@ -1,20 +1,17 @@
 "use client"; // Ensure this component is client-side
 
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { showToast } from "../ToastNotifications";
 
 const Navbar: FC = () => {
   // Access user from Redux state
   const user = useSelector((state: RootState) => state.user.user);
-  const path = useSearchParams().get("v");
   const router = useRouter();
-
-  const [header, setHeader] = useState("");
 
   useEffect(() => {
     if (user === undefined || !user?.role) return; // Wait until user state is defined
@@ -27,27 +24,7 @@ const Navbar: FC = () => {
     if (user.role !== "admin") {
       showToast("error", "Only allowed for admins");
     }
-  }, [user]);
-
-  useEffect(() => {
-    switch (path) {
-      case "1":
-        setHeader("Dashboard");
-        break;
-      case "2":
-        setHeader("Product");
-        break;
-      case "3":
-        setHeader("Users");
-        break;
-      case "4":
-        setHeader("Orders");
-        break;
-      case "5":
-        setHeader("Analysis");
-        break;
-    }
-  }, [path]);
+  }, [user, router]);
 
   return (
     <nav
@@ -69,9 +46,6 @@ const Navbar: FC = () => {
               <span className="text-bl text-[10px]">store</span>
             </p> */}
           </Link>
-        </div>
-        <div className="flex items-end justify-start min-w-[140px] pb-[0px] mx-[20px] text-[22px] font-semibold h-[60px]">
-          {header}
         </div>
 
         {/* Search Bar */}

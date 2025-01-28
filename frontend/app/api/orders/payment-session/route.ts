@@ -3,7 +3,7 @@ import { NextResponse, NextRequest } from "next/server";
 import axios from "axios";
 import * as cookie from "cookie";
 
-const BASE_URL = "http://localhost:5000/api/orders/payment-session";
+const BASE_URL = `${process.env.SERVER_URL}/orders/payment-session`;
 
 // Utility Functions
 function getAuthToken(req: NextRequest) {

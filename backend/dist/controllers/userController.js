@@ -30,7 +30,7 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             return;
         }
         const user = yield userModel_1.default.create({ name, email, password, role });
-        const token = jsonwebtoken_1.default.sign({ _id: user._id, role: user.role }, JWT_SECRET, {
+        const token = jsonwebtoken_1.default.sign({ _id: user._id, name: user.name, role: user.role }, JWT_SECRET, {
             expiresIn: maxAge,
         });
         res
@@ -65,7 +65,7 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             res.status(401).json({ message: "Invalid email or password" });
             return;
         }
-        const token = jsonwebtoken_1.default.sign({ _id: user._id, role: user.role }, JWT_SECRET, {
+        const token = jsonwebtoken_1.default.sign({ _id: user._id, name: user.name, role: user.role }, JWT_SECRET, {
             expiresIn: maxAge,
         });
         res

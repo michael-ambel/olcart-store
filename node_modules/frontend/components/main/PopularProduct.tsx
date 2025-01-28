@@ -1,5 +1,5 @@
 "use client";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useGetTopSellingAndRatedProductsQuery } from "@/store/apiSlices/productApiSlice";
 import CardTopSelling from "./CardTopSelling";
@@ -21,30 +21,33 @@ const PopularProduct: FC = () => {
 
   const animationFrameRef = useRef<number | null>(null);
 
-  const handleMouseEnter = () => {
+  const handleMouseEnter = useCallback(() => {
     setIsHovered(true);
     setPopUp(true);
     setTimeout(() => setPopUp(false), 4000);
-  };
+  }, []);
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     setIsHovered(false);
-  };
+  }, []);
 
-  const handleWheel = (e: WheelEvent) => {
-    if (!isHovered) return;
+  const handleWheel = useCallback(
+    (e: WheelEvent) => {
+      if (!isHovered) return;
 
-    e.preventDefault();
-    const scrollAmount = e.deltaY * wheelSpeed;
-    setXOffset((prev) => prev - scrollAmount);
-  };
+      e.preventDefault();
+      const scrollAmount = e.deltaY * wheelSpeed;
+      setXOffset((prev) => prev - scrollAmount);
+    },
+    [isHovered, wheelSpeed]
+  );
 
-  const scrollAutomatically = () => {
+  const scrollAutomatically = useCallback(() => {
     if (!isHovered) {
       setXOffset((prev) => prev - scrollSpeed);
       animationFrameRef.current = requestAnimationFrame(scrollAutomatically);
     }
-  };
+  }, [isHovered, scrollSpeed]);
 
   // Start automatic scroll when not hovered
   useEffect(() => {
@@ -56,7 +59,7 @@ const PopularProduct: FC = () => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [isHovered]);
+  }, [isHovered, scrollAutomatically]);
 
   // Adding mouse wheel listener when hovered
   useEffect(() => {
@@ -70,7 +73,7 @@ const PopularProduct: FC = () => {
         container.removeEventListener("wheel", handleWheel);
       }
     };
-  }, [isHovered]);
+  }, [isHovered, handleWheel]);
 
   // Reset the scroll position when reaching the end or beginning
   useEffect(() => {
@@ -79,7 +82,7 @@ const PopularProduct: FC = () => {
     } else if (xOffset >= -resetThreshold) {
       setXOffset((prev) => prev - resetThreshold);
     }
-  }, [xOffset, productList.length]);
+  }, [xOffset, resetThreshold]);
 
   return (
     <div className="relative flex flex-col justify-between w-full h-[300px] px-[0] my-[100px]">

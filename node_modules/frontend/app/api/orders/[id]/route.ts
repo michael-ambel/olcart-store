@@ -1,11 +1,12 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import axios from "axios";
 import * as cookie from "cookie";
 
-const BASE_URL = "http://localhost:5000/api/orders";
+// Base URL for orders
+const BASE_URL = `${process.env.SERVER_URL}/orders`;
 
-// Utility Functions
-function getAuthToken(req: NextRequest) {
+// Utility: Extract auth token from cookies
+function getAuthToken(req: Request) {
   const cookies = cookie.parse(req.headers.get("cookie") || "");
   const token = cookies.jwt;
 
@@ -16,66 +17,91 @@ function getAuthToken(req: NextRequest) {
   return token;
 }
 
-function handleApiError(error: unknown) {
-  const message =
-    axios.isAxiosError(error) && error.response
-      ? error.response.data
-      : (error as Error).message;
-  return NextResponse.json({ message }, { status: 500 });
-}
+// Get a Specific Order by ID (GET /:id)
+export async function GET(req: Request) {
+  const urlParts = req.url.split("/");
+  const id = urlParts[urlParts.length - 1];
 
-// Get a Specific Order by ID (GET /:orderId)
-export async function GET_ORDER(
-  req: NextRequest,
-  { params }: { params: { orderId: string } }
-) {
+  if (!id || typeof id !== "string") {
+    return NextResponse.json(
+      { message: "Order ID is required" },
+      { status: 400 }
+    );
+  }
+
   try {
     const token = getAuthToken(req);
-    const { orderId } = params;
-    const response = await axios.get(`${BASE_URL}/${orderId}`, {
+    const resp = await axios.get(`${BASE_URL}/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    return NextResponse.json(response.data, { status: response.status });
+    return NextResponse.json(resp.data, { status: resp.status });
   } catch (error) {
-    return handleApiError(error);
+    const message =
+      axios.isAxiosError(error) && error.response
+        ? error.response.data
+        : (error as Error).message;
+
+    return NextResponse.json({ message }, { status: 500 });
   }
 }
 
-// Update Order Status (Admin only) (PUT /:orderId)
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { orderId: string } }
-) {
+// Update Order Status (Admin only) (PUT /:id)
+export async function PUT(req: Request) {
+  const urlParts = req.url.split("/");
+  const id = urlParts[urlParts.length - 1];
+
+  if (!id || typeof id !== "string") {
+    return NextResponse.json(
+      { message: "Order ID is required" },
+      { status: 400 }
+    );
+  }
+
   try {
     const token = getAuthToken(req);
-    const { orderId } = params;
     const { status } = await req.json();
-    const response = await axios.put(
-      `${BASE_URL}/${orderId}`,
+    const resp = await axios.put(
+      `${BASE_URL}/${id}`,
       { status },
       {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
-    return NextResponse.json(response.data, { status: response.status });
+    return NextResponse.json(resp.data, { status: resp.status });
   } catch (error) {
-    return handleApiError(error);
+    const message =
+      axios.isAxiosError(error) && error.response
+        ? error.response.data
+        : (error as Error).message;
+
+    return NextResponse.json({ message }, { status: 500 });
   }
 }
 
-// Delete an Order (Admin only) (DELETE /:orderId)
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { orderId: string } }
-) {
+// Delete an Order (Admin only) (DELETE /:id)
+export async function DELETE(req: Request) {
+  const urlParts = req.url.split("/");
+  const id = urlParts[urlParts.length - 1];
+
+  if (!id || typeof id !== "string") {
+    return NextResponse.json(
+      { message: "Order ID is required" },
+      { status: 400 }
+    );
+  }
+
   try {
     const token = getAuthToken(req);
-    const { orderId } = params;
-    const response = await axios.delete(`${BASE_URL}/${orderId}`, {
+    const resp = await axios.delete(`${BASE_URL}/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    return NextResponse.json(response.data, { status: response.status });
+    return NextResponse.json(resp.data, { status: resp.status });
   } catch (error) {
-    return handleApiError(error);
+    const message =
+      axios.isAxiosError(error) && error.response
+        ? error.response.data
+        : (error as Error).message;
+
+    return NextResponse.json({ message }, { status: 500 });
   }
 }

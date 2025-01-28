@@ -1,8 +1,18 @@
 "use client";
 import CheckOutProgress from "@/components/checkout/CheckOutProgress";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 export default function PaymentSuccess() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PaymentSuccessContent />
+    </Suspense>
+  );
+}
+
+function PaymentSuccessContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const PayerID = searchParams.get("PayerID");
@@ -40,12 +50,12 @@ export default function PaymentSuccess() {
         )}
 
         <div className="mt-8">
-          <a
+          <Link
             href="/"
             className="bg-green-700 text-white py-3 px-8 rounded-lg shadow-lg hover:bg-green-600 transition duration-300"
           >
             Go to Home Page
-          </a>
+          </Link>
         </div>
       </div>
     </div>

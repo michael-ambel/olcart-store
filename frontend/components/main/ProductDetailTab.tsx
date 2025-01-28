@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { IBuyer, Product, Review, TabKey } from "@/store/types/productTypes";
+import { IBuyer, Product, TabKey } from "@/store/types/productTypes";
 import {
   useCreateOrUpdateQuestionAndFeedbackMutation,
   useCreateOrUpdateReviewMutation,
@@ -32,10 +32,8 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
   const user = useSelector((state: RootState) => state.user.user);
   const tstar: number[] = [1, 2, 3, 4, 5];
 
-  const [createOrUpdateReview, { isLoading: isSubmittingReview }] =
-    useCreateOrUpdateReviewMutation();
-  const [createOrUpdateQandF, { isLoading: isSubmittingQandF }] =
-    useCreateOrUpdateQuestionAndFeedbackMutation();
+  const [createOrUpdateReview] = useCreateOrUpdateReviewMutation();
+  const [createOrUpdateQandF] = useCreateOrUpdateQuestionAndFeedbackMutation();
 
   useEffect(() => {
     const buyer = product.buyers?.find((buyer) => buyer._id === user?._id);
@@ -46,7 +44,7 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
     }
   }, [product, user]);
 
-  const handleReply = (parentId: string, parentMessage: string) => {
+  const handleReply = (parentId: string) => {
     // Toggle the reply box
     if (replayTo === parentId) {
       setReplayTo(""); // Close the reply box
@@ -125,10 +123,12 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
       showToast("success", "Submitted successfully!");
       setQandfInput({ message: "", type: "question" });
     } catch (error) {
-      showToast(
-        "error",
-        "Failed to submit question/feedback. Please try again."
-      );
+      if (error) {
+        showToast(
+          "error",
+          "Failed to submit question/feedback. Please try again."
+        );
+      }
     }
   };
 
@@ -261,9 +261,7 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
                       <div className="flex justify-between">
                         {qf.type !== "replay" && (
                           <button
-                            onClick={() =>
-                              qf._id && handleReply(qf._id, qf.message)
-                            }
+                            onClick={() => qf._id && handleReply(qf._id)}
                             className="my-[12px] p-[6px] text-[14px] border-[1px] rounded-full border-mg text-mg font-bold"
                           >
                             Add Reply

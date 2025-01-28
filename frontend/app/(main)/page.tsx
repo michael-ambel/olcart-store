@@ -1,5 +1,3 @@
-import CategoryBar from "@/components/main/CategoryBar";
-
 import MainCard from "@/components/main/MainEventCard";
 import PopularProduct from "@/components/main/PopularProduct";
 import Shops from "@/components/main/Shops";

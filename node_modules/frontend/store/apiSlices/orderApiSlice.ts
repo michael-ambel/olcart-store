@@ -2,9 +2,11 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { IOrder, IOrderItem } from "../types/orderTypes";
 import { ICartItem, IShippingAddress } from "../types/userTypes";
 
+const url = `${process.env.NEXT_PUBLIC_API_URL}/api/orders`;
+
 export const orderApiSlice = createApi({
   reducerPath: "orderApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/api/orders" }),
+  baseQuery: fetchBaseQuery({ baseUrl: url }),
   tagTypes: ["Orders"],
 
   endpoints: (builder) => ({

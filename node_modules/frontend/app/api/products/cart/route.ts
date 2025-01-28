@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import * as cookie from "cookie";
 
-const BASE_URL = "http://localhost:5000/api/products/cart"; // Backend endpoint for fetching carted products
+const BASE_URL = `${process.env.SERVER_URL}/products/cart`;
 
 // Function to get the auth token from cookies
 function getAuthToken(req: NextRequest) {

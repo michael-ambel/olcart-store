@@ -2,19 +2,24 @@ import { NextResponse } from "next/server";
 import axios from "axios";
 import { Category } from "@/store/types/categoryTypes";
 
-const BASE_URL = "http://localhost:5000/api/categories";
+const BASE_URL = `${process.env.SERVER_URL}/categories`;
 
-// Utility function to create category tree
-const createCategoryTree = (categories: Category[]) => {
-  const categoryMap: Record<string, any> = {};
-  const tree: Record<string, any>[] = [];
+interface CategoryTreeNode {
+  _id: string;
+  name: string;
+  slug: string;
+  parentCategory?: string | null;
+  subCategories: CategoryTreeNode[];
+}
 
-  // Map categories by ID and initialize subCategories
+const createCategoryTree = (categories: Category[]): CategoryTreeNode[] => {
+  const categoryMap: Record<string, CategoryTreeNode> = {};
+  const tree: CategoryTreeNode[] = [];
+
   categories.forEach((category) => {
     categoryMap[category._id] = { ...category, subCategories: [] };
   });
 
-  // Build tree structure
   categories.forEach((category) => {
     if (category.parentCategory) {
       const parent = categoryMap[category.parentCategory];

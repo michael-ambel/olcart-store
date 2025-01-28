@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useSearchProductsQuery } from "@/store/apiSlices/productApiSlice";
 import Card from "./Card";

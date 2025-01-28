@@ -38,8 +38,8 @@ export default function LoginPage() {
       setSuccess("Login successful!");
       setError(null);
       setFormData({ email: "", password: "" });
-    } catch (error: any) {
-      setError(error?.message || "Login failed");
+    } catch (error) {
+      setError((error as Error)?.message || "Login failed");
     } finally {
       setIsLoading(false);
     }

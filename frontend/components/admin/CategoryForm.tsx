@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { useAddCategoryMutation } from "@/store/apiSlices/categoryApiSlice";
-import { CreateCategoryRequest } from "@/store/types/categoryTypes";
 
 const CategoryForm: React.FC = () => {
   const [name, setName] = useState<string>("");
@@ -107,7 +106,7 @@ const CategoryForm: React.FC = () => {
 
       {error && (
         <div className="text-red-500 text-sm mt-2">
-          {(error as any).message}
+          {(error as Error).message}
         </div>
       )}
     </form>

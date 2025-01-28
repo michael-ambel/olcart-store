@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
 
-const BASE_URL = "http://localhost:5000/api/users/logout";
+const BASE_URL = `${process.env.SERVER_URL}/users/logout`;
 
-export async function POST(req: Request) {
+export async function POST() {
   try {
     const resp = await axios.post(BASE_URL, null, { withCredentials: true });
     const token = resp.headers["set-cookie"];

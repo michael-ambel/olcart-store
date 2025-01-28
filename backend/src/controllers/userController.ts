@@ -22,9 +22,13 @@ export const registerUser: RequestHandler = async (req, res) => {
 
     const user = await User.create({ name, email, password, role });
 
-    const token = jwt.sign({ _id: user._id, role: user.role }, JWT_SECRET, {
-      expiresIn: maxAge,
-    });
+    const token = jwt.sign(
+      { _id: user._id, name: user.name, role: user.role },
+      JWT_SECRET,
+      {
+        expiresIn: maxAge,
+      }
+    );
 
     res
       .cookie("jwt", token, {
@@ -59,9 +63,13 @@ export const loginUser: RequestHandler = async (req, res) => {
       return;
     }
 
-    const token = jwt.sign({ _id: user._id, role: user.role }, JWT_SECRET, {
-      expiresIn: maxAge,
-    });
+    const token = jwt.sign(
+      { _id: user._id, name: user.name, role: user.role },
+      JWT_SECRET,
+      {
+        expiresIn: maxAge,
+      }
+    );
 
     res
       .cookie("jwt", token, {

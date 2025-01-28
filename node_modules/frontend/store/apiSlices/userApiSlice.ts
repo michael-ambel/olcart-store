@@ -6,14 +6,16 @@ import {
   CartResp,
 } from "../types/userTypes";
 
+const url = `${process.env.NEXT_PUBLIC_API_URL}/api/users`;
+
 export const userApiSlice = createApi({
   reducerPath: "userApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/api/users" }),
+  baseQuery: fetchBaseQuery({ baseUrl: url }),
   tagTypes: ["Users", "Cart"],
 
   endpoints: (builder) => ({
     // Register user
-    registerUser: builder.mutation<IUser, Partial<IUser>>({
+    registerUser: builder.mutation<{ user: IUser }, Partial<IUser>>({
       query: (user) => ({
         url: "/register",
         method: "POST",
@@ -22,7 +24,10 @@ export const userApiSlice = createApi({
     }),
 
     // Login user
-    loginUser: builder.mutation<IUser, { email: string; password: string }>({
+    loginUser: builder.mutation<
+      { user: IUser },
+      { email: string; password: string }
+    >({
       query: (credentials) => ({
         url: "/login",
         method: "POST",
