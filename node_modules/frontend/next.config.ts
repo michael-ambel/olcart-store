@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: false,
   images: {
-    domains: ["localhost", "res.cloudinary.com"],
+    domains: ["res.cloudinary.com", "olcart-store.onrender.com"],
   },
 };
 

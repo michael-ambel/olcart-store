@@ -17,9 +17,12 @@ dotenv.config();
 const app = express();
 
 // Middleware
+
+const url = process.env.CLIENT_URL;
+
 app.use(
   cors({
-    origin: ["https://olcart.store", "http://localhost:3000"], // Allow your frontend
+    origin: url,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   })
