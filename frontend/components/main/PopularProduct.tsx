@@ -14,7 +14,7 @@ const PopularProduct: FC = () => {
   const [popUp, setPopUp] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const scrollSpeed = 2.4;
+  const scrollSpeed = 1.4;
   const wheelSpeed = 0.8;
   const itemWidth = 210;
   const resetThreshold = itemWidth * products.length;

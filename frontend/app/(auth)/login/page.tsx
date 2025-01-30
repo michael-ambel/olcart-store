@@ -6,7 +6,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/store/slices/userSlice";
-import LogoutButton from "@/components/main/LogoutButton";
+import { showToast } from "@/components/ToastNotifications";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -16,6 +17,7 @@ export default function LoginPage() {
 
   const [loginUser] = useLoginUserMutation();
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -38,6 +40,12 @@ export default function LoginPage() {
       setSuccess("Login successful!");
       setError(null);
       setFormData({ email: "", password: "" });
+
+      showToast("success", "🎉 Look who's back! to shop? 🎉");
+
+      setTimeout(() => {
+        router.push("/");
+      }, 2000);
     } catch (error) {
       setError((error as Error)?.message || "Login failed");
     } finally {
@@ -46,7 +54,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-[440px] mx-auto px-[38px] py-[74px] mt-20 bg-bgs rounded-[10px]">
+    <div className="w-[440px] mx-auto px-[38px] py-[74px] mt-20  rounded-[10px]">
       <h1 className="text-2xl ml-[41px] font-bold mb-[30px]">Login</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col w-full gap-[22px]">
@@ -107,7 +115,6 @@ export default function LoginPage() {
           Register
         </Link>
       </p>
-      <LogoutButton />
     </div>
   );
 }
