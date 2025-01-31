@@ -13,6 +13,8 @@ export const categoryApiSlice = createApi({
   reducerPath: "categoryApi",
   baseQuery: fetchBaseQuery({
     baseUrl: url,
+    credentials: "include",
+    mode: "cors",
   }),
   tagTypes: ["Category"],
 

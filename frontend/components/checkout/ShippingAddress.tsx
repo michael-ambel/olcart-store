@@ -138,41 +138,49 @@ const ShippingAddress = () => {
         {addresses.map((address: IShippingAddress) => (
           <div
             key={address._id}
-            className={`relative flex flex-col justify-between text-[15px] gap-1 p-4 mb-2 w-[320px] border-[1.5px] rounded-[8px] bg-bgt border-bg`}
+            className={`relative flex flex-col justify-between text-[14px] gap-1 p-4 mb-2 w-[360px] border-[1.5px] rounded-[8px] bg-bl/10 border-bg`}
           >
             <label className="flex  items-center">
               <input
                 type="checkbox"
+                className={`absolute right-[18px] top-[16px] h-[22px] w-[22px] appearance-none rounded-md border-2 border-bl cursor-pointer focus:outline-none 
+    flex items-center justify-center
+ 
+    ${
+      selectedAddress?._id === address?._id || false
+        ? "after:content-['✔'] after:absolute after:right-0 after:font-bold after:text-[18px] after:text-mo after:pointer-events-none after:h-full after:w-full after:flex after:items-center after:justify-center"
+        : ""
+    }`}
                 checked={selectedAddress?._id === address?._id || false}
                 onChange={() => handleSelectAddress(address)}
-                className="absolute flex right-4 top-4 w-[20px] h-[20px] rounded-[4px] border-[1.5px] border-mo  appearance-none   cursor-pointer transition-all duration-300 checked:before:content-['✔'] text-[20px] items-center"
               />
+
               <div className="flex flex-col gap-2 w-full text-mb">
-                <p className="bg-bgs mr-[34px]">
+                <p className="bg-bg mr-[34px] p-2 rounded-[10px]">
                   Name:
                   <span className="text-bl font-semibold"> {address.name}</span>
                 </p>
-                <p className="bg-bgs ">
-                  StreetAddress:{" "}
+                <p className="bg-bg  p-2 rounded-[10px]">
+                  Street:{" "}
                   <span className="text-bl font-semibold">
                     {address.address}
                   </span>{" "}
                 </p>
-                <p className="bg-bgs">
+                <p className="bg-bg  p-2 rounded-[10px]">
                   City:{" "}
                   <span className="text-bl font-semibold"> {address.city}</span>
                 </p>
-                <p className="bg-bgs">
+                <p className="bg-bg  p-2 rounded-[10px]">
                   Postal code:{" "}
                   <span className="text-bl font-semibold">
                     {address.postalCode}
                   </span>
                 </p>
-                <p className="bg-bgs">
+                <p className="bg-bg  p-2 rounded-[10px]">
                   State:{" "}
                   <span className="text-bl font-semibold"> {address.city}</span>
                 </p>
-                <p className="bg-bgs">
+                <p className="bg-bg  p-2 rounded-[10px]">
                   Phone number:{" "}
                   <span className="text-bl font-semibold">{address.phone}</span>
                 </p>
@@ -185,7 +193,7 @@ const ShippingAddress = () => {
               </p>
               <div className="flex justify-between w-[150px]">
                 <button
-                  className="px-4 py-1 border-[1px] border-fade text-mg rounded-full"
+                  className="px-4 py-1 border-[1px] border-bl font-semibold text-mg rounded-full"
                   onClick={() => handleOpenModal(true, address)}
                   disabled={
                     loadingState[address._id ?? ""] === "updating" ||
@@ -198,7 +206,7 @@ const ShippingAddress = () => {
                     : "Edit"}
                 </button>
                 <button
-                  className="px-3 py-1 border-[1px] border-fade text-mo  rounded-full"
+                  className="px-3 py-1 border-[1px] border-bl font-semibold text-mo  rounded-full"
                   onClick={() =>
                     address._id && handleDeleteAddress(address._id)
                   }

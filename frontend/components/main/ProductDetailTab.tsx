@@ -206,7 +206,7 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
                       alt={`Star ${star}`}
                       width={500}
                       height={500}
-                      className="w-[30px]"
+                      className="w-[26px]"
                     />
                   </button>
                 );

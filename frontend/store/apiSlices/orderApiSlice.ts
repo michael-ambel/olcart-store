@@ -6,7 +6,11 @@ const url = `${process.env.NEXT_PUBLIC_API_URL}/api/orders`;
 
 export const orderApiSlice = createApi({
   reducerPath: "orderApi",
-  baseQuery: fetchBaseQuery({ baseUrl: url }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: url,
+    credentials: "include",
+    mode: "cors",
+  }),
   tagTypes: ["Orders"],
 
   endpoints: (builder) => ({

@@ -3,117 +3,134 @@
 import { FC, useState, useEffect } from "react";
 import Card from "./Card";
 import { useGetUserFeedQuery } from "@/store/apiSlices/productApiSlice";
-import CardSkeleton from "./CardSkeleton";
+import { CardSkeleton } from "./CardSkeleton";
 
 const YourFeed: FC = () => {
-  // Pagination states
   const [page, setPage] = useState(1);
-  const [limit] = useState(15); // Items per page
-  const [isNextLoading, setIsNextLoading] = useState(false); // Loading state for next button
-  const [isPreviousLoading, setIsPreviousLoading] = useState(false); // Loading state for previous button
+  const [limit] = useState(15);
+  const [isNextLoading, setIsNextLoading] = useState(false);
+  const [isPreviousLoading, setIsPreviousLoading] = useState(false);
 
   const { data, isLoading, error } = useGetUserFeedQuery({ page, limit });
 
-  // Handle "Next" button click
   const handleNextPage = () => {
     if (
       data?.pagination?.page &&
-      data?.pagination?.page < (data?.pagination?.totalPages || 0)
+      data.pagination.page < (data.pagination.totalPages || 0)
     ) {
-      setIsNextLoading(true); // Set loading state for next button
-      setPage((prevPage) => prevPage + 1);
+      setIsNextLoading(true);
+      setPage((prev) => prev + 1);
     }
   };
 
-  // Handle "Previous" button click
   const handlePreviousPage = () => {
-    if (data?.pagination?.page && data?.pagination?.page > 1) {
-      setIsPreviousLoading(true); // Set loading state for previous button
-      setPage((prevPage) => prevPage - 1);
+    if (data?.pagination?.page && data.pagination.page > 1) {
+      setIsPreviousLoading(true);
+      setPage((prev) => prev - 1);
     }
   };
 
-  // Use useEffect to reset the loading states when data is fetched
   useEffect(() => {
     if (!isLoading && data) {
-      setIsNextLoading(false); // Reset next button loading state
-      setIsPreviousLoading(false); // Reset previous button loading state
+      setIsNextLoading(false);
+      setIsPreviousLoading(false);
     }
-  }, [isLoading, data]); // Depend on isLoading and data
+  }, [isLoading, data]);
 
   return (
-    <div className="flex w-full my-[40px] min-h-[400px]">
-      <div className="flex flex-col min-h-vh w-full mx-[40px] px-[20px] pt-[20px] bg-bgt rounded-[20px]">
-        <h2 className="text-[24px] font-bold">Your Feed...</h2>
-        <div className="grid grid-cols-5 items-center justify-center gap-[36px] w-full my-[30px]">
+    <div className="w-full my-10 min-h-[400px] px-4">
+      <div className="flex flex-col w-full mx-auto bg-white rounded-3xl shadow-xl p-6">
+        <div className="flex items-center justify-between mb-[40px]">
+          <h2 className="text-[24px] font-bold ">Personalized Feed</h2>
+        </div>
+
+        {/* Product Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 w-full mb-8">
           {isLoading ? (
             Array.from({ length: 15 }).map((_, index) => (
               <CardSkeleton key={index} />
             ))
           ) : error ? (
-            <div>Error loading products.</div>
+            <div className="col-span-full flex flex-col items-center justify-center py-12">
+              <div className="text-6xl mb-4">😢</div>
+              <p className="text-gray-600 text-lg">Failed to load products</p>
+              <p className="text-sm text-gray-400 mt-2">
+                Please try again later
+              </p>
+            </div>
           ) : (
-            data && (
-              <>
-                {data.products.map((product) => (
-                  <Card key={product._id} product={product} />
-                ))}
-              </>
-            )
+            data?.products.map((product) => (
+              <Card key={product._id} product={product} />
+            ))
           )}
         </div>
 
-        <div className="flex justify-between items-center pb-[60px] pt-[30px] px-[10px]">
+        {/* Pagination */}
+        <div className="flex justify-between items-center py-6 border-t border-gray-100">
           <button
             onClick={handlePreviousPage}
             disabled={
-              isLoading ||
               isPreviousLoading ||
-              !(data?.pagination?.page && data?.pagination?.page > 1)
+              isLoading ||
+              !(data?.pagination?.page && data.pagination.page > 1)
             }
-            className={`w-[100px] py-1 rounded-[2px] ${
-              isLoading ||
+            className={`flex items-center px-6 py-2 rounded-full transition-all ${
               isPreviousLoading ||
-              !(data?.pagination?.page && data?.pagination?.page > 1)
-                ? "bg-fade  text-white "
-                : "bg-mo text-white"
+              isLoading ||
+              !(data?.pagination?.page && data.pagination.page > 1)
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-mo/10 hover:bg-mo/20 text-mo"
             }`}
           >
-            {isPreviousLoading || isLoading ? (
-              <span className="animate-spin">Loading...</span> // Spinner animation for previous button
+            {isPreviousLoading ? (
+              <>
+                <span className="w-4 h-4 border-2 border-mo border-t-transparent rounded-full animate-spin mr-2" />
+                Loading...
+              </>
             ) : (
               "Previous"
             )}
           </button>
-          <span>
-            Page {data?.pagination?.page || 0} of{" "}
-            {data?.pagination?.totalPages || 0}
-          </span>
+
+          <div className="flex items-center space-x-4">
+            <span className="text-sm text-gray-500">
+              Page{" "}
+              <span className="font-semibold text-mo">
+                {data?.pagination?.page || 0}
+              </span>{" "}
+              of{" "}
+              <span className="font-semibold text-mg">
+                {data?.pagination?.totalPages || 0}
+              </span>
+            </span>
+          </div>
+
           <button
             onClick={handleNextPage}
             disabled={
-              isLoading ||
               isNextLoading ||
+              isLoading ||
               !(
                 data?.pagination?.page &&
-                data?.pagination?.totalPages &&
-                data.pagination.page < data.pagination.totalPages
+                data.pagination.page < (data.pagination.totalPages || 0)
               )
             }
-            className={`w-[100px] py-1 rounded-[2px] ${
-              isLoading ||
+            className={`flex items-center px-6 py-2 rounded-full transition-all ${
               isNextLoading ||
+              isLoading ||
               !(
                 data?.pagination?.page &&
-                data?.pagination?.totalPages &&
-                data.pagination.page < data.pagination.totalPages
+                data.pagination.page < (data.pagination.totalPages || 0)
               )
-                ? "bg-mo  text-white"
-                : "bg-mo text-white"
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-mg/10 hover:bg-mg/20 text-mg"
             }`}
           >
-            {isNextLoading || isLoading ? (
-              <span className="animate-spin">Loading...</span> // Spinner animation for next button
+            {isNextLoading ? (
+              <>
+                <span className="w-4 h-4 border-2 border-mg border-t-transparent rounded-full animate-spin mr-2" />
+                Loading...
+              </>
             ) : (
               "Next"
             )}

@@ -17,11 +17,9 @@ interface CardProp {
 
 const CardTopSelling: FC<CardProp> = ({ product }) => {
   const dispatch = useDispatch();
-  const [updateCartMutation, { isLoading }] = useUpdateCartMutation();
-  const [updateCartedItem, { isLoading: cartedIsLoading }] =
-    useUpdateCartedItemMutation();
-
-  const [buttonAnimation, setButtonAnimation] = useState(false); // State for button animation
+  const [updateCartMutation] = useUpdateCartMutation();
+  const [updateCartedItem] = useUpdateCartedItemMutation();
+  const [buttonAnimation, setButtonAnimation] = useState(false);
 
   const addCartHandler = async () => {
     try {
@@ -32,65 +30,69 @@ const CardTopSelling: FC<CardProp> = ({ product }) => {
       }).unwrap();
 
       dispatch(updateCart(updatedCart.cart));
-
-      await updateCartedItem({
-        _id: product._id,
-        quantity: 1,
-      });
-
+      await updateCartedItem({ _id: product._id, quantity: 1 });
       showToast("success", `${updatedCart.message}`);
-    } catch (error) {
-      if (error) {
-        showToast("error", "Failed to Cart!");
-      }
+    } catch {
+      showToast("error", "Failed to Cart!");
     } finally {
-      setButtonAnimation(false); // Stop animation after the process completes
+      setButtonAnimation(false);
     }
   };
 
   return (
-    <div className="flex flex-col group w-[210px] p-[20px] h-auto text-[14px] text-mg font-semibold">
-      <div className="relative flex items-center justify-center w-[170px] h-[170px] bg-bgt rounded-[12px]">
-        <div className="relative flex items-center justify-center w-[170px] h-[170px] hover:cursor-pointer">
-          <Link href={`/product/${product._id}`}>
-            <Image
-              src={
-                product.images && product.images.length > 0
-                  ? `${product.images[0]}`
-                  : ""
-              }
-              alt={product.name || "Product"}
-              layout="fill"
-              objectFit="contain"
-              className=""
-            />
-          </Link>
-        </div>
+    <div className="group relative w-[200px] p-4 h-[240px]  rounded-2xl  transition-all duration-500 hover:-translate-y-2">
+      {/* Product Image Container */}
+      <div className="relative w-full h-[160px] bg-white rounded-xl overflow-hidden">
+        <Link href={`/product/${product._id}`} className="block w-full h-full">
+          <Image
+            src={
+              typeof product.images?.[0] === "string"
+                ? product.images[0]
+                : "/placeholder-product.jpg"
+            }
+            alt={product.name || "Product"}
+            fill
+            className="object-contain scale-90 group-hover:scale-100 transition-transform duration-500"
+          />
+        </Link>
 
+        {/* Add to Cart Button */}
         <button
           onClick={addCartHandler}
-          disabled={isLoading || cartedIsLoading} // Disable button during loading
-          className="absolute bottom-[6px] right-[10px] transition-transform duration-400 "
+          className="absolute bottom-2 right-2 p-1.5 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:scale-110"
         >
           {buttonAnimation ? (
-            <div className="w-[30px] h-[30px] border-[6px] border-fade border-t-mo rounded-full animate-spin"></div>
+            <div className="w-6 h-6 border-[3px] border-gray-200 border-t-mo rounded-full animate-spin" />
           ) : (
-            <Image
-              src="./icons/addcart.svg"
-              alt="Add to Cart"
-              width={30}
-              height={30}
-              className="w-[30px] hidden group-hover:block"
-            />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-6 h-6 text-mo hover:text-mg transition-colors"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+              />
+            </svg>
           )}
         </button>
       </div>
 
-      <p className="my-[6px]">
-        {product.name && product.name.length > 20
-          ? `${product.name.slice(0, 16)}...`
-          : product.name || ""}
-      </p>
+      {/* Product Name with Gradient Text */}
+      <div className="mt-3 text-center">
+        <h3 className="font-bold text-gray-900 text-sm truncate bg-mg bg-clip-text text-transparent">
+          {product.name || ""}
+        </h3>
+      </div>
+
+      {/* Hover Glow Effect */}
+      <div className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute -inset-[0px] bg-gradient-to-br from-mo/20 to-mg/20 rounded-2xl blur-md"></div>
+      </div>
     </div>
   );
 };

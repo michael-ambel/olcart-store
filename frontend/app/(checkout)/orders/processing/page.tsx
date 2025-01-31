@@ -121,8 +121,8 @@ const ProcessingOrders: React.FC = () => {
         cart={true}
         shippingInfo={true}
         paymentMethod={true}
-        placeOrder={true}
-        success={false}
+        processing={true}
+        processed={false}
       />
       <div className="flex flex-col justify-start mx-[84px]  mt-[120px]">
         <div className="flex justify-between">

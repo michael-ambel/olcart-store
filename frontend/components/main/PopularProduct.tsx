@@ -14,7 +14,7 @@ const PopularProduct: FC = () => {
   const [popUp, setPopUp] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const scrollSpeed = 1.4;
+  const scrollSpeed = 1;
   const wheelSpeed = 0.8;
   const itemWidth = 210;
   const resetThreshold = itemWidth * products.length;
@@ -89,13 +89,13 @@ const PopularProduct: FC = () => {
       <h2 className="text-[24px] ml-[40px] font-bold">Top-Selling Items</h2>
       <div
         ref={containerRef}
-        className="flex w-full justify-between overflow-x-hidden"
+        className="flex w-full justify-between "
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
         {/* Popup message for user instruction */}
         {popUp && (
-          <div className="absolute z-50 top-0 right-[40px] py-[10px] px-[20px] text-bg bg-mg w-auto h-auto rounded-full">
+          <div className="absolute z-40 top-0 right-[40px] py-[10px] px-[20px] text-bg bg-mg w-auto h-auto rounded-full">
             Use scroll
           </div>
         )}

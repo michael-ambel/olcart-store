@@ -5,16 +5,16 @@ interface Progress {
   cart: boolean;
   shippingInfo: boolean;
   paymentMethod: boolean;
-  placeOrder: boolean;
-  success: boolean;
+  processing: boolean;
+  processed: boolean;
 }
 
 const CheckOutProgress = ({
   cart,
   shippingInfo,
   paymentMethod,
-  placeOrder,
-  success,
+  processing,
+  processed,
 }: Progress) => {
   return (
     <div className="fixed top-[0px] z-20 flex  w-full justify-around items-center h-[100px] bg-bgs">
@@ -42,14 +42,14 @@ const CheckOutProgress = ({
         Payment
       </Link>
       <Link
-        href="orders/processing"
-        className={`${placeOrder === true ? "text-bl" : "text-fade"} px-[10px]`}
+        href="/orders/processing"
+        className={`${processing === true ? "text-bl" : "text-fade"} px-[10px]`}
       >
         Processing
       </Link>
       <Link
-        href="orders/processed"
-        className={`${success === true ? "text-bl" : "text-fade"} px-[10px]`}
+        href="/orders/processed"
+        className={`${processed === true ? "text-bl" : "text-fade"} px-[10px]`}
       >
         Processed
       </Link>

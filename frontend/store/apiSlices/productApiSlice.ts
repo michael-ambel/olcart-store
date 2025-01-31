@@ -8,6 +8,7 @@ export const productApiSlice = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: url,
     credentials: "include",
+    mode: "cors",
   }),
   tagTypes: ["Product", "Carted"],
 

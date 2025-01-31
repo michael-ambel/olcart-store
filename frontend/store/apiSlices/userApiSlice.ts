@@ -10,7 +10,11 @@ const url = `${process.env.NEXT_PUBLIC_API_URL}/api/users`;
 
 export const userApiSlice = createApi({
   reducerPath: "userApi",
-  baseQuery: fetchBaseQuery({ baseUrl: url }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: url,
+    credentials: "include",
+    mode: "cors",
+  }),
   tagTypes: ["Users", "Cart"],
 
   endpoints: (builder) => ({

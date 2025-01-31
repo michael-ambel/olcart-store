@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+
 import {
   useGetUserOrdersQuery,
   useCreatePaymentSessionMutation,
@@ -8,7 +9,7 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { showToast } from "../ToastNotifications";
-import { IPaymentOrder, IOrder } from "@/store/types/orderTypes"; // Import both types
+import { IPaymentOrder, IOrder } from "@/store/types/orderTypes";
 
 export default function PaymentPage() {
   const [selectedOrders, setSelectedOrders] = useState<IPaymentOrder[]>([]);
@@ -31,7 +32,7 @@ export default function PaymentPage() {
 
   const handleOrderSelect = (order: IPaymentOrder) => {
     setSelectedOrders((prev) =>
-      prev.includes(order)
+      prev.some((o) => o._id === order._id)
         ? prev.filter((o) => o._id !== order._id)
         : [...prev, order]
     );
@@ -109,12 +110,11 @@ export default function PaymentPage() {
         <div className="space-y-6 ml-[20px] mr-[460px]">
           <h1 className="text-xl font-bold mb-6 text-center">Order Summary</h1>
           {orders?.map((order: IOrder) => {
-            // Map IOrder to IPaymentOrder
             const paymentOrder: IPaymentOrder = {
               ...order,
-              _id: order._id || "", // Ensure _id is a string, provide a fallback if undefined
-              shippingPrice: 10, // Example shipping price (replace with actual logic)
-              paymentStatus: "Pending", // Example payment status
+              _id: order._id || "",
+              shippingPrice: 10,
+              paymentStatus: "Pending",
               status: order.status || "Pending", // Ensure status exists with a fallback
             };
 
@@ -128,8 +128,17 @@ export default function PaymentPage() {
                 <div className="flex items-center space-x-4 mb-4">
                   <input
                     type="checkbox"
-                    className="absolute flex right-[30px] w-[20px] h-[20px] rounded-[4px] border-[1.5px] border-bl text-mo appearance-none cursor-pointer transition-all duration-300 checked:before:content-['✔'] text-[20px] items-center"
-                    checked={selectedOrders.includes(paymentOrder)}
+                    className={`absolute right-[30px] h-[22px] w-[22px] appearance-none rounded-md border-2 border-bl cursor-pointer focus:outline-none 
+    flex items-center justify-center
+ 
+    ${
+      selectedOrders.some((o) => o._id === paymentOrder._id)
+        ? "after:content-['✔'] after:absolute after:right-0 after:font-bold after:text-[18px] after:text-mo after:pointer-events-none after:h-full after:w-full after:flex after:items-center after:justify-center"
+        : ""
+    }`}
+                    checked={selectedOrders.some(
+                      (o) => o._id === paymentOrder._id
+                    )}
                     onChange={() => handleOrderSelect(paymentOrder)}
                   />
                   <h2 className="text-lg font-semibold">

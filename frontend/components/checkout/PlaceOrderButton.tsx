@@ -2,6 +2,7 @@ import { usePlaceOrderMutation } from "@/store/apiSlices/orderApiSlice";
 import { RootState } from "@/store/store";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
+import { showToast } from "../ToastNotifications";
 
 const PlaceOrderButton = () => {
   const [placeOrder] = usePlaceOrderMutation();
@@ -12,11 +13,11 @@ const PlaceOrderButton = () => {
   const handlePlaceOrder = async () => {
     const { currentItems, currentAddress } = currentOrder;
     if (!currentItems || currentItems.length === 0) {
-      alert("Cart is empty!");
+      showToast("error", "No Selected Cart/Cart is empty!");
       return;
     }
     if (!currentAddress) {
-      alert("Please provide a shipping address.");
+      showToast("success", "Please provide a shipping address.");
       return;
     }
 

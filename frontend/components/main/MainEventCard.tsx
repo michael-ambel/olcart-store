@@ -4,6 +4,7 @@ import Image from "next/image";
 import { FC, useEffect, useState } from "react";
 import { events } from "../data";
 import { motion } from "framer-motion";
+import { showToast } from "../ToastNotifications";
 
 const MainCard: FC = () => {
   const [currentEvent, setCurrentEvent] = useState(0);
@@ -15,6 +16,10 @@ const MainCard: FC = () => {
 
     return () => clearInterval(interval);
   }, []);
+
+  const handleComingSoon = () => {
+    showToast("success", "Get Ready, It’s Almost Here! 🎉");
+  };
 
   const fadeIn = {
     initial: { opacity: 0 },
@@ -62,7 +67,8 @@ const MainCard: FC = () => {
               <h2 className="text-[24px] font-bold ">{event.title}</h2>
               <p className="text-[18px] ">{event.description}</p>
               <button
-                className={`w-[120px] h-[52px]  rounded-full ${event.buttonStyle}`}
+                onClick={handleComingSoon}
+                className={`w-[120px] h-[47px] rounded-full  font-semibold hover:bg-opacity-90 transition-all duration-300 hover:shadow-[0_0_15px_5px_rgba(255,255,255,0.5)] ${event.buttonStyle}`}
               >
                 Shop
               </button>

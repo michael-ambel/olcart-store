@@ -9,8 +9,8 @@ export default function Home() {
           cart={true}
           shippingInfo={true}
           paymentMethod={true}
-          placeOrder={false}
-          success={false}
+          processing={false}
+          processed={false}
         />
         <PaymentPage />
       </main>
