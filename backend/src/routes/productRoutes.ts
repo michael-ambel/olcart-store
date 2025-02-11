@@ -31,7 +31,7 @@ router.post(
   handleQuestionAndFeedback
 );
 router.get("/topselling-rated", getTopSellingAndTopRatedProducts);
-router.get("/userfeed", protectCustomer, getUserFeed);
+router.get("/userfeed", getUserFeed);
 router.patch("/carted", protectCustomer, updateCartedItem);
 router.post("/cart", protectCustomer, getProductsByIds);
 router.get("/:id", getProduct);

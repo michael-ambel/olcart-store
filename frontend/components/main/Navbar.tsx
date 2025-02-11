@@ -2,7 +2,7 @@
 
 import { ChangeEvent, FC, FormEvent, useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../../store/store";
+import { RootState } from "@/store/store";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -13,6 +13,7 @@ import { useLogoutUserMutation } from "@/store/apiSlices/userApiSlice";
 import { clearUser } from "@/store/slices/userSlice";
 import { Menu, X } from "lucide-react";
 import SliderMenu from "./SliderMenu";
+import { showToast } from "../ToastNotifications";
 
 const Navbar: FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,12 +31,21 @@ const Navbar: FC = () => {
   const logout = async () => {
     try {
       await logoutUser().unwrap();
+      setIsMenuOpen(false);
       dispatch(clearUser());
       localStorage.removeItem("user");
-      setIsMenuOpen(false);
+      showToast("success", "Logged out successfully");
       router.refresh();
-    } catch (err) {
-      console.error("Logout failed:", err);
+    } catch {
+      showToast("error", "Logout failed");
+    }
+  };
+
+  const cartBtnHandler = () => {
+    if (user) {
+      router.push("/cart");
+    } else {
+      showToast("error", "Please login to view cart!");
     }
   };
 
@@ -112,7 +122,7 @@ const Navbar: FC = () => {
 
         {/* Cart and Menu */}
         <div className="flex justify-between items-center ml-[100px] w-[380px] pb-[10px]">
-          <Link href="/cart">
+          <button onClick={cartBtnHandler}>
             <div className="relative w-[50px] h-[36px] hover:scale-110 transition-transform duration-300">
               <Image
                 src="/icons/cart.svg"
@@ -125,7 +135,7 @@ const Navbar: FC = () => {
                 {cart}
               </span>
             </div>
-          </Link>
+          </button>
 
           <Link href="/notifications">
             <div className="relative w-[44px] h-[36px] hover:scale-110 transition-transform duration-300">
@@ -159,6 +169,15 @@ const Navbar: FC = () => {
                 <Menu className="w-[34px] h-[30px] text-mo" />
               )}
             </button>
+
+            {!user && (
+              <button
+                onClick={() => router.push("/login")}
+                className="text-mo font-semibold"
+              >
+                Log In
+              </button>
+            )}
 
             <SliderMenu
               isOpen={isMenuOpen}

@@ -15,11 +15,11 @@ const PlaceOrderButton = () => {
   const handlePlaceOrder = async () => {
     const { currentItems, currentAddress } = currentOrder;
     if (!currentItems || currentItems.length === 0) {
-      showToast("error", "No Selected Cart/Cart is empty!");
+      showToast("error", "No items in cart!");
       return;
     }
     if (!currentAddress) {
-      showToast("success", "Please provide a shipping address.");
+      showToast("error", "No Shipping Address added!");
       return;
     }
 
@@ -33,7 +33,7 @@ const PlaceOrderButton = () => {
       showToast("success", "Order placed successfully!");
       setTimeout(() => router.push("/payment-method"), 2000);
     } catch {
-      showToast("error", "Failed to place order:");
+      showToast("error", "Failed to place order!");
     }
   };
   return (

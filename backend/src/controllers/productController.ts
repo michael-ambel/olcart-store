@@ -293,76 +293,56 @@ export const searchProducts: RequestHandler = async (req, res) => {
   }
 };
 
-//Fetch user feed considering preferences
+// Fetch user feed considering preferences or general feed
 export const getUserFeed: RequestHandler = async (req, res) => {
   try {
     const userId = req.user?._id;
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
 
-    // Fetch user preferences
-    const user = await User.findById(userId);
-    if (!user) {
-      res.status(404).json({ success: false, message: "User not found" });
-      return;
+    let filters = {};
+
+    if (userId) {
+      // Fetch user preferences
+      const user = await User.findById(userId);
+      const preferences = user?.preferences || [];
+
+      if (preferences.length > 0) {
+        // Convert preferences to ObjectId where applicable
+        const preferenceObjectIds = preferences.map((p) =>
+          mongoose.Types.ObjectId.isValid(p)
+            ? new mongoose.Types.ObjectId(p)
+            : p
+        );
+
+        // Apply filters based on user preferences
+        filters = {
+          $or: [
+            { tags: { $in: preferences } },
+            { category: { $in: preferenceObjectIds } },
+          ],
+        };
+      }
     }
 
-    const { preferences } = user;
+    // Count total products matching the filters
+    const totalProducts = await Product.countDocuments(filters);
 
-    // Convert preferences to ObjectId where applicable
-    const preferenceObjectIds = preferences.map((p) =>
-      mongoose.Types.ObjectId.isValid(p) ? new mongoose.Types.ObjectId(p) : p
-    );
-
-    // Define filters for preference-based products
-    const preferenceFilters =
-      preferences.length > 0
-        ? {
-            $or: [
-              { tags: { $in: preferences } },
-              { category: { $in: preferenceObjectIds } },
-            ],
-          }
-        : {};
-
-    // Total preference-based product count
-    const totalPreferenceProducts = await Product.countDocuments(
-      preferenceFilters
-    );
-
-    // Pagination logic
-    const skip = (page - 1) * limit; // Global skip value
-    const preferenceSkip = Math.min(skip, totalPreferenceProducts); // Skip within preference products
-    const preferenceLimit = Math.min(
-      limit,
-      totalPreferenceProducts - preferenceSkip
-    ); // Limit for preference products
-
-    // Fetch preference-based products
-    const preferenceProducts =
-      preferenceLimit > 0
-        ? await Product.find(preferenceFilters)
-            .sort({
-              averageRating: -1,
-              salesCount: -1,
-              reviewCount: -1,
-              _id: 1, // Secondary sort for consistent ordering
-            })
-            .skip(preferenceSkip)
-            .limit(preferenceLimit)
-        : [];
-
-    // Total product count (only preference products)
-    const total = totalPreferenceProducts;
+    // Fetch products based on filters (either preference-based or general)
+    const products = await Product.find(filters)
+      .sort({ averageRating: -1, salesCount: -1, reviewCount: -1, _id: 1 })
+      .skip(skip)
+      .limit(limit);
 
     res.status(200).json({
       success: true,
-      products: preferenceProducts,
+      products,
       pagination: {
-        total,
+        total: totalProducts,
         page,
         limit,
-        totalPages: Math.ceil(total / limit),
+        totalPages: Math.ceil(totalProducts / limit),
       },
     });
   } catch (error) {
@@ -372,7 +352,7 @@ export const getUserFeed: RequestHandler = async (req, res) => {
 
 //Get Top-Selling Products
 export const getTopSellingAndTopRatedProducts: RequestHandler = async (
-  req,
+  _req,
   res
 ) => {
   try {

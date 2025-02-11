@@ -43,7 +43,7 @@ const UserSchema: Schema<IUser> = new Schema(
         quantity: { type: Number, default: 1 },
         price: { type: Number, required: true },
         shippingPrice: { type: Number, required: true },
-        checked: { type: Boolean, default: true },
+        checked: { type: Boolean, default: false },
       },
     ],
     shippingAddresses: [

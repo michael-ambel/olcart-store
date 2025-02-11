@@ -98,7 +98,7 @@ export default function LoginPage() {
             type="submit"
             className={`w-[120px] h-[44px] ml-[41px] mt-[6px] rounded-full text-white ${
               isLoading
-                ? "bg-gray-500 cursor-not-allowed"
+                ? "bg-mg px-[10px] cursor-not-allowed"
                 : "bg-mo hover:bg-mo-light"
             }`}
             disabled={isLoading}

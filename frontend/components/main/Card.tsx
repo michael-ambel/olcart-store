@@ -2,7 +2,7 @@
 
 import { useUpdateCartMutation } from "@/store/apiSlices/userApiSlice";
 import { Product } from "@/store/types/productTypes";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateCart } from "@/store/slices/userSlice";
 import Image from "next/image";
 import { FC, useState } from "react";
@@ -10,6 +10,7 @@ import { CartResp } from "@/store/types/userTypes";
 import { useUpdateCartedItemMutation } from "@/store/apiSlices/productApiSlice";
 import { showToast } from "../ToastNotifications";
 import Link from "next/link";
+import { RootState } from "@/store/store";
 
 interface CardProp {
   product: Product;
@@ -26,9 +27,16 @@ const Card: FC<CardProp> = ({ product }) => {
 
   const [buttonAnimation, setButtonAnimation] = useState(false);
 
+  const user = useSelector((state: RootState) => state.user.user);
+
   const addCartHandler = async () => {
     try {
       setButtonAnimation(true);
+      if (!user) {
+        showToast("error", "Please login to add to cart!");
+        return;
+      }
+
       const updatedCart: CartResp = await updateCartMutation({
         _id: product._id,
         quantity: 1,
@@ -79,11 +87,11 @@ const Card: FC<CardProp> = ({ product }) => {
           hover:scale-110 active:scale-95 bg-white/90 backdrop-blur-sm rounded-full p-1.5"
         >
           {buttonAnimation ? (
-            <div className="w-[30px] h-[30px] border-[6px] border-fade border-t-mo rounded-full animate-spin" />
+            <div className="w-[30px] h-[30px] border-[5px] border-gray-200 border-t-mo rounded-full animate-spin" />
           ) : (
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="w-6 h-6 text-mo hover:text-mo/80 transition-colors"
+              className="w-6 h-6 text-mo hover:text-mg transition-colors"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"

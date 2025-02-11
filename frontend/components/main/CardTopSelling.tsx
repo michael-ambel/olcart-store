@@ -10,6 +10,8 @@ import { CartResp } from "@/store/types/userTypes";
 import { useUpdateCartedItemMutation } from "@/store/apiSlices/productApiSlice";
 import { showToast } from "../ToastNotifications";
 import Link from "next/link";
+import { RootState } from "@/store/store";
+import { useSelector } from "react-redux";
 
 interface CardProp {
   product: Partial<Product>;
@@ -21,9 +23,15 @@ const CardTopSelling: FC<CardProp> = ({ product }) => {
   const [updateCartedItem] = useUpdateCartedItemMutation();
   const [buttonAnimation, setButtonAnimation] = useState(false);
 
+  const user = useSelector((state: RootState) => state.user.user);
+
   const addCartHandler = async () => {
     try {
       setButtonAnimation(true);
+      if (!user) {
+        showToast("error", "Please login to add to cart!");
+        return;
+      }
       const updatedCart: CartResp = await updateCartMutation({
         _id: product._id,
         quantity: 1,
@@ -70,7 +78,7 @@ const CardTopSelling: FC<CardProp> = ({ product }) => {
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              strokeWidth="2"
+              strokeWidth="2.2"
             >
               <path
                 strokeLinecap="round"

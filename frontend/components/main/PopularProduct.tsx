@@ -16,7 +16,7 @@ const PopularProduct: FC = () => {
 
   const scrollSpeed = 1;
   const wheelSpeed = 0.8;
-  const itemWidth = 210;
+  const itemWidth = 200;
   const resetThreshold = itemWidth * products.length;
 
   const animationFrameRef = useRef<number | null>(null);
@@ -39,7 +39,7 @@ const PopularProduct: FC = () => {
       const scrollAmount = e.deltaY * wheelSpeed;
       setXOffset((prev) => prev - scrollAmount);
     },
-    [isHovered, wheelSpeed],
+    [isHovered, wheelSpeed]
   );
 
   const scrollAutomatically = useCallback(() => {

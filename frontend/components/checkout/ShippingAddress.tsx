@@ -30,7 +30,7 @@ const ShippingAddress = () => {
     useDeleteShippingAddressMutation();
 
   const selectedAddress = useSelector(
-    (state: RootState) => state.order.currentAddress,
+    (state: RootState) => state.order.currentAddress
   );
 
   const dispatch = useDispatch();
@@ -48,7 +48,7 @@ const ShippingAddress = () => {
     isDefault: false,
   });
   const [loadingState, setLoadingState] = useState<{ [key: string]: string }>(
-    {},
+    {}
   );
 
   // Set the first address default
@@ -66,7 +66,7 @@ const ShippingAddress = () => {
 
   const handleFormChange = (
     field: keyof IShippingAddress,
-    value: string | boolean,
+    value: string | boolean
   ) => {
     setAddressForm((prev) => ({ ...prev, [field]: value }));
   };
@@ -101,9 +101,11 @@ const ShippingAddress = () => {
           ...addressForm,
           _id: editingAddressId,
         }).unwrap();
+        showToast("success", "Address updated successfully");
       } else {
         setLoadingState((prev) => ({ ...prev, new: "adding" }));
         await addShippingAddress(addressForm).unwrap();
+        showToast("success", "Address added successfully");
       }
       setIsModalOpen(false);
       setEditingAddressId(null);

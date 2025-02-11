@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-
 import {
   useGetUserOrdersQuery,
   useCreatePaymentSessionMutation,
@@ -13,6 +12,9 @@ import { IPaymentOrder, IOrder } from "@/store/types/orderTypes";
 
 export default function PaymentPage() {
   const [selectedOrders, setSelectedOrders] = useState<IPaymentOrder[]>([]);
+  const [activePaymentMethod, setActivePaymentMethod] = useState<
+    "paypal" | "stripe" | null
+  >(null); // Track active payment method
   const [createPaymentSession, { isLoading: isPaying }] =
     useCreatePaymentSessionMutation();
 
@@ -34,7 +36,7 @@ export default function PaymentPage() {
     setSelectedOrders((prev) =>
       prev.some((o) => o._id === order._id)
         ? prev.filter((o) => o._id !== order._id)
-        : [...prev, order],
+        : [...prev, order]
     );
   };
 
@@ -44,7 +46,7 @@ export default function PaymentPage() {
         totalAmount: acc.totalAmount + order.totalAmount,
         shippingPrice: acc.shippingPrice + order.shippingPrice,
       }),
-      { totalAmount: 0, shippingPrice: 0 },
+      { totalAmount: 0, shippingPrice: 0 }
     );
   };
 
@@ -52,9 +54,10 @@ export default function PaymentPage() {
     try {
       if (selectedOrders.length === 0) {
         showToast("error", "Please select at least one order");
-
         return;
       }
+
+      setActivePaymentMethod(paymentMethod); // Set the active payment method
 
       const orderIds = selectedOrders?.map((order) => order._id);
 
@@ -72,9 +75,11 @@ export default function PaymentPage() {
       if (error) {
         showToast(
           "error",
-          "Failed to create payment session. Please try again.",
+          "Failed to create payment session. Please try again."
         );
       }
+    } finally {
+      setActivePaymentMethod(null); // Reset the active payment method
     }
   };
 
@@ -115,7 +120,7 @@ export default function PaymentPage() {
               _id: order._id || "",
               shippingPrice: 10,
               paymentStatus: "Pending",
-              status: order.status || "Pending", // Ensure status exists with a fallback
+              status: order.status || "Pending",
             };
 
             return (
@@ -137,7 +142,7 @@ export default function PaymentPage() {
         : ""
     }`}
                     checked={selectedOrders.some(
-                      (o) => o._id === paymentOrder._id,
+                      (o) => o._id === paymentOrder._id
                     )}
                     onChange={() => handleOrderSelect(paymentOrder)}
                   />
@@ -218,20 +223,74 @@ export default function PaymentPage() {
             </p>
             <p className="">Grand Total: ${calculateTotal().totalAmount}</p>
           </div>
+
           <div className="flex flex-col gap-4 text-bg text-[18px]">
+            {/* PayPal Button */}
             <button
-              disabled={isPaying}
+              disabled={isPaying && activePaymentMethod === "paypal"}
               onClick={() => handlePayment("paypal")}
-              className="pay-button w-full rounded-[8px] bg-blue-800 h-[44px]"
+              className="relative w-full rounded-xl bg-gradient-to-r from-[#003087] to-[#009cde] h-[52px] 
+      transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_4px_12px_rgba(0,156,222,0.4)] 
+      focus:ring-4 focus:ring-[#009cde]/50 focus:outline-none
+      active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Pay with PayPal
+              <div className="flex items-center justify-center gap-3">
+                {activePaymentMethod === "paypal" && isPaying ? (
+                  <>
+                    <div className="w-6 h-6 border-4 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span className="font-semibold tracking-wide pt-[1px] animate-pulse ml-[10px]">
+                      Processing...
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <Image
+                      src="/icons/paypal.svg"
+                      alt="PayPal"
+                      width={24}
+                      height={24}
+                      className="w-6 h-6"
+                    />
+                    <span className="font-semibold tracking-wide">
+                      Pay with PayPal
+                    </span>
+                  </>
+                )}
+              </div>
             </button>
+
+            {/* Stripe Button */}
             <button
-              disabled={isPaying}
+              disabled={isPaying && activePaymentMethod === "stripe"}
               onClick={() => handlePayment("stripe")}
-              className="pay-button w-full rounded-[8px] bg-mb h-[44px]"
+              className="relative w-full rounded-xl bg-gradient-to-r from-[#635bff] to-[#a259ff] h-[52px] 
+      transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_4px_12px_rgba(163,89,255,0.4)] 
+      focus:ring-4 focus:ring-[#a259ff]/50 focus:outline-none
+      active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Pay with Stripe
+              <div className="flex items-center justify-center gap-3">
+                {activePaymentMethod === "stripe" && isPaying ? (
+                  <>
+                    <div className="w-6 h-6 border-4 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span className="font-semibold tracking-wide pt-[1px] animate-pulse ml-[10px]">
+                      Processing...
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <Image
+                      src="/icons/stripe.svg"
+                      alt="Stripe"
+                      width={24}
+                      height={24}
+                      className="w-6 h-6"
+                    />
+                    <span className="font-semibold tracking-wide">
+                      Pay with Stripe
+                    </span>
+                  </>
+                )}
+              </div>
             </button>
           </div>
         </div>

@@ -21,7 +21,6 @@ export default {
         mo: "#E52F06",
         mb: "#13265C",
         mg: "#015724",
-        // mg: "#004813",
         bl: "#333333",
         mp: "#E52F06",
         shopp: "#FFD5CC",
@@ -29,7 +28,19 @@ export default {
         shopt: "#D6D6D6",
       },
       animation: {
-        "spin-slow": "spin 3s linear infinite", // Rotates infinitely
+        "spin-slow": "spin 3s linear infinite", // Existing animation
+        "fade-in-up": "fade-in-up 0.6s ease-out forwards", // New animation
+        float: "float 3s ease-in-out infinite", // New animation
+      },
+      keyframes: {
+        "fade-in-up": {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
       },
       fontFamily: {
         poetsen: ["var(--font-poetsen-one)", "sans-serif"],

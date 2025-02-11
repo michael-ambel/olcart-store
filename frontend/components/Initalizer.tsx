@@ -4,21 +4,25 @@ import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { userInitalizer, updateCart } from "@/store/slices/userSlice";
 import { useGetUserCartQuery } from "@/store/apiSlices/userApiSlice";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 const Initalizer = () => {
+  const user = useSelector((state: RootState) => state.user.user);
   const dispatch = useDispatch();
-
-  const { data } = useGetUserCartQuery();
+  const { data: userCart } = useGetUserCartQuery(undefined, {
+    skip: !user,
+  });
 
   useEffect(() => {
     dispatch(userInitalizer());
   }, [dispatch]);
 
   useEffect(() => {
-    if (data) {
-      dispatch(updateCart(data));
+    if (userCart) {
+      dispatch(updateCart(userCart));
     }
-  }, [data, dispatch]);
+  }, [userCart, dispatch]);
   return <div></div>;
 };
 
