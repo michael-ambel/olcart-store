@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import "./globals.css";
+import "./globals.css"; // Global CSS containing the font-face definitions
 import { ReduxProvider } from "@/store/Provider";
 import Initalizer from "@/components/Initalizer";
 import ToastNotifications from "@/components/ToastNotifications";
@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased font-poppins text-bl bg-bg">
+      <body className="font-poppins antialiased text-bl bg-bg">
         <ReduxProvider>
           <Initalizer />
           <ToastNotifications />

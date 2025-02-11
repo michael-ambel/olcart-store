@@ -1,6 +1,0 @@
-backend/.env
-frontend/.env
-.env
-node_modules
-backend/dist/
-frontend/.next

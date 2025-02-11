@@ -2,18 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import * as cookie from "cookie";
 
-const BASE_URL = `${process.env.SERVER_URL}/products`;
+const BASE_URL = `${process.env["SERVER_URL"]}/products`;
 
 //get all products
 export async function GET(req: NextRequest) {
   try {
     const cookies = cookie.parse(req.headers.get("cookie") || "");
-    const token = cookies.jwt;
+    const token = cookies["jwt"];
 
     if (!token) {
       return NextResponse.json(
         { message: "Authentication error: please log in again" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -37,12 +37,12 @@ export async function GET(req: NextRequest) {
 export async function POST(req: Request) {
   try {
     const cookies = cookie.parse(req.headers.get("cookie") || "");
-    const token = cookies.jwt;
+    const token = cookies["jwt"];
 
     if (!token) {
       return NextResponse.json(
         { message: "Authentication error: please log in again" },
-        { status: 401 }
+        { status: 401 },
       );
     }
     const contentType = req.headers.get("Content-Type");
@@ -77,7 +77,7 @@ export async function POST(req: Request) {
     } else {
       return NextResponse.json(
         { message: "Content type must be multipart/form-data" },
-        { status: 400 }
+        { status: 400 },
       );
     }
   } catch (error) {

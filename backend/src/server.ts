@@ -24,7 +24,7 @@ app.use(
     origin: url,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
+    credentials: true,
   })
 );
 app.post(

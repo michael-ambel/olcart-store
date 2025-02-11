@@ -143,8 +143,8 @@ export default function RegisterPage() {
             {isLoading
               ? "Registering..."
               : success
-              ? "Registered!"
-              : "Register"}
+                ? "Registered!"
+                : "Register"}
           </button>
           {error && <p className="text-red-600 ml-[16px]">{error}</p>}
           {success && <p className="text-green-600 ml-[16px]">{success}</p>}

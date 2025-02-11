@@ -8,7 +8,7 @@ import { setFilters } from "@/store/slices/productSlice";
 
 const SearchResultsDisplay: React.FC = () => {
   const { searchQuery, filters } = useSelector(
-    (state: RootState) => state.product
+    (state: RootState) => state.product,
   );
   const dispatch = useDispatch();
 

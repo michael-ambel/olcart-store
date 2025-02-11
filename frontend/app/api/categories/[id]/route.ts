@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
 
-const BASE_URL = `${process.env.SERVER_URL}/categories`;
+const BASE_URL = `${process.env["SERVER_URL"]}/categories`;
 
 //..update category
 export async function PUT(req: Request) {

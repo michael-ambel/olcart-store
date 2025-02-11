@@ -32,7 +32,7 @@ const CategroSelector: React.FC = () => {
     const updatedPath = selectedPath.slice(0, level);
     const category = findCategoryById(
       level === 0 ? categoriesData : selectedPath[level - 1]?.subCategories,
-      id
+      id,
     );
 
     if (category) {
@@ -52,7 +52,7 @@ const CategroSelector: React.FC = () => {
 
   const findCategoryById = (
     categories: CategoryTree[] | undefined,
-    id: string
+    id: string,
   ): CategoryTree | undefined => {
     if (!categories) return undefined;
     for (const category of categories) {
@@ -89,7 +89,7 @@ const CategroSelector: React.FC = () => {
               {category.name}
             </option>
           ))}
-        </select>
+        </select>,
       );
     }
 

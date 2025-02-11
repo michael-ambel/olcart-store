@@ -5,6 +5,7 @@ declare global {
   namespace Express {
     interface Request {
       user?: DecodeTocken;
+      cloudinaryUrls?: Array<{ url: string; publicId: string }>;
     }
   }
 }

@@ -30,7 +30,7 @@ const ShippingAddress = () => {
     useDeleteShippingAddressMutation();
 
   const selectedAddress = useSelector(
-    (state: RootState) => state.order.currentAddress
+    (state: RootState) => state.order.currentAddress,
   );
 
   const dispatch = useDispatch();
@@ -48,13 +48,15 @@ const ShippingAddress = () => {
     isDefault: false,
   });
   const [loadingState, setLoadingState] = useState<{ [key: string]: string }>(
-    {}
+    {},
   );
 
   // Set the first address default
   useEffect(() => {
     if (!selectedAddress && addresses.length > 0) {
-      dispatch(setCurrentAddress(addresses[0]));
+      if (addresses[0]) {
+        dispatch(setCurrentAddress(addresses[0]));
+      }
     }
   }, [addresses, selectedAddress, dispatch]);
 
@@ -64,7 +66,7 @@ const ShippingAddress = () => {
 
   const handleFormChange = (
     field: keyof IShippingAddress,
-    value: string | boolean
+    value: string | boolean,
   ) => {
     setAddressForm((prev) => ({ ...prev, [field]: value }));
   };

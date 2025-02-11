@@ -82,7 +82,7 @@ const CategorizedOrders: React.FC<CategorizedOrdersProps> = ({ orders }) => {
                       <OrderItem
                         key={item._id}
                         name={item.name}
-                        image={item.images[0]}
+                        image={item.images[0] || "/path/to/default/image.jpg"}
                         price={item.price}
                         quantity={item.quantity}
                       />

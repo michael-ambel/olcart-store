@@ -3,11 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import * as cookie from "cookie";
 
-const BASE_URL = `${process.env.SERVER_URL}/products/search`;
+const BASE_URL = `${process.env["SERVER_URL"]}/products/search`;
 
 function getAuthToken(req: NextRequest) {
   const cookies = cookie.parse(req.headers.get("cookie") || "");
-  const token = cookies.jwt;
+  const token = cookies["jwt"];
   if (!token) {
     throw new Error("Authentication error: please log in again");
   }
@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
     const category = url.searchParams.get("category") || "";
     const priceMin = parseFloat(url.searchParams.get("priceMin") || "0");
     const priceMax = parseFloat(
-      url.searchParams.get("priceMax") || "1000000000000"
+      url.searchParams.get("priceMax") || "1000000000000",
     );
     const tags = url.searchParams.get("tags") || "";
     const sort = url.searchParams.get("sort") || "relevance";

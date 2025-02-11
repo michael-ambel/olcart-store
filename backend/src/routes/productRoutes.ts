@@ -1,4 +1,4 @@
-import express, { Router } from "express";
+import express from "express";
 import {
   createProduct,
   getProducts,
@@ -14,10 +14,14 @@ import {
   getTopSellingAndTopRatedProducts,
 } from "../controllers/productController";
 import { protectAdmin, protectCustomer } from "../utils/ProtectMiddleware";
+import {
+  validateAndUploadProduct,
+  validateAndUploadProductUpdate,
+} from "../controllers/helper/CreateProductMiddleware";
 
 const router = express.Router();
 
-router.post("/", protectAdmin, createProduct);
+router.post("/", protectAdmin, validateAndUploadProduct, createProduct);
 router.get("/", getProducts);
 router.get("/search", searchProducts);
 router.post("/reviews", protectCustomer, createOrUpdateReview);
@@ -31,7 +35,7 @@ router.get("/userfeed", protectCustomer, getUserFeed);
 router.patch("/carted", protectCustomer, updateCartedItem);
 router.post("/cart", protectCustomer, getProductsByIds);
 router.get("/:id", getProduct);
-router.put("/:id", protectAdmin, updateProduct);
+router.put("/:id", protectAdmin, validateAndUploadProductUpdate, updateProduct);
 router.delete("/:id", deleteProduct);
 
 export default router;

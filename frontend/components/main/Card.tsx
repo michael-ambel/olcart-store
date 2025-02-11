@@ -113,8 +113,8 @@ const Card: FC<CardProp> = ({ product }) => {
               s >= ts
                 ? "/icons/fstar.svg"
                 : ts - 1 < s && s < ts
-                ? "/icons/hstar.svg"
-                : "/icons/zstar.svg";
+                  ? "/icons/hstar.svg"
+                  : "/icons/zstar.svg";
             return (
               <div
                 key={i}

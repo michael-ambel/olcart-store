@@ -19,7 +19,7 @@ const Footer: FC = () => {
   const pathname = usePathname();
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ): void => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });

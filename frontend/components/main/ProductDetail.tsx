@@ -60,8 +60,8 @@ const ProductDetailPage = () => {
             rating >= ts
               ? "/icons/fstar.svg"
               : ts - 1 < rating && rating < ts
-              ? "/icons/hstar.svg"
-              : "/icons/zstar.svg";
+                ? "/icons/hstar.svg"
+                : "/icons/zstar.svg";
           return (
             <div key={i} className="w-[15px]">
               <Image

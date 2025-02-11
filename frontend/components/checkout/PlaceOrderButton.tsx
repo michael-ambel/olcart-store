@@ -1,3 +1,5 @@
+"use client";
+
 import { usePlaceOrderMutation } from "@/store/apiSlices/orderApiSlice";
 import { RootState } from "@/store/store";
 import { useRouter } from "next/navigation";
@@ -28,10 +30,10 @@ const PlaceOrderButton = () => {
       };
 
       await placeOrder(orderData).unwrap();
-      alert("Order placed successfully!");
+      showToast("success", "Order placed successfully!");
       setTimeout(() => router.push("/payment-method"), 2000);
-    } catch (error: unknown) {
-      console.error("Failed to place order:", error);
+    } catch {
+      showToast("error", "Failed to place order:");
     }
   };
   return (

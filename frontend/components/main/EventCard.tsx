@@ -50,7 +50,9 @@ const EventCard = () => {
 
   return (
     <div
-      className={`relative w-full h-[400px] overflow-hidden flex justify-center items-center ${events[currentEvent].background}`}
+      className={`relative w-full h-[400px] overflow-hidden flex justify-center items-center ${
+        events[currentEvent]?.background || ""
+      }`}
     >
       {events.map((event, index) => (
         <motion.div

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
 
-const BASE_URL = `${process.env.SERVER_URL}/users`;
+const BASE_URL = `${process.env["SERVER_URL"]}/users`;
 
 // get all users
 export async function GET() {

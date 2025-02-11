@@ -1,14 +1,10 @@
 "use client";
-import { Suspense } from "react";
+import Analysis from "@/components/admin/Analysis";
 
 export default function AdminOrders() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <AdminOrdersContent />
-    </Suspense>
+    <div>
+      <Analysis />
+    </div>
   );
-}
-
-function AdminOrdersContent() {
-  return <div>Admin Orders Page</div>;
 }

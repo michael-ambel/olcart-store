@@ -52,7 +52,9 @@ const MainCard: FC = () => {
   };
   return (
     <div
-      className={`relative flex w-full justify-between items-center h-[328px] ${events[currentEvent].background} mt-[120px] mb-[60px] px-[60px]`}
+      className={`relative flex w-full justify-between items-center h-[328px] ${
+        events[currentEvent]?.background || ""
+      } mt-[120px] mb-[60px] px-[60px]`}
     >
       {events.map((event, index) => (
         <motion.div

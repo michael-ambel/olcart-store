@@ -67,7 +67,7 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
       if (!user?.name) {
         showToast(
           "error",
-          "You have to login and purchase the product to add a review"
+          "You have to login and purchase the product to add a review",
         );
         return;
       }
@@ -76,7 +76,7 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
         product._id,
         user?.name,
         reviewInput.rating,
-        reviewInput.comment
+        reviewInput.comment,
       );
       await createOrUpdateReview({
         productId: product._id,
@@ -93,7 +93,7 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
         `${
           (error as { data?: { message: { message?: string } } })?.data?.message
             .message || "An error occurred while submitting the review."
-        }`
+        }`,
       );
     }
   };
@@ -103,7 +103,7 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
       if (!qandfInput.message || !qandfInput.type) {
         showToast(
           "error",
-          "Please fill in the message field and select a type."
+          "Please fill in the message field and select a type.",
         );
         return;
       }
@@ -126,7 +126,7 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
       if (error) {
         showToast(
           "error",
-          "Failed to submit question/feedback. Please try again."
+          "Failed to submit question/feedback. Please try again.",
         );
       }
     }
@@ -148,8 +148,8 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
                       s >= ts
                         ? "/icons/fstar.svg"
                         : ts - 1 < s && s < ts
-                        ? "/icons/hstar.svg"
-                        : "/icons/zstar.svg";
+                          ? "/icons/hstar.svg"
+                          : "/icons/zstar.svg";
 
                     return (
                       <div key={i} className="w-[18px] ">
@@ -168,7 +168,7 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
                 <p className="text-sm text-gray-400">
                   {buyer.reviews
                     ? new Date(
-                        buyer.reviews.updatedAt || buyer.reviews.createdAt
+                        buyer.reviews.updatedAt || buyer.reviews.createdAt,
                       ).toLocaleDateString()
                     : "No review date"}
                 </p>
@@ -269,7 +269,7 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
                         )}
                         <p className="text-sm text-gray-400">
                           {new Date(
-                            qf.createdAt ? qf.createdAt : ""
+                            qf.createdAt ? qf.createdAt : "",
                           ).toLocaleDateString()}
                         </p>
                       </div>
@@ -309,7 +309,7 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
 
                                   <p className="text-sm text-gray-400 my-[6px]">
                                     {new Date(
-                                      replay.createdAt && replay.createdAt
+                                      replay.createdAt && replay.createdAt,
                                     ).toDateString()}
                                   </p>
                                 </div>

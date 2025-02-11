@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Product, IPCart, Review } from "../types/productTypes";
 
-const url = `${process.env.NEXT_PUBLIC_API_URL}/api/products`;
+const url = `${process.env["NEXT_PUBLIC_API_URL"]}/api/products`;
 
 export const productApiSlice = createApi({
   reducerPath: "productApi",
@@ -22,7 +22,7 @@ export const productApiSlice = createApi({
     // Get single product
     getProduct: builder.query<Product, string>({
       query: (id) => `/${id}`,
-      providesTags: (result, error, id) => [{ type: "Product", id }],
+      providesTags: (_, __, id) => [{ type: "Product", id }],
     }),
 
     //create
@@ -36,16 +36,13 @@ export const productApiSlice = createApi({
     }),
 
     //update
-    updateProduct: builder.mutation<
-      Product,
-      { id: string; data: Partial<Product> }
-    >({
+    updateProduct: builder.mutation<Product, { id: string; data: FormData }>({
       query: ({ id, data }) => ({
         url: `/${id}`,
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "Product", id }],
+      invalidatesTags: (_, __, { id }) => [{ type: "Product", id }],
     }),
 
     //delete
@@ -54,7 +51,7 @@ export const productApiSlice = createApi({
         url: `/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: (result, error, id) => [{ type: "Product", id }],
+      invalidatesTags: (_, __, id) => [{ type: "Product", id }],
     }),
 
     updateCartedItem: builder.mutation<IPCart[], Partial<IPCart>>({
@@ -79,7 +76,7 @@ export const productApiSlice = createApi({
     searchProducts: builder.query<
       {
         products: Product[];
-        success: Boolean;
+        success: boolean;
         pagination: {
           total: number;
           page: number;
@@ -151,7 +148,7 @@ export const productApiSlice = createApi({
         method: "POST", // POST used for create or update
         body: { productId, username, rating, comment },
       }),
-      invalidatesTags: (result, error, { productId }) => [
+      invalidatesTags: (_, __, { productId }) => [
         { type: "Product", _id: productId },
       ],
     }),
@@ -161,8 +158,8 @@ export const productApiSlice = createApi({
       { message: string },
       {
         productId: string;
-        username: string; // Updated to match `IReply` property
-        message: string; // Updated to match `IReply` property
+        username: string;
+        message: string;
         type: "question" | "feedback" | "replay";
         replyTo?: string; // Optional for handling replies
       }
@@ -172,7 +169,7 @@ export const productApiSlice = createApi({
         method: "POST", // POST used for create or update
         body: { productId, username, message, type, replyTo }, // Adjusted to match backend logic
       }),
-      invalidatesTags: (result, error, { productId }) => [
+      invalidatesTags: (_, __, { productId }) => [
         { type: "Product", id: productId },
       ],
     }),

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
 
-const BASE_URL = `${process.env.SERVER_URL}/users`;
+const BASE_URL = `${process.env["SERVER_URL"]}/users`;
 
 //..get user
 export async function GET(req: Request) {
@@ -11,7 +11,7 @@ export async function GET(req: Request) {
   if (!id || typeof id !== "string") {
     return NextResponse.json(
       { message: "Valid Product ID is required" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -36,7 +36,7 @@ export async function PUT(req: Request) {
   if (!id || typeof id !== "string") {
     return NextResponse.json(
       { message: "Valid Product ID is required" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -62,7 +62,7 @@ export async function DELETE(req: Request) {
   if (!id || typeof id !== "string") {
     return NextResponse.json(
       { message: "Valid Product ID is required" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 

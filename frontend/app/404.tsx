@@ -1,7 +1,9 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 
-const NotFound: React.FC = () => {
+const Custom404: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-bg text-mo">
       <div className="text-center space-y-6">
@@ -26,4 +28,4 @@ const NotFound: React.FC = () => {
   );
 };
 
-export default NotFound;
+export default Custom404;

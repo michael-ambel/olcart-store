@@ -3,12 +3,12 @@ import axios from "axios";
 import * as cookie from "cookie";
 
 // Base URL for orders
-const BASE_URL = `${process.env.SERVER_URL}/orders`;
+const BASE_URL = `${process.env["SERVER_URL"]}/orders`;
 
 // Utility: Extract auth token from cookies
 function getAuthToken(req: Request) {
   const cookies = cookie.parse(req.headers.get("cookie") || "");
-  const token = cookies.jwt;
+  const token = cookies["jwt"];
 
   if (!token) {
     throw new Error("Authentication error: please log in again");
@@ -25,7 +25,7 @@ export async function GET(req: Request) {
   if (!id || typeof id !== "string") {
     return NextResponse.json(
       { message: "Order ID is required" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -53,7 +53,7 @@ export async function PUT(req: Request) {
   if (!id || typeof id !== "string") {
     return NextResponse.json(
       { message: "Order ID is required" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -65,7 +65,7 @@ export async function PUT(req: Request) {
       { status },
       {
         headers: { Authorization: `Bearer ${token}` },
-      }
+      },
     );
     return NextResponse.json(resp.data, { status: resp.status });
   } catch (error) {
@@ -86,7 +86,7 @@ export async function DELETE(req: Request) {
   if (!id || typeof id !== "string") {
     return NextResponse.json(
       { message: "Order ID is required" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 

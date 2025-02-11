@@ -14,7 +14,7 @@ const Navbar: FC = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (user === undefined || !user?.role) return; // Wait until user state is defined
+    if (!user?.role) return;
 
     if (!user) {
       router.push("/login");
@@ -76,8 +76,8 @@ const Navbar: FC = () => {
                 height={500}
                 className="w-[32px]"
               />
-              <span className="absolute bottom-0 right-0 w-[21px] h-[21px] items-center text-center text-[15] text-bl bg-mo font-semibold rounded-full">
-                8
+              <span className="absolute bottom-0 right-0 w-[21px] h-[21px] items-center text-center text-[15] text-bg bg-mo font-semibold rounded-[8px]">
+                0
               </span>
             </div>
           </Link>
@@ -91,8 +91,8 @@ const Navbar: FC = () => {
                 height={500}
                 className="w-[34px]"
               />
-              <span className="absolute bottom-0 right-0 w-[21px] h-[21px] items-center text-center text-[15] text-bl bg-mo font-semibold rounded-full">
-                1
+              <span className="absolute bottom-0 right-0 w-[21px] h-[21px] items-center text-center text-[15] text-bg bg-mo font-semibold rounded-[8px]">
+                0
               </span>
             </div>
           </Link>

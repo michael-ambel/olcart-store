@@ -1,11 +1,11 @@
 // app/(admin)/admin/orders/page.tsx
 "use client";
-import Dashboard from "@/components/admin/Dashboard";
+import CategoryCreate from "@/components/admin/CategoryCreate";
 
 export default function AdminOrders() {
   return (
     <>
-      <Dashboard />
+      <CategoryCreate />
     </>
   );
 }

@@ -1,8 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { IOrder, IOrderItem } from "../types/orderTypes";
-import { ICartItem, IShippingAddress } from "../types/userTypes";
+import { IShippingAddress } from "../types/userTypes";
 
-const url = `${process.env.NEXT_PUBLIC_API_URL}/api/orders`;
+const url = `${process.env["NEXT_PUBLIC_API_URL"]}/api/orders`;
 
 export const orderApiSlice = createApi({
   reducerPath: "orderApi",
@@ -54,7 +54,7 @@ export const orderApiSlice = createApi({
           body: { status },
         }),
         invalidatesTags: ["Orders"],
-      }
+      },
     ),
 
     // Delete an order (Admin only)

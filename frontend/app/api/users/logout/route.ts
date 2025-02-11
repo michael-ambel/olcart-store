@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
 
-const BASE_URL = `${process.env.SERVER_URL}/users/logout`;
+const BASE_URL = `${process.env["SERVER_URL"]}/users/logout`;
 
 export async function POST() {
   try {
@@ -16,7 +16,6 @@ export async function POST() {
 
     return response;
   } catch (error) {
-    console.log(error);
     const message =
       axios.isAxiosError(error) && error.response
         ? error.response.data

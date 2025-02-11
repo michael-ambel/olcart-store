@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
 
-const BASE_URL = `${process.env.SERVER_URL}/users/register`;
+const BASE_URL = `${process.env["SERVER_URL"]}/users/register`;
 
 export async function POST(req: Request) {
   try {

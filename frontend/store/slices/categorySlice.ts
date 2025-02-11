@@ -22,7 +22,7 @@ const categorySlice = createSlice({
     },
     updateCategory(state, action: PayloadAction<Category>) {
       const index = state.categories.findIndex(
-        (cat) => cat._id === action.payload._id
+        (cat) => cat._id === action.payload._id,
       );
       if (index !== -1) {
         state.categories[index] = action.payload;
@@ -30,7 +30,7 @@ const categorySlice = createSlice({
     },
     deleteCategory(state, action: PayloadAction<string>) {
       state.categories = state.categories.filter(
-        (cat) => cat._id !== action.payload
+        (cat) => cat._id !== action.payload,
       );
     },
   },

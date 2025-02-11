@@ -39,7 +39,7 @@ const PopularProduct: FC = () => {
       const scrollAmount = e.deltaY * wheelSpeed;
       setXOffset((prev) => prev - scrollAmount);
     },
-    [isHovered, wheelSpeed]
+    [isHovered, wheelSpeed],
   );
 
   const scrollAutomatically = useCallback(() => {

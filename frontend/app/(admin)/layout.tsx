@@ -9,12 +9,10 @@ export default function AdminLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="relative">
-        <NavbarLeft />
-        <NavbarTop />
-        {children}
-      </body>
-    </html>
+    <div className="relative">
+      <NavbarLeft />
+      <NavbarTop />
+      <div className="ml-[180px] mt-[120px]">{children}</div>
+    </div>
   );
 }

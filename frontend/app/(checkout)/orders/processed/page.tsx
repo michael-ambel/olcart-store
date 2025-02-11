@@ -47,7 +47,7 @@ const CategorizedOrders: React.FC<{ orders: IOrder[] }> = ({ orders }) => {
                       >
                         <div className="flex items-center justify-center w-[90px] object-cover ">
                           <Image
-                            src={item.images[0]}
+                            src={item.images[0] || "/path/to/default/image.jpg"}
                             alt={item.name}
                             height={100}
                             width={100}
@@ -125,7 +125,9 @@ const ProcessedOrders: React.FC = () => {
         ) : isError ? (
           <p className="text-red-500">Failed to load processed orders.</p>
         ) : (
-          <CategorizedOrders orders={processedOrders || []} />
+          <CategorizedOrders
+            orders={Array.isArray(processedOrders) ? processedOrders : []}
+          />
         )}
       </div>
     </div>

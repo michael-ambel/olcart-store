@@ -6,7 +6,7 @@ import {
   CartResp,
 } from "../types/userTypes";
 
-const url = `${process.env.NEXT_PUBLIC_API_URL}/api/users`;
+const url = `${process.env["NEXT_PUBLIC_API_URL"]}/api/users`;
 
 export const userApiSlice = createApi({
   reducerPath: "userApi",

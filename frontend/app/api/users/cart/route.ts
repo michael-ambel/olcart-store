@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import * as cookie from "cookie";
 
-const BASE_URL = `${process.env.SERVER_URL}/users/cart`;
+const BASE_URL = `${process.env["SERVER_URL"]}/users/cart`;
 
 function getAuthToken(req: NextRequest) {
   const cookies = cookie.parse(req.headers.get("cookie") || "");
-  const token = cookies.jwt;
+  const token = cookies["jwt"];
   if (!token) {
     throw new Error("Authentication error: please log in again");
   }

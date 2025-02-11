@@ -9,6 +9,7 @@ import { setCurrentOrder } from "@/store/slices/orderSlice";
 import { useRouter } from "next/navigation";
 import { IOrderItem } from "@/store/types/orderTypes";
 import { useDispatch } from "react-redux";
+import { showToast } from "../ToastNotifications";
 
 const Cart = () => {
   const [cartList, setCartList] = useState<ICartItem[]>([]);
@@ -44,14 +45,16 @@ const Cart = () => {
     if (fetchedProducts) {
       const updatedProducts = cartList.map((cartItem) => {
         const productDetail = fetchedProducts.find(
-          (product) => product._id === cartItem._id
+          (product) => product._id === cartItem._id,
         );
 
         if (productDetail) {
           const image =
             typeof productDetail.images[0] === "string"
               ? productDetail.images[0]
-              : URL.createObjectURL(productDetail.images[0]);
+              : productDetail.images[0]
+                ? URL.createObjectURL(productDetail.images[0])
+                : "unknown-product.jpg";
 
           return {
             ...productDetail,
@@ -92,7 +95,7 @@ const Cart = () => {
   const handleCheckboxChange = (index: number) => {
     setProducts((prevProducts) => {
       const updatedProducts = prevProducts.map((product, i) =>
-        i === index ? { ...product, checked: !product.checked } : product
+        i === index ? { ...product, checked: !product.checked } : product,
       );
       updateOrderItems(updatedProducts);
       return updatedProducts;
@@ -102,7 +105,7 @@ const Cart = () => {
   const handleQuantityChange = (index: number, value: number) => {
     setProducts((prevProducts) => {
       const updatedProducts = prevProducts.map((product, i) =>
-        i === index ? { ...product, quantity: value } : product
+        i === index ? { ...product, quantity: value } : product,
       );
       updateOrderItems(updatedProducts);
       return updatedProducts;
@@ -123,6 +126,7 @@ const Cart = () => {
 
   const handleCheckout = () => {
     if (orderItems.length === 0) {
+      showToast("error", "No items selected for checkout.");
       return;
     }
 

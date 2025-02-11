@@ -34,7 +34,7 @@ export default function PaymentPage() {
     setSelectedOrders((prev) =>
       prev.some((o) => o._id === order._id)
         ? prev.filter((o) => o._id !== order._id)
-        : [...prev, order]
+        : [...prev, order],
     );
   };
 
@@ -44,7 +44,7 @@ export default function PaymentPage() {
         totalAmount: acc.totalAmount + order.totalAmount,
         shippingPrice: acc.shippingPrice + order.shippingPrice,
       }),
-      { totalAmount: 0, shippingPrice: 0 }
+      { totalAmount: 0, shippingPrice: 0 },
     );
   };
 
@@ -72,7 +72,7 @@ export default function PaymentPage() {
       if (error) {
         showToast(
           "error",
-          "Failed to create payment session. Please try again."
+          "Failed to create payment session. Please try again.",
         );
       }
     }
@@ -137,7 +137,7 @@ export default function PaymentPage() {
         : ""
     }`}
                     checked={selectedOrders.some(
-                      (o) => o._id === paymentOrder._id
+                      (o) => o._id === paymentOrder._id,
                     )}
                     onChange={() => handleOrderSelect(paymentOrder)}
                   />
@@ -153,7 +153,7 @@ export default function PaymentPage() {
                     >
                       <div className="flex items-center w-[70px] h-[70px]">
                         <Image
-                          src={item.images[0]}
+                          src={item.images[0] || "/default-image.png"}
                           alt={item.name}
                           width={70}
                           height={70}
@@ -196,8 +196,8 @@ export default function PaymentPage() {
                         paymentOrder.paymentStatus === "Failed"
                           ? "text-red-600"
                           : paymentOrder.paymentStatus === "Pending"
-                          ? "text-yellow-600"
-                          : "text-green-600"
+                            ? "text-yellow-600"
+                            : "text-green-600"
                       }`}
                     >
                       {paymentOrder.paymentStatus}

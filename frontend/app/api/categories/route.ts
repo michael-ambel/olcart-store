@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import axios from "axios";
 import { Category } from "@/store/types/categoryTypes";
 
-const BASE_URL = `${process.env.SERVER_URL}/categories`;
+const BASE_URL = `${process.env["SERVER_URL"]}/categories`;
 
 interface CategoryTreeNode {
   _id: string;
@@ -24,10 +24,16 @@ const createCategoryTree = (categories: Category[]): CategoryTreeNode[] => {
     if (category.parentCategory) {
       const parent = categoryMap[category.parentCategory];
       if (parent) {
-        parent.subCategories.push(categoryMap[category._id]);
+        const childCategory = categoryMap[category._id];
+        if (childCategory) {
+          parent.subCategories.push(childCategory);
+        }
       }
     } else {
-      tree.push(categoryMap[category._id]);
+      const rootCategory = categoryMap[category._id];
+      if (rootCategory) {
+        tree.push(rootCategory);
+      }
     }
   });
 

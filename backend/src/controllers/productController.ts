@@ -1,121 +1,83 @@
 import { RequestHandler } from "express";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import Product from "../models/productModel";
-import { body, validationResult } from "express-validator";
-import multer from "multer";
-import path from "path";
+
 import slugify from "slugify";
 import mongoose from "mongoose";
 import User from "../models/userModel";
 
-// Setup Multer for image upload - defines how Multer should store uploaded files
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/images"); // Folder for uploaded images
-  },
-  filename: (req, file, cb) => {
-    // Unique filename with timestamp
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
+// Create product controller
+export const createProduct: RequestHandler = async (req, res) => {
+  try {
+    const { name, description, price, shippingPrice, category, stock, tags } =
+      req.body;
+    const parsedTags = tags ? JSON.parse(tags) : [];
+    const images = req.cloudinaryUrls?.map((img) => img.url) || [];
+    const slug = slugify(name, { lower: true, strict: true });
 
-const upload = multer({
-  storage,
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|webp|avif/;
-    const extname = allowedTypes.test(
-      path.extname(file.originalname).toLowerCase()
-    );
-    const mimetype = allowedTypes.test(file.mimetype);
+    const product = await Product.create({
+      name,
+      description,
+      price,
+      shippingPrice,
+      category,
+      stock: stock || 0,
+      tags: parsedTags,
+      images,
+      slug,
+    });
 
-    if (extname && mimetype) {
-      return cb(null, true); // Allow the file
-    }
-    cb(new Error("Images only!"));
-  },
-}).array("images", 5); // Allow up to 5 images
-
-// Validation middleware for product creation
-export const validateProduct = [
-  body("name").isString().notEmpty().withMessage("Name is required"),
-  body("price")
-    .isFloat({ gt: 0 })
-    .withMessage("Price must be a positive number"),
-  body("category")
-    .isArray()
-    .withMessage("Category must be an array of IDs")
-    .custom((value) => {
-      if (value.some((id: string) => !mongoose.Types.ObjectId.isValid(id))) {
-        throw new Error("Each category must be a valid ObjectId");
-      }
-      return true;
-    }),
-  body("images")
-    .isArray()
-    .withMessage("Images must be an array of image URLs")
-    .custom((value) => {
-      if (
-        value &&
-        !value.every((image: string) =>
-          /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/.test(image)
-        )
-      ) {
-        throw new Error("Each image URL must be valid");
-      }
-      return true;
-    }),
-  (req: Request, res: Response, next: NextFunction) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    next();
-  },
-];
-
-// Utility function for handling image upload
-const handleImageUpload = (req: Request, res: Response, callback: Function) => {
-  upload(req, res, (err) => {
-    if (err) {
-      console.log("Error during file upload:", err);
-      return res.status(400).json({ error: err.message });
-    }
-    callback();
-  });
+    res.status(201).json(product);
+  } catch (err) {
+    res.status(400).json({
+      error: err instanceof Error ? err.message : "Product creation failed",
+    });
+    return;
+  }
 };
 
-// Create a new product
-export const createProduct = async (req: Request, res: Response) => {
-  handleImageUpload(req, res, async () => {
-    try {
-      const { name, description, price, category, stock, slug, tags } =
-        req.body;
+// Update product controller
+export const updateProduct: RequestHandler = async (req, res) => {
+  console.log("update product request");
+  try {
+    const { name, description, price, category, stock, tags } = req.body;
+    const images = req.cloudinaryUrls?.map((img) => img.url) || []; // Get cloudinary URLs from middleware
 
-      const files = req.files as Express.Multer.File[];
-      const images = files
-        ? files.map(
-            (file) => `http://localhost:5000/uploads/images/${file.filename}`
-          )
-        : [];
+    // Convert category IDs if necessary
+    const categoryIds = category
+      ? category.map((id: string) => new mongoose.Types.ObjectId(id))
+      : undefined;
 
-      const product = await Product.create({
+    // Prepare update data dynamically
+    const updateData: any = {
+      ...(description && { description }),
+      ...(price && { price }),
+      ...(categoryIds && { category: categoryIds }),
+      ...(typeof stock !== "undefined" && { stock }),
+      ...(tags && { tags }),
+      ...(name && {
         name,
-        description,
-        price,
-        shippingPrice: 0,
-        category,
-        stock,
-        tags: JSON.parse(tags || "[]"),
-        images,
-        slug,
-      });
+        slug: slugify(name, { lower: true, strict: true }),
+      }),
+      ...(images.length && { images }), // Only add images if new images exist
+    };
 
-      res.status(201).json(product);
-    } catch (error) {
-      console.log(error);
-      res.status(400).json({ error: (error as Error).message });
+    console.log(updateData);
+
+    // Perform the update
+    const product = await Product.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+    });
+
+    if (!product) {
+      res.status(404).json({ message: "Product not found" });
+      return;
     }
-  });
+
+    res.status(200).json(product);
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
+  }
 };
 
 // Get all products with pagination and filters
@@ -157,51 +119,6 @@ export const getProduct: RequestHandler = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }
-};
-
-// Update a product by ID
-export const updateProduct: RequestHandler = async (req, res) => {
-  handleImageUpload(req, res, async () => {
-    try {
-      const { name, description, price, category, stock, tags } = req.body;
-      const files = req.files as Express.Multer.File[];
-      const images = files
-        ? files.map((file) => `/uploads/images/${file.filename}`)
-        : undefined;
-
-      const categoryIds = category.map(
-        (id: string) => new mongoose.Types.ObjectId(id)
-      );
-
-      const updateData: any = {
-        description,
-        price,
-        category: categoryIds,
-        stock,
-        tags,
-        ...(name && {
-          name,
-          slug: slugify(name, { lower: true, strict: true }),
-        }),
-      };
-
-      if (images) updateData.images = images;
-
-      const product = await Product.findByIdAndUpdate(
-        req.params.id,
-        updateData,
-        { new: true }
-      );
-
-      if (!product) {
-        return res.status(404).json({ message: "Product not found" });
-      }
-
-      res.status(200).json(product);
-    } catch (error) {
-      res.status(500).json({ error: (error as Error).message });
-    }
-  });
 };
 
 // Delete a product
@@ -354,7 +271,6 @@ export const searchProducts: RequestHandler = async (req, res) => {
 
     // Pagination calculation
     const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
-    console.log(page, limit, skip);
     const products = await Product.find(filters)
       .sort(sortOptions)
       .skip(skip)
@@ -373,7 +289,6 @@ export const searchProducts: RequestHandler = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error in searchProducts:", error);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
@@ -451,7 +366,6 @@ export const getUserFeed: RequestHandler = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error in getUserFeed:", error);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
@@ -468,7 +382,6 @@ export const getTopSellingAndTopRatedProducts: RequestHandler = async (
       .select("_id name price salesCount images averageRating reviewCount");
     res.status(200).json(products);
   } catch (error) {
-    console.error("Error in getTopSellingAndTopRatedProducts:", error);
     res.status(500).json({ message: "Server Error" });
   }
 };
@@ -563,7 +476,6 @@ export const createOrUpdateReview: RequestHandler = async (req, res) => {
       buyer,
     });
   } catch (error) {
-    console.error("Error in createOrUpdateReview:", error);
     res.status(500).json({ error: (error as Error).message });
   }
 };
@@ -603,7 +515,7 @@ export const handleQuestionAndFeedback: RequestHandler = async (req, res) => {
         res.status(404).json({ message: "Parent question/feedback not found" });
         return;
       }
-      console.log(productId, message, type, username, replyTo);
+
       // Add the reply to the replies array
       const newReply = {
         _id: new mongoose.Types.ObjectId(),

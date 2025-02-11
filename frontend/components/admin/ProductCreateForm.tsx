@@ -34,7 +34,7 @@ const ProductCreateForm: React.FC = () => {
     const updatedPath = selectedPath.slice(0, level);
     const category = findCategoryById(
       level === 0 ? categoriesData : selectedPath[level - 1]?.subCategories,
-      id
+      id,
     );
 
     if (category) {
@@ -46,7 +46,7 @@ const ProductCreateForm: React.FC = () => {
 
   const findCategoryById = (
     categories: CategoryTree[] | undefined,
-    id: string
+    id: string,
   ): CategoryTree | undefined => {
     if (!categories) return undefined;
     for (const category of categories) {
@@ -83,7 +83,7 @@ const ProductCreateForm: React.FC = () => {
               {category.name}
             </option>
           ))}
-        </select>
+        </select>,
       );
     }
 
@@ -104,7 +104,7 @@ const ProductCreateForm: React.FC = () => {
   const handleRemoveImage = (index: number) => {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
     setImagePreviews((prevPreviews) =>
-      prevPreviews.filter((_, i) => i !== index)
+      prevPreviews.filter((_, i) => i !== index),
     );
   };
 

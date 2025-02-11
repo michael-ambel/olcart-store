@@ -1,3 +1,5 @@
+"use client";
+
 import ProductButtons from "@/components/admin/ProductButtons";
 import ProductCreateForm from "@/components/admin/ProductCreateForm";
 

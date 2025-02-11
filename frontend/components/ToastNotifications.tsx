@@ -34,24 +34,24 @@ const toastOptions: ToastOptions = {
 // Universal Toast Function (to be used across the app)
 export const showToast = (
   type: "success" | "error" | "info" | "loading",
-  message: string
+  message: string,
 ) => {
   const toastStyles = {
     success: {
-      backgroundColor: "#34c724",
-      color: "#fff",
+      backgroundColor: "#fff",
+      color: "#34c724",
     },
     error: {
-      backgroundColor: "#f54a45",
-      color: "#fff",
+      backgroundColor: "#fff",
+      color: "#ed4337",
     },
     info: {
-      backgroundColor: "#2563EB",
-      color: "#fff",
+      backgroundColor: "#fff",
+      color: "#2563EB",
     },
     loading: {
-      backgroundColor: "#F59E0B",
-      color: "#fff",
+      backgroundColor: "#fff",
+      color: "#F59E0B",
     },
   };
 

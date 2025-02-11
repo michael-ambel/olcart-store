@@ -30,7 +30,7 @@ const FilterComponent: React.FC = () => {
   }, [data]);
 
   const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     if (name === "priceMin" || name === "priceMax" || name === "tags") {
@@ -64,7 +64,7 @@ const FilterComponent: React.FC = () => {
     const updatedPath = selectedPath.slice(0, level);
     const category = findCategoryById(
       level === 0 ? categoriesData : selectedPath[level - 1]?.subCategories,
-      id
+      id,
     );
 
     if (category) {
@@ -90,7 +90,7 @@ const FilterComponent: React.FC = () => {
 
   const findCategoryById = (
     categories: CategoryTree[] | undefined,
-    id: string
+    id: string,
   ): CategoryTree | undefined => {
     if (!categories) return undefined;
     for (const category of categories) {
@@ -127,7 +127,7 @@ const FilterComponent: React.FC = () => {
               {category.name}
             </option>
           ))}
-        </select>
+        </select>,
       );
     }
 
