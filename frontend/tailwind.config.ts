@@ -21,7 +21,7 @@ export default {
         mo: "#E52F06",
         mb: "#13265C",
         mg: "#015724",
-        bl: "#333333",
+        bl: "#1f2939",
         mp: "#E52F06",
         shopp: "#FFD5CC",
         shops: "#BBB5FF",

@@ -4,14 +4,13 @@
 import { useState } from "react";
 import { useGetProductsQuery } from "@/store/apiSlices/productApiSlice";
 import ProductCreateModal from "@/components/admin/ProductCreateModal";
-import ProductEditModal from "@/components/admin/ProductEditModal";
+
 import { ProductList } from "@/components/admin/ProductList";
-import { Product } from "@/store/types/productTypes";
 
 const ProductsPage = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const { data, isLoading, error } = useGetProductsQuery();
+
+  const { data, isLoading, error, refetch } = useGetProductsQuery();
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -30,23 +29,13 @@ const ProductsPage = () => {
       {isLoading && <div className="text-center py-4">Loading products...</div>}
       {error && <div className="text-red-500 py-4">Error loading products</div>}
       {data?.products && (
-        <ProductList
-          products={data.products}
-          onEdit={(product) => setEditingProduct(product)}
-        />
+        <ProductList products={data.products} refetch={refetch} />
       )}
 
       {showCreateModal && (
         <ProductCreateModal
           onClose={() => setShowCreateModal(false)}
           initialData={null}
-        />
-      )}
-
-      {editingProduct && (
-        <ProductEditModal
-          product={editingProduct}
-          onClose={() => setEditingProduct(null)}
         />
       )}
     </div>
