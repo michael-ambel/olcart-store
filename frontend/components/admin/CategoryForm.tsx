@@ -1,116 +1,161 @@
 "use client";
 
-import React, { useState } from "react";
-import { useAddCategoryMutation } from "@/store/apiSlices/categoryApiSlice";
+import React, { useEffect, useState } from "react";
+import {
+  useGetCategoriesQuery,
+  useAddCategoryMutation,
+} from "@/store/apiSlices/categoryApiSlice";
+import { CategoryTree } from "@/store/types/categoryTypes";
+import { showToast } from "../ToastNotifications";
 
-const CategoryForm: React.FC = () => {
-  const [name, setName] = useState<string>("");
-  const [slug, setSlug] = useState<string>("");
-  const [parentCategory, setParentCategory] = useState<string | undefined>(); // Allow manual ID input
-  const [addCategory, { isLoading, error }] = useAddCategoryMutation();
+const CategoryCreate: React.FC = () => {
+  const { data: categoriesData } = useGetCategoriesQuery();
+  const [createCategory, { isLoading }] = useAddCategoryMutation();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [isParent, setIsParent] = useState(false);
+  const [isChild, setIsChild] = useState(false);
+  const [selectedPath, setSelectedPath] = useState<string[]>([]);
+  const [categoryTree, setCategoryTree] = useState<CategoryTree[]>([]);
 
-    let newCategory;
+  useEffect(() => {
+    if (categoriesData) {
+      setCategoryTree(categoriesData);
+    }
+  }, [categoriesData]);
 
-    // Prepare the data to send to the API
-    if (parentCategory) {
-      newCategory = {
-        name,
-        slug,
-        parentCategory,
-      };
-    } else {
-      newCategory = {
-        name,
-        slug,
-      };
+  const handleSelectionChange = (level: number, id: string) => {
+    const updatedPath = selectedPath.slice(0, level);
+    if (id) {
+      updatedPath.push(id);
+    }
+    setSelectedPath(updatedPath);
+  };
+
+  const handleCreateCategory = async () => {
+    if (!newCategoryName.trim()) {
+      showToast("error", "Category name cannot be empty");
+      return;
     }
 
-    // Call the API to add the category
+    const parentCategory = isParent
+      ? undefined
+      : selectedPath[selectedPath.length - 1];
+
     try {
-      await addCategory(newCategory).unwrap();
-      //   setName(""); // Reset form fields after successful submission
-      //   setSlug("");
-      //   setParentCategory(""); // Reset parent category
-    } catch (err) {
-      console.error("Failed to create category", err);
+      await createCategory({
+        name: newCategoryName,
+        slug: newCategoryName.toLowerCase().replace(/\s+/g, "-"),
+        parentCategory,
+      }).unwrap();
+      showToast("success", "Category created successfully");
+      setNewCategoryName("");
+      setSelectedPath([]);
+      setIsParent(false);
+      setIsChild(false);
+    } catch {
+      showToast("error", "Failed to create category");
     }
   };
 
+  const renderSelectors = () => {
+    if (isParent) return null;
+
+    const allSelectors = [];
+    let currentCategories = categoryTree;
+
+    for (let level = 0; level <= selectedPath.length; level++) {
+      if (!currentCategories || currentCategories.length === 0) break;
+
+      allSelectors.push(
+        <select
+          key={level}
+          value={selectedPath[level] || ""}
+          onChange={(e) => handleSelectionChange(level, e.target.value)}
+          className="w-auto p-2 autline-1 rounded-lg m-1 focus:outline-none focus:ring-2 ring-1 ring-mg"
+        >
+          <option value="">Select Category</option>
+          {currentCategories.map((category) => (
+            <option key={category._id} value={category._id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+      );
+
+      currentCategories =
+        (selectedPath[level] &&
+          currentCategories.find((cat) => cat._id === selectedPath[level])
+            ?.subCategories) ||
+        [];
+    }
+
+    return allSelectors;
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-[600px]">
-      <div>
-        <label
-          htmlFor="name"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Category Name
-        </label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-        />
-      </div>
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <h1 className="text-xl font-bold mb-6 text-gray-800">Create category</h1>
+      <div className="bg-white p-8 rounded-lg shadow-lg  mx-auto">
+        <div className="flex gap-9 mb-6">
+          <label className="block  text- font-semibold">Category Type:</label>
+          <div className="flex items-center font-bold space-x-6">
+            {/* Parent Checkbox */}
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                checked={isParent}
+                onChange={(e) => {
+                  setIsParent(e.target.checked);
+                  setIsChild(false); // Uncheck Child if Parent is checked
+                }}
+                className="form-checkbox appearance-none h-5 w-5 border-2 border-bl rounded-md checked:bg-mo checked:border-mo  focus:outline-none "
+              />
+              <span className="ml-2 text-gray-700">Parent</span>
+            </div>
 
-      <div>
-        <label
-          htmlFor="slug"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Slug
-        </label>
-        <input
-          type="text"
-          id="slug"
-          name="slug"
-          value={slug}
-          onChange={(e) => setSlug(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="parentCategory"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Parent Category ID (for testing)
-        </label>
-        <input
-          type="text"
-          id="parentCategory"
-          name="parentCategory"
-          value={parentCategory}
-          onChange={(e) => setParentCategory(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-        />
-        <p className="text-sm text-gray-500">
-          Enter the parent category ID here. Leave blank if there is no parent.
-        </p>
-      </div>
-
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="w-[400px] bg-mb text-white py-2 px-4 my-[20px] rounded-md hover:bg-mo disabled:bg-gray-400"
-      >
-        {isLoading ? "Creating..." : "Create Category"}
-      </button>
-
-      {error && (
-        <div className="text-red-500 text-sm mt-2">
-          {(error as Error).message}
+            {/* Child Checkbox */}
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                checked={isChild}
+                onChange={(e) => {
+                  setIsChild(e.target.checked);
+                  setIsParent(false); // Uncheck Parent if Child is checked
+                }}
+                className="form-checkbox appearance-none h-5 w-5 border-2 border-bl rounded-md checked:bg-mo checked:border-mo focus:outline-none   "
+              />
+              <span className="ml-2 text-gray-700">Child</span>
+            </div>
+          </div>
         </div>
-      )}
-    </form>
+
+        {(isParent || isChild) && (
+          <div className="mb-6">
+            <input
+              type="text"
+              placeholder="New Category Name"
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ring-1 ring-bl"
+            />
+          </div>
+        )}
+
+        {isChild && <div className="mb-6">{renderSelectors()}</div>}
+
+        {(isParent || isChild) && (
+          <button
+            onClick={handleCreateCategory}
+            disabled={isLoading}
+            className="w-full bg-bl text-white px-6 py-3 rounded-lg hover:bg-bl/80 transition duration-300 flex items-center justify-center"
+          >
+            {isLoading ? "Creating..." : "Create Category"}
+          </button>
+        )}
+      </div>
+    </div>
   );
 };
 
-export default CategoryForm;
+export default CategoryCreate;

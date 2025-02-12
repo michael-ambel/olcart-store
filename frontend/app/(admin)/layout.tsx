@@ -12,7 +12,7 @@ export default function AdminLayout({
     <div className="relative">
       <NavbarLeft />
       <NavbarTop />
-      <div className="ml-[180px] mt-[120px]">{children}</div>
+      <div className="ml-[180px] pt-[110px]">{children}</div>
     </div>
   );
 }

@@ -31,7 +31,7 @@ const CategoryCreate = () => {
                 ...cat,
                 subCategories: [...(cat.subCategories || []), newCategory],
               }
-            : { ...cat, subCategories: addToParent(cat.subCategories || []) },
+            : { ...cat, subCategories: addToParent(cat.subCategories || []) }
         );
       };
       setCategories(addToParent(categories));

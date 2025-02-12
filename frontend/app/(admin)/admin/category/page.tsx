@@ -1,11 +1,11 @@
-// app/(admin)/admin/orders/page.tsx
 "use client";
-import CategoryCreate from "@/components/admin/CategoryCreate";
 
-export default function AdminOrders() {
+import CategoryForm from "@/components/admin/CategoryForm";
+
+export default function Category() {
   return (
-    <>
-      <CategoryCreate />
-    </>
+    <div className="flex flex-col mt-[130px] mx-[20px] gap-[30px] p-[100px]  bg-bgt">
+      <CategoryForm />
+    </div>
   );
 }

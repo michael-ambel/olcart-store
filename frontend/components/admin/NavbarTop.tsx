@@ -28,7 +28,7 @@ const Navbar: FC = () => {
 
   return (
     <nav
-      className={`flex z-50 fixed top-0 bg-bg flex-col items-center justify-between h-[112px] pt-[32px] w-full px-[20px]`}
+      className={`flex z-50 fixed top-0 bg-bg flex-col items-center justify-between h-[110px] pt-[28px] w-full px-[20px]`}
     >
       <div className="flex justify-between w-full items-end">
         {/* Logo */}

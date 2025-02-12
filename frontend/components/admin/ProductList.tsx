@@ -27,18 +27,18 @@ export const ProductList = ({
       try {
         await deleteProduct(id).unwrap();
         showToast("success", "Product deleted successfully!");
-        refetch(); // Refresh the product list after deletion
-      } catch (error) {
+        refetch();
+      } catch {
         showToast("error", "Failed to delete product.");
       } finally {
-        setDeletingProductId(null); // Reset after deletion
+        setDeletingProductId(null);
       }
     }
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen p-6">
-      <div className="bg-white p-6 rounded-lg shadow-lg overflow-x-auto">
+    <div className="bg-gray-100 min-h-screen ">
+      <div className="bg-white p-2 rounded-lg shadow-lg overflow-x-auto">
         {/* Products Table */}
         <table className="min-w-full divide-y divide-gray-200">
           <thead>

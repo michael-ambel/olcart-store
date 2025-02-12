@@ -38,7 +38,6 @@ export const createProduct: RequestHandler = async (req, res) => {
 
 // Update product controller
 export const updateProduct: RequestHandler = async (req, res) => {
-  console.log("update product request");
   try {
     const { name, description, price, category, stock, tags } = req.body;
     const images = req.cloudinaryUrls?.map((img) => img.url) || []; // Get cloudinary URLs from middleware
@@ -61,8 +60,6 @@ export const updateProduct: RequestHandler = async (req, res) => {
       }),
       ...(images.length && { images }), // Only add images if new images exist
     };
-
-    console.log(updateData);
 
     // Perform the update
     const product = await Product.findByIdAndUpdate(req.params.id, updateData, {
