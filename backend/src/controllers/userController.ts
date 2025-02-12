@@ -136,6 +136,43 @@ export const getUser: RequestHandler = async (req, res) => {
   }
 };
 
+//Update a user (Admin only)
+export const updateUser: RequestHandler = async (req, res) => {
+  const { name, email, role } = req.body;
+
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    user.name = name || user.name;
+    user.email = email || user.email;
+    user.role = role || user.role;
+
+    const updatedUser = await user.save();
+    res.status(200).json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      role: updatedUser.role,
+    });
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+};
+
+// Delete a user (Admin only)
+export const deleteUser: RequestHandler = async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    await user.deleteOne();
+    res.status(200).json({ message: "User removed" });
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+};
+
 //update cart
 export const updateCart: RequestHandler = async (req, res) => {
   try {

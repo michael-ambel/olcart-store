@@ -53,7 +53,7 @@ export const userApiSlice = createApi({
       providesTags: ["Cart"],
     }),
 
-    // adding, updating, and removing cart items
+    // Update cart
     updateCart: builder.mutation<CartResp, Partial<ICartItem>>({
       query: (cartData) => ({
         url: "/cart",
@@ -64,7 +64,6 @@ export const userApiSlice = createApi({
     }),
 
     // Shipping address endpoints
-    // Add a new shipping address
     addShippingAddress: builder.mutation<IShippingAddress[], IShippingAddress>({
       query: (address) => ({
         url: "/shipping-address",
@@ -74,13 +73,11 @@ export const userApiSlice = createApi({
       invalidatesTags: ["Users"],
     }),
 
-    // Get user shipping addresses
     getShippingAddresses: builder.query<IShippingAddress[], void>({
       query: () => "/shipping-address",
       providesTags: ["Users"],
     }),
 
-    // Update an existing shipping address
     updateShippingAddress: builder.mutation<
       IShippingAddress[],
       IShippingAddress
@@ -93,12 +90,34 @@ export const userApiSlice = createApi({
       invalidatesTags: ["Users"],
     }),
 
-    // Delete a shipping address
     deleteShippingAddress: builder.mutation<void, { _id: string }>({
       query: ({ _id }) => ({
         url: "/shipping-address",
         method: "DELETE",
         body: { _id },
+      }),
+      invalidatesTags: ["Users"],
+    }),
+
+    // New endpoints for user management
+    getUsers: builder.query<IUser[], void>({
+      query: () => "/",
+      providesTags: ["Users"],
+    }),
+
+    updateUser: builder.mutation<IUser, Partial<IUser>>({
+      query: (user) => ({
+        url: `/${user._id}`,
+        method: "PATCH",
+        body: user,
+      }),
+      invalidatesTags: ["Users"],
+    }),
+
+    deleteUser: builder.mutation<void, string>({
+      query: (userId) => ({
+        url: `/${userId}`,
+        method: "DELETE",
       }),
       invalidatesTags: ["Users"],
     }),
@@ -115,4 +134,7 @@ export const {
   useGetShippingAddressesQuery,
   useUpdateShippingAddressMutation,
   useDeleteShippingAddressMutation,
+  useGetUsersQuery,
+  useUpdateUserMutation,
+  useDeleteUserMutation,
 } = userApiSlice;

@@ -1,80 +1,74 @@
-import { NextResponse } from "next/server";
+// app/api/users/route.ts
+import { NextResponse, NextRequest } from "next/server";
 import axios from "axios";
+import * as cookie from "cookie";
 
 const BASE_URL = `${process.env["SERVER_URL"]}/users`;
 
-//..get user
-export async function GET(req: Request) {
-  const urlParts = req.url.split("/");
-  const id = urlParts[urlParts.length - 1];
+// Utility Functions
+function getAuthToken(req: NextRequest) {
+  const cookies = cookie.parse(req.headers.get("cookie") || "");
+  const token = cookies["jwt"];
 
-  if (!id || typeof id !== "string") {
-    return NextResponse.json(
-      { message: "Valid Product ID is required" },
-      { status: 400 },
-    );
+  if (!token) {
+    throw new Error("Authentication error: please log in again");
   }
 
-  try {
-    const resp = await axios.get(`${BASE_URL}/${id}`);
-    return NextResponse.json(resp.data, { status: resp.status });
-  } catch (error) {
-    const message =
-      axios.isAxiosError(error) && error.response
-        ? error.response.data
-        : (error as Error).message;
+  return token;
+}
 
-    return NextResponse.json({ message }, { status: 500 });
+function handleApiError(error: unknown) {
+  const message =
+    axios.isAxiosError(error) && error.response
+      ? error.response.data
+      : (error as Error).message;
+  console.log(message);
+  return NextResponse.json({ message }, { status: 500 });
+}
+
+// Get All User
+export async function GET(req: NextRequest) {
+  try {
+    const token = getAuthToken(req);
+    const response = await axios.get(BASE_URL, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return NextResponse.json(response.data, { status: response.status });
+  } catch (error) {
+    return handleApiError(error);
   }
 }
 
-//... update user
-export async function PUT(req: Request) {
-  const urlParts = req.url.split("/");
-  const id = urlParts[urlParts.length - 1];
-
-  if (!id || typeof id !== "string") {
-    return NextResponse.json(
-      { message: "Valid Product ID is required" },
-      { status: 400 },
-    );
-  }
-
+// Update a User (Admin only)
+export async function PATCH(req: NextRequest) {
   try {
-    const resp = await axios.put(`${BASE_URL}/${id}`, req.body);
-    return NextResponse.json(resp.data, { status: resp.status });
+    const token = getAuthToken(req);
+    const userData = await req.json();
+    const response = await axios.patch(
+      `${BASE_URL}/${userData._id}`,
+      userData,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return NextResponse.json(response.data, { status: response.status });
   } catch (error) {
-    const message =
-      axios.isAxiosError(error) && error.response
-        ? error.response.data
-        : (error as Error).message;
-
-    return NextResponse.json({ message }, { status: 500 });
+    return handleApiError(error);
   }
 }
 
-//..delete user
-
-export async function DELETE(req: Request) {
-  const urlParts = req.url.split("/");
-  const id = urlParts[urlParts.length - 1];
-
-  if (!id || typeof id !== "string") {
-    return NextResponse.json(
-      { message: "Valid Product ID is required" },
-      { status: 400 },
-    );
-  }
-
+// Delete a User (Admin only)
+export async function DELETE(req: NextRequest) {
   try {
-    const resp = await axios.delete(`${BASE_URL}/${id}`);
-    return NextResponse.json(resp.data, { status: resp.status });
+    const token = getAuthToken(req);
+    const url = new URL(req.url);
+    const pathSegments = url.pathname.split("/");
+    const userId = pathSegments[pathSegments.length - 1];
+    const response = await axios.delete(`${BASE_URL}/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return NextResponse.json(response.data, { status: response.status });
   } catch (error) {
-    const message =
-      axios.isAxiosError(error) && error.response
-        ? error.response.data
-        : (error as Error).message;
-
-    return NextResponse.json({ message }, { status: 500 });
+    return handleApiError(error);
   }
 }

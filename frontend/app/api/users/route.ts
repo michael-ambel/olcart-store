@@ -1,19 +1,38 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import axios from "axios";
+import * as cookie from "cookie";
 
 const BASE_URL = `${process.env["SERVER_URL"]}/users`;
 
-// get all users
-export async function GET() {
+// Utility Functions
+function getAuthToken(req: NextRequest) {
+  const cookies = cookie.parse(req.headers.get("cookie") || "");
+  const token = cookies["jwt"];
+
+  if (!token) {
+    throw new Error("Authentication error: please log in again");
+  }
+
+  return token;
+}
+
+function handleApiError(error: unknown) {
+  const message =
+    axios.isAxiosError(error) && error.response
+      ? error.response.data
+      : (error as Error).message;
+  return NextResponse.json({ message }, { status: 500 });
+}
+
+// Get All Users (Admin only)
+export async function GET(req: NextRequest) {
   try {
-    const resp = await axios.get(BASE_URL);
-    return NextResponse.json(resp.data, { status: resp.status });
+    const token = getAuthToken(req);
+    const response = await axios.get(BASE_URL, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return NextResponse.json(response.data, { status: response.status });
   } catch (error) {
-    console.error(error);
-    const message =
-      axios.isAxiosError(error) && error.response
-        ? error.response.data
-        : (error as Error).message;
-    return NextResponse.json({ message }, { status: 500 });
+    return handleApiError(error);
   }
 }
