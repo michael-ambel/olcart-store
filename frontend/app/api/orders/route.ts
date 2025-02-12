@@ -21,6 +21,7 @@ function handleApiError(error: unknown) {
     axios.isAxiosError(error) && error.response
       ? error.response.data
       : (error as Error).message;
+  console.log(message);
   return NextResponse.json({ message }, { status: 500 });
 }
 
@@ -41,6 +42,7 @@ export async function POST(req: NextRequest) {
 // Get All Orders (Admin only)
 export async function GET(req: NextRequest) {
   try {
+    console.log("get order request");
     const token = getAuthToken(req);
     const response = await axios.get(BASE_URL, {
       headers: { Authorization: `Bearer ${token}` },

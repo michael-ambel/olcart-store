@@ -10,8 +10,9 @@ import {
   createPaymentSession,
   getUserProcessedOrders,
   getUserProcessingOrders,
+  updateOrderStatus,
 } from "../controllers/orderController";
-import { protectCustomer } from "../utils/ProtectMiddleware";
+import { protectAdmin, protectCustomer } from "../utils/ProtectMiddleware";
 
 const router = express.Router();
 
@@ -22,8 +23,8 @@ router.get("/", allOrders);
 router.post("/payment-session", protectCustomer, createPaymentSession);
 router.get("/user/processing", protectCustomer, getUserProcessingOrders);
 router.get("/user/processed", protectCustomer, getUserProcessedOrders);
-// router.post("/payment-webhook", handlePaymentWebhook);
-router.get("/:orderId", getOrder);
-router.delete("/:orderId", deleteOrder);
+router.get("/:orderId", protectCustomer, getOrder);
+router.put("/:orderId", protectAdmin, updateOrderStatus);
+router.delete("/:orderId", protectAdmin, deleteOrder);
 
 export default router;

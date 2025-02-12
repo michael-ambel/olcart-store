@@ -1,37 +1,54 @@
 "use client";
-
-// app/admin/orders/page.tsx
 import React, { useState } from "react";
-import OrderEditPopup from "./OrderEditPoup";
+import {
+  useGetOrdersQuery,
+  useUpdateOrderStatusMutation,
+} from "@/store/apiSlices/orderApiSlice";
+import { ClipLoader } from "react-spinners";
+import { showToast } from "../ToastNotifications";
+import { Edit } from "lucide-react";
 
 const Orders = () => {
-  const [activeTab, setActiveTab] = useState("total");
+  const {
+    data: orders = [],
+    refetch,
+    isLoading,
+    isFetching,
+  } = useGetOrdersQuery();
+  const [updateOrderStatus, { isLoading: isUpdating }] =
+    useUpdateOrderStatusMutation();
+
+  const [activeTab, setActiveTab] = useState("All");
   const [selectedOrder, setSelectedOrder] = useState<{
     id: string;
     status: string;
   } | null>(null);
 
-  // Sample orders data with dynamic IDs
-  const orders = [
-    { id: "ksd9sd88o4ij", status: "pending", total: 100, date: "2023-10-01" },
-    { id: "lkjhgf123456", status: "paid", total: 200, date: "2023-10-02" },
-    { id: "mnbvcxz7890", status: "delivered", total: 300, date: "2023-10-03" },
-    { id: "poiuytrewq", status: "canceled", total: 400, date: "2023-10-04" },
-    { id: "asdfghjkl123", status: "pending", total: 150, date: "2023-10-05" },
-    { id: "zxcvbnm456", status: "paid", total: 250, date: "2023-10-06" },
+  // Tabs for filtering orders
+  const orderTabs = [
+    "All",
+    "Pending",
+    "Processing",
+    "Shipped",
+    "Delivered",
+    "Cancelled",
   ];
 
   // Filter orders based on the active tab
   const filteredOrders = orders.filter(
-    (order) => activeTab === "total" || order.status === activeTab,
+    (order) => activeTab === "All" || order.status === activeTab
   );
 
-  // Handle saving the updated order status
-  const handleSave = (status: string) => {
+  const handleSave = async (status: string) => {
     if (selectedOrder) {
-      // Update the order status in the backend or state
-      console.log(`Order ${selectedOrder.id} status updated to:`, status);
-      setSelectedOrder(null); // Close the popup
+      try {
+        await updateOrderStatus({ id: selectedOrder.id, status }).unwrap();
+        showToast("success", "Order status updated successfully!");
+        refetch();
+        setSelectedOrder(null);
+      } catch (error) {
+        showToast("error", "Failed to update order status.");
+      }
     }
   };
 
@@ -39,88 +56,173 @@ const Orders = () => {
     <div className="p-6 bg-gray-100 min-h-screen">
       <h1 className="text-2xl font-bold mb-6">Orders</h1>
       <div className="bg-white p-6 rounded-lg shadow-lg">
-        {/* Tabs for filtering orders */}
+        {/* Tabs */}
         <div className="flex space-x-4 mb-6">
-          {["total", "pending", "paid", "delivered", "canceled"].map((tab) => (
+          {orderTabs.map((tab) => (
             <button
               key={tab}
               className={`px-4 py-2 rounded-md ${
                 activeTab === tab
-                  ? "bg-blue-600 text-white"
+                  ? "bg-gray-200 text-mo font-bold"
                   : "bg-gray-200 text-gray-700"
               }`}
               onClick={() => setActiveTab(tab)}
             >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              {tab}
             </button>
           ))}
         </div>
 
-        {/* Orders Table */}
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead>
-            <tr>
-              <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                No
-              </th>
-              <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                ID
-              </th>
-              <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Total
-              </th>
-              <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Date
-              </th>
-              <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {filteredOrders.map((order, index) => (
-              <tr key={order.id}>
-                {/* Dynamically render the row number (No) */}
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {index + 1}
-                </td>
-                {/* Display the dynamic order ID */}
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {order.id}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {order.status}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  ${order.total}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {order.date}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button
-                    className="text-blue-600 hover:text-blue-900"
-                    onClick={() => setSelectedOrder(order)}
-                  >
-                    Edit
-                  </button>
-                </td>
+        {/* Loading State */}
+        {isLoading || isFetching ? (
+          <div className="flex justify-center items-center h-64 ">
+            <ClipLoader size={80} color="#333333" />
+          </div>
+        ) : (
+          /* Orders Table */
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr>
+                <th className="px-2 py-3 bg-gray-50 text-left text-xs text-gray-500 uppercase">
+                  No
+                </th>
+                <th className="px-2 py-3 bg-gray-50 text-left text-xs text-gray-500 uppercase">
+                  ID
+                </th>
+                <th className="px-2 py-3 bg-gray-50 text-left text-xs text-gray-500 uppercase">
+                  Name
+                </th>
+                <th className="px-2 py-3 bg-gray-50 text-left text-xs text-gray-500 uppercase">
+                  Email
+                </th>
+                <th className="px-2 py-3 bg-gray-50 text-left text-xs text-gray-500 uppercase">
+                  Items
+                </th>
+                <th className="px-2 py-3 bg-gray-50 text-left text-xs text-gray-500 uppercase">
+                  Total
+                </th>
+                <th className="px-2 py-3 bg-gray-50 text-left text-xs text-gray-500 uppercase">
+                  Status
+                </th>
+                <th className="px-2 py-3 bg-gray-50 text-left text-xs text-gray-500 uppercase">
+                  Date
+                </th>
+                <th className="px-2 py-3 bg-gray-50 text-left text-xs text-gray-500 uppercase">
+                  Actions
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredOrders.map((order, index) => (
+                <tr key={order._id}>
+                  <td className="px-2 py-4 text-sm text-gray-500">
+                    {index + 1}
+                  </td>
+                  <td className="px-2 py-2 text-sm text-gray-500">
+                    {order._id}
+                  </td>
+                  <td className="px-2 py-2 text-sm text-gray-500">
+                    {order.user?.name}
+                  </td>
+                  <td className="px-2 py-2 text-sm text-gray-500">
+                    {order.user?.email}
+                  </td>
+                  <td className="px-2 py-2 whitespace-nowrap text-sm text-gray-500">
+                    <ul>
+                      {order.items.map((item, i) => (
+                        <li key={i}>
+                          {item.name.slice(0, 10)}... - ${item.price}
+                        </li>
+                      ))}
+                    </ul>
+                  </td>
+                  <td className="px-2 py-2 text-sm text-gray-500">
+                    ${order.totalAmount}
+                  </td>
+                  <td
+                    className={`px-2 py-2 text-sm font-medium ${
+                      order.status === "Pending"
+                        ? "text-yellow-600 px-2 py-1"
+                        : order.status === "Processing"
+                          ? "text-blue-600 px-2 py-1"
+                          : order.status === "Shipped"
+                            ? "text-purple-600  px-2 py-1"
+                            : order.status === "Delivered"
+                              ? "text-green-600 px-2 py-1"
+                              : order.status === "Cancelled"
+                                ? "text-red-600  px-2 py-1"
+                                : "text-gray-800 px-2 py-1"
+                    }`}
+                  >
+                    {order.status}
+                  </td>
+                  <td className="px-2 py-2 text-sm text-gray-500">
+                    {order.createdAt
+                      ? new Date(order.createdAt).toLocaleDateString()
+                      : "N/A"}
+                  </td>
+                  <td className="px-2 py-2 text-sm text-gray-500">
+                    <button
+                      className="text-blue-600 hover:text-blue-900"
+                      onClick={() =>
+                        setSelectedOrder({
+                          id: order._id || "",
+                          status: order.status || "Pending",
+                        })
+                      }
+                    >
+                      <Edit size={18} className="text-mb" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {/* Order Edit Popup */}
       {selectedOrder && (
-        <OrderEditPopup
-          order={selectedOrder}
-          onClose={() => setSelectedOrder(null)}
-          onSave={handleSave}
-        />
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 className="text-xl font-bold mb-4">
+              Edit Order #{selectedOrder.id}
+            </h2>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Status
+              </label>
+              <select
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                value={selectedOrder.status}
+                onChange={(e) =>
+                  setSelectedOrder({ ...selectedOrder, status: e.target.value })
+                }
+              >
+                {orderTabs.slice(1).map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex justify-end space-x-4">
+              <button
+                className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400"
+                onClick={() => setSelectedOrder(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
+                onClick={() => handleSave(selectedOrder.status)}
+                disabled={isUpdating}
+              >
+                {isUpdating ? <ClipLoader size={18} color="#ffffff" /> : "Save"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

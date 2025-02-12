@@ -240,10 +240,29 @@ export const getOrder: RequestHandler = async (req, res) => {
 // 5. Get All Orders (Admin Only)
 export const allOrders: RequestHandler = async (req, res) => {
   try {
-    const orders = await Order.find()
-      .populate("user")
-      .populate("items.product");
+    const orders = await Order.find({})
+      .populate("user", "name email")
+      .populate("items", "name price");
     res.status(200).json(orders);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateOrderStatus: RequestHandler = async (req, res) => {
+  const { status } = req.body;
+
+  try {
+    const order = await Order.findById(req.params.orderId);
+
+    if (order) {
+      order.status = status;
+      const updatedOrder = await order.save();
+      res.status(200).json(updatedOrder);
+    } else {
+      res.status(404);
+      throw new Error("Order not found");
+    }
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }

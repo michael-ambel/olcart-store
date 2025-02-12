@@ -25,7 +25,7 @@ export async function GET(req: Request) {
   if (!id || typeof id !== "string") {
     return NextResponse.json(
       { message: "Order ID is required" },
-      { status: 400 },
+      { status: 400 }
     );
   }
 
@@ -53,19 +53,20 @@ export async function PUT(req: Request) {
   if (!id || typeof id !== "string") {
     return NextResponse.json(
       { message: "Order ID is required" },
-      { status: 400 },
+      { status: 400 }
     );
   }
 
   try {
     const token = getAuthToken(req);
     const { status } = await req.json();
+    console.log(id, status);
     const resp = await axios.put(
       `${BASE_URL}/${id}`,
       { status },
       {
         headers: { Authorization: `Bearer ${token}` },
-      },
+      }
     );
     return NextResponse.json(resp.data, { status: resp.status });
   } catch (error) {
@@ -86,7 +87,7 @@ export async function DELETE(req: Request) {
   if (!id || typeof id !== "string") {
     return NextResponse.json(
       { message: "Order ID is required" },
-      { status: 400 },
+      { status: 400 }
     );
   }
 

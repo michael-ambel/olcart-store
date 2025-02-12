@@ -40,7 +40,15 @@ export const orderApiSlice = createApi({
     }),
 
     // Get all orders (Admin only)
-    getOrders: builder.query<IOrder[], void>({
+    getOrders: builder.query<
+      (IOrder & {
+        user: {
+          name: string;
+          email: string;
+        };
+      })[],
+      void
+    >({
       query: () => "/",
       providesTags: ["Orders"],
     }),
@@ -54,17 +62,17 @@ export const orderApiSlice = createApi({
           body: { status },
         }),
         invalidatesTags: ["Orders"],
-      },
+      }
     ),
 
-    // Delete an order (Admin only)
-    deleteOrder: builder.mutation<void, string>({
-      query: (orderId) => ({
-        url: `/${orderId}`,
-        method: "DELETE",
-      }),
-      invalidatesTags: ["Orders"],
-    }),
+    // // Delete an order (Admin only)
+    // deleteOrder: builder.mutation<void, string>({
+    //   query: (orderId) => ({
+    //     url: `/${orderId}`,
+    //     method: "DELETE",
+    //   }),
+    //   invalidatesTags: ["Orders"],
+    // }),
 
     // Create payment session (Stripe/PayPal)
     createPaymentSession: builder.mutation<
@@ -98,7 +106,7 @@ export const {
   useGetOrderQuery,
   useGetOrdersQuery,
   useUpdateOrderStatusMutation,
-  useDeleteOrderMutation,
+  // useDeleteOrderMutation,
   useCreatePaymentSessionMutation,
   useGetUserProcessingOrdersQuery,
   useGetUserProcessedOrdersQuery,
