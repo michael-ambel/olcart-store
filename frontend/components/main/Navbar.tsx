@@ -81,7 +81,7 @@ const Navbar: FC = () => {
 
   return (
     <nav className="flex z-50 fixed top-0 bg-white flex-col items-center justify-between xl:h-[110px] xxl:h-[132px] pt-[20px] w-full px-[10px] md:px-[40px] border-b border-mo/10">
-      <div className="flex flex-col gap-2 md:flex-row justify-between w-full items-end">
+      <div className="flex flex-col gap-4 md:flex-row justify-between w-full items-end">
         <div className="flex  justify-between md:block items-center w-full md:w-[104px]">
           {/* Logo */}
           <div className="items-baseline w-[104px] md:w-[104px] ">

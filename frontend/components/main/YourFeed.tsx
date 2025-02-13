@@ -45,7 +45,7 @@ const YourFeed: FC = () => {
         </div>
 
         {/* Product Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 w-full mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 xxl:grid-cols-6 gap-6 w-full mb-8">
           {isLoading ? (
             Array.from({ length: 15 }).map((_, index) => (
               <CardSkeleton key={index} />

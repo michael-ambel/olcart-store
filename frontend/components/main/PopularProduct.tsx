@@ -10,6 +10,7 @@ const PopularProduct: FC = () => {
 
   const productList = [...products, ...products, ...products];
   const [isHovered, setIsHovered] = useState(false);
+  const [isTouching, setIsTouching] = useState(false);
   const [xOffset, setXOffset] = useState(0);
   const [popUp, setPopUp] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -18,8 +19,9 @@ const PopularProduct: FC = () => {
   const wheelSpeed = 0.8;
   const itemWidth = 200;
   const resetThreshold = itemWidth * products.length;
-
   const animationFrameRef = useRef<number | null>(null);
+  const touchStartX = useRef<number>(0);
+  const lastXOffset = useRef<number>(0);
 
   const handleMouseEnter = useCallback(() => {
     setIsHovered(true);
@@ -34,7 +36,6 @@ const PopularProduct: FC = () => {
   const handleWheel = useCallback(
     (e: WheelEvent) => {
       if (!isHovered) return;
-
       e.preventDefault();
       const scrollAmount = e.deltaY * wheelSpeed;
       setXOffset((prev) => prev - scrollAmount);
@@ -42,16 +43,41 @@ const PopularProduct: FC = () => {
     [isHovered, wheelSpeed]
   );
 
+  const handleTouchStart = useCallback(
+    (e: TouchEvent) => {
+      setIsTouching(true);
+      if (e.touches[0]) {
+        touchStartX.current = e.touches[0].clientX;
+      }
+      lastXOffset.current = xOffset;
+    },
+    [xOffset]
+  );
+
+  const handleTouchMove = useCallback(
+    (e: TouchEvent) => {
+      if (!isTouching) return;
+      if (e.touches[0]) {
+        const deltaX = e.touches[0].clientX - touchStartX.current;
+        setXOffset(lastXOffset.current + deltaX);
+      }
+    },
+    [isTouching]
+  );
+
+  const handleTouchEnd = useCallback(() => {
+    setIsTouching(false);
+  }, []);
+
   const scrollAutomatically = useCallback(() => {
-    if (!isHovered) {
+    if (!isHovered && !isTouching) {
       setXOffset((prev) => prev - scrollSpeed);
       animationFrameRef.current = requestAnimationFrame(scrollAutomatically);
     }
-  }, [isHovered, scrollSpeed]);
+  }, [isHovered, isTouching, scrollSpeed]);
 
-  // Start automatic scroll when not hovered
   useEffect(() => {
-    if (!isHovered) {
+    if (!isHovered && !isTouching) {
       animationFrameRef.current = requestAnimationFrame(scrollAutomatically);
     }
     return () => {
@@ -59,23 +85,30 @@ const PopularProduct: FC = () => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [isHovered, scrollAutomatically]);
+  }, [isHovered, isTouching, scrollAutomatically]);
 
-  // Adding mouse wheel listener when hovered
   useEffect(() => {
     const container = containerRef.current;
-    if (isHovered && container) {
+    if (container) {
       container.addEventListener("wheel", handleWheel, { passive: false });
+      container.addEventListener("touchstart", handleTouchStart, {
+        passive: true,
+      });
+      container.addEventListener("touchmove", handleTouchMove, {
+        passive: true,
+      });
+      container.addEventListener("touchend", handleTouchEnd);
     }
-
     return () => {
       if (container) {
         container.removeEventListener("wheel", handleWheel);
+        container.removeEventListener("touchstart", handleTouchStart);
+        container.removeEventListener("touchmove", handleTouchMove);
+        container.removeEventListener("touchend", handleTouchEnd);
       }
     };
-  }, [isHovered, handleWheel]);
+  }, [handleWheel, handleTouchStart, handleTouchMove, handleTouchEnd]);
 
-  // Reset the scroll position when reaching the end or beginning
   useEffect(() => {
     if (xOffset <= -resetThreshold * 2) {
       setXOffset((prev) => prev + resetThreshold);
@@ -85,7 +118,7 @@ const PopularProduct: FC = () => {
   }, [xOffset, resetThreshold]);
 
   return (
-    <div className="relative flex flex-col justify-between w-full h-[300px] px-[0] my-[100px]">
+    <div className="relative flex flex-col justify-between w-full h-[300px] overflow-x-clip px-[0] my-[60px]">
       <h2 className="text-[24px] ml-[40px] font-bold">Top-Selling Items</h2>
       <div
         ref={containerRef}
@@ -93,14 +126,11 @@ const PopularProduct: FC = () => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        {/* Popup message for user instruction */}
         {popUp && (
           <div className="absolute z-40 top-0 right-[40px] py-[10px] px-[20px] text-bg bg-mg w-auto h-auto rounded-full">
             Use scroll
           </div>
         )}
-
-        {/* Suspense Placeholders */}
         {isLoading ? (
           <div className="flex">
             {Array.from({ length: 10 }).map((_, i) => (
@@ -114,12 +144,9 @@ const PopularProduct: FC = () => {
             ))}
           </div>
         ) : (
-          // Scrollable product list
           <motion.div
             className="flex"
-            style={{
-              transform: `translateX(${xOffset}px)`,
-            }}
+            style={{ transform: `translateX(${xOffset}px)` }}
           >
             {productList.map((p, i) => (
               <CardTopSelling key={i} product={p} />
