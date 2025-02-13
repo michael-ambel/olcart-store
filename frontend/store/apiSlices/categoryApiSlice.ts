@@ -15,6 +15,10 @@ export const categoryApiSlice = createApi({
     baseUrl: url,
     credentials: "include",
     mode: "cors",
+    prepareHeaders: (headers) => {
+      headers.set("Cache-Control", "no-cache");
+      return headers;
+    },
   }),
   tagTypes: ["Category"],
 

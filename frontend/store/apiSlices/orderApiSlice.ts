@@ -10,6 +10,10 @@ export const orderApiSlice = createApi({
     baseUrl: url,
     credentials: "include",
     mode: "cors",
+    prepareHeaders: (headers) => {
+      headers.set("Cache-Control", "no-cache");
+      return headers;
+    },
   }),
   tagTypes: ["Orders"],
 

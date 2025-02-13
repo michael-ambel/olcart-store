@@ -24,7 +24,7 @@ const SliderMenu: React.FC<ProfileSidebarProps> = ({ isOpen, logout }) => {
   return (
     <div
       ref={sidebarRef}
-      className={`absolute top-[90px] right-0 w-[280px] bg-white/95 shadow-2xl rounded-lg transform transition-all ease-[cubic-bezier(0.4,0,0.2,1)] ${
+      className={`absolute top-[110px] xl:top-[90px] right-0 w-[280px] bg-white/95 shadow-2xl rounded-lg transform transition-all ease-[cubic-bezier(0.4,0,0.2,1)] ${
         isOpen
           ? "translate-x-0 opacity-100 visible duration-1000"
           : "translate-x-full opacity-0 invisible duration-500"
