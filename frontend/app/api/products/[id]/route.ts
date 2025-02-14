@@ -36,15 +36,12 @@ export async function GET(req: Request) {
   if (!id || typeof id !== "string") {
     return NextResponse.json(
       { message: "Product ID is required" },
-      { status: 400 },
+      { status: 400 }
     );
   }
 
   try {
-    const token = getAuthToken(req);
-    const response = await axios.get(`${BASE_URL}/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await axios.get(`${BASE_URL}/${id}`);
     return NextResponse.json(response.data, { status: response.status });
   } catch (error) {
     return handleApiError(error);
@@ -62,7 +59,7 @@ export async function PUT(req: Request) {
     if (!id) {
       return NextResponse.json(
         { message: "Product ID is required" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -73,7 +70,7 @@ export async function PUT(req: Request) {
     if (!token) {
       return NextResponse.json(
         { message: "Authentication error: please log in again" },
-        { status: 401 },
+        { status: 401 }
       );
     }
 
@@ -82,7 +79,7 @@ export async function PUT(req: Request) {
     if (!contentType || !contentType.includes("multipart/form-data")) {
       return NextResponse.json(
         { message: "Content type must be multipart/form-data" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -117,7 +114,7 @@ export async function DELETE(req: Request) {
   if (!id || typeof id !== "string") {
     return NextResponse.json(
       { message: "Product ID is required" },
-      { status: 400 },
+      { status: 400 }
     );
   }
 

@@ -1,18 +1,8 @@
 // pages/api/search.ts
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
-import * as cookie from "cookie";
 
 const BASE_URL = `${process.env["SERVER_URL"]}/products/search`;
-
-function getAuthToken(req: NextRequest) {
-  const cookies = cookie.parse(req.headers.get("cookie") || "");
-  const token = cookies["jwt"];
-  if (!token) {
-    throw new Error("Authentication error: please log in again");
-  }
-  return token;
-}
 
 // Error handling function
 function handleApiError(error: unknown) {
@@ -32,14 +22,12 @@ export async function GET(req: NextRequest) {
     const category = url.searchParams.get("category") || "";
     const priceMin = parseFloat(url.searchParams.get("priceMin") || "0");
     const priceMax = parseFloat(
-      url.searchParams.get("priceMax") || "1000000000000",
+      url.searchParams.get("priceMax") || "1000000000000"
     );
     const tags = url.searchParams.get("tags") || "";
     const sort = url.searchParams.get("sort") || "relevance";
     const page = parseInt(url.searchParams.get("page") || "1");
     const limit = parseInt(url.searchParams.get("limit") || "10");
-
-    const token = getAuthToken(req);
 
     const response = await axios.get(BASE_URL, {
       params: {
@@ -51,26 +39,6 @@ export async function GET(req: NextRequest) {
         sort,
         page,
         limit,
-      },
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    return NextResponse.json(response.data, { status: response.status });
-  } catch (error) {
-    return handleApiError(error);
-  }
-}
-
-// Handle POST request (for creating/updating products, if needed)
-export async function POST(req: NextRequest) {
-  try {
-    const token = getAuthToken(req);
-    const body = await req.json();
-
-    // Send POST request to the backend API
-    const response = await axios.post(BASE_URL, body, {
-      headers: {
-        Authorization: `Bearer ${token}`,
       },
     });
 
