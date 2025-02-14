@@ -11,6 +11,9 @@ import "./types/express";
 
 import bodyParser from "body-parser";
 import { handlePaymentWebhook } from "./controllers/orderController";
+import axios from "axios";
+
+const PING_INTERVAL = 14 * 60 * 1000;
 
 dotenv.config();
 
@@ -46,8 +49,24 @@ app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/categories", categoryRoutes);
+app.get("/api/ping", (req, res) => {
+  res.send("Server is alive!");
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+setInterval(async () => {
+  try {
+    await axios.get("https://olcart-store.onrender.com/api/ping");
+    console.log("Self-pinged to stay awake!");
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Ping failed:", error.message);
+    } else {
+      console.error("Ping failed:", error);
+    }
+  }
+}, PING_INTERVAL);
 
 export default app;

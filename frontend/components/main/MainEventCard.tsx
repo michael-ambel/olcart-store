@@ -80,7 +80,7 @@ const MainCard: FC = () => {
   };
 
   return (
-    <div className="relative w-full h-[300px] overflow-y-visible overflow-x-clip mt-[120px] mb-[60px] bg-mo">
+    <div className="relative w-full h-[300px] overflow-y-visible overflow-x-clip mt-[140px] mb-[60px] bg-mo">
       {events.map((event, index) => (
         <motion.div
           key={event.id}
