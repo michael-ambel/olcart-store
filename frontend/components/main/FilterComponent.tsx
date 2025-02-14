@@ -20,6 +20,7 @@ const FilterComponent: React.FC = () => {
   const [localFilters, setLocalFilters] = useState<Filters>(filters);
   const [categoriesData, setCategoriesData] = useState<CategoryTree[]>([]);
   const [selectedPath, setSelectedPath] = useState<CategoryTree[]>([]);
+  const [showMobileFilters, setShowMobileFilters] = useState(false); // Mobile filter state
 
   const { data, isLoading: isCategoriesLoading } = useGetCategoriesQuery();
 
@@ -30,7 +31,7 @@ const FilterComponent: React.FC = () => {
   }, [data]);
 
   const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     if (name === "priceMin" || name === "priceMax" || name === "tags") {
@@ -64,7 +65,7 @@ const FilterComponent: React.FC = () => {
     const updatedPath = selectedPath.slice(0, level);
     const category = findCategoryById(
       level === 0 ? categoriesData : selectedPath[level - 1]?.subCategories,
-      id,
+      id
     );
 
     if (category) {
@@ -90,7 +91,7 @@ const FilterComponent: React.FC = () => {
 
   const findCategoryById = (
     categories: CategoryTree[] | undefined,
-    id: string,
+    id: string
   ): CategoryTree | undefined => {
     if (!categories) return undefined;
     for (const category of categories) {
@@ -119,7 +120,7 @@ const FilterComponent: React.FC = () => {
           key={level}
           value={selectedPath[level]?._id || ""}
           onChange={(e) => handleSelectionChange(level, e.target.value)}
-          className="w-auto border rounded p-2 mb-2"
+          className="w-full md:w-auto border rounded p-2 mb-2"
         >
           <option value="">Select</option>
           {categories.map((category) => (
@@ -127,7 +128,7 @@ const FilterComponent: React.FC = () => {
               {category.name}
             </option>
           ))}
-        </select>,
+        </select>
       );
     }
 
@@ -135,89 +136,125 @@ const FilterComponent: React.FC = () => {
   };
 
   return (
-    <div className="fixed top-[170px] left-[20px] py-[24px] px-[14px] bg-gray-100 w-[260px] rounded-[12px]">
-      <div className="fixed flex gap-[8px] items-center top-[112px] mb-4">
-        <label className="block text-sm font-medium">Category</label>
-        {isCategoriesLoading ? <p>Loading categories...</p> : renderSelectors()}
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium">Price Range</label>
-        <div className="flex space-x-1">
-          <input
-            type="number"
-            name="priceMin"
-            value={localFilters.priceMin}
-            onChange={handleInputChange}
-            placeholder="Min"
-            className="mt-1 block w-full px-3 py-[8px] border border-gray-300 rounded-md"
-          />
-          <input
-            type="number"
-            name="priceMax"
-            value={localFilters.priceMax}
-            onChange={handleInputChange}
-            placeholder="Max"
-            className="mt-1 block w-full px-3 py-[8px] border border-gray-300 rounded-md"
-          />
+    <>
+      {/* Mobile Filter Button */}
+      <button
+        className="fixed md:hidden bottom-4 right-4 z-40 px-6 py-3 bg-mo text-white rounded-full shadow-lg"
+        onClick={() => setShowMobileFilters(!showMobileFilters)}
+      >
+        {showMobileFilters ? "Close Filters" : "Show Filters"}
+      </button>
+
+      {/* Filter Content */}
+      <div
+        className={`fixed  top-[110px] z-50 left-0 md:top-[140px] md:left-[20px] h-screen md:h-[75%]  md:w-[260px] p-4 md:py-[24px] md:px-[14px] bg-white md:bg-gray-100  md:rounded-[12px] overflow-y-auto transition-transform duration-300 ${
+          showMobileFilters
+            ? "translate-x-0"
+            : "-translate-x-full md:translate-x-0"
+        }`}
+      >
+        <div className="md:fixed flex flex-col gap-1">
+          {/* Category Selectors */}
+          <div className="md:mb-4">
+            <label className="block text-sm font-medium">Category</label>
+            {isCategoriesLoading ? <p>Loading...</p> : renderSelectors()}
+          </div>
+
+          {/* Price Range */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium">Price Range</label>
+            <div className="flex gap-2">
+              <input
+                type="number"
+                name="priceMin"
+                value={localFilters.priceMin}
+                onChange={handleInputChange}
+                placeholder="Min"
+                className="w-full px-3 py-2 border rounded-md"
+              />
+              <input
+                type="number"
+                name="priceMax"
+                value={localFilters.priceMax}
+                onChange={handleInputChange}
+                placeholder="Max"
+                className="w-full px-3 py-2 border rounded-md"
+              />
+              <button
+                onClick={handlePriceRangeConfirm}
+                className="px-3 py-2 bg-mo text-white rounded-md"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+
+          {/* Tags */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium">Tags</label>
+            <input
+              type="text"
+              name="tags"
+              value={localFilters.tags?.join(", ")}
+              onChange={handleInputChange}
+              placeholder="Comma-separated tags"
+              className="w-full px-3 py-2 border rounded-md"
+            />
+            <button
+              onClick={handleTagsSubmit}
+              className="mt-2 px-4 py-2 bg-mo text-white rounded-md"
+            >
+              Submit
+            </button>
+          </div>
+
+          {/* Sort By */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium">Sort By</label>
+            <select
+              name="sort"
+              value={localFilters.sort}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border rounded-md"
+            >
+              <option value="">Relevance</option>
+              <option value="price_asc">Price: Low to High</option>
+              <option value="price_desc">Price: High to Low</option>
+              <option value="popularity">Popularity</option>
+              <option value="rating">Rating</option>
+            </select>
+          </div>
+
+          {/* Results Limit */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium">Results Limit</label>
+            <div className="flex gap-2">
+              {[10, 20, 35, 50].map((limit) => (
+                <button
+                  key={limit}
+                  onClick={() => handleLimitChange(limit)}
+                  className={`px-3 py-1 rounded-md ${
+                    localFilters.limit === limit
+                      ? "bg-mo text-white"
+                      : "bg-gray-200 text-gray-700"
+                  }`}
+                >
+                  {limit}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile Close Button */}
           <button
-            onClick={handlePriceRangeConfirm}
-            className="mt-2 px-2 py-1 bg-fade text-white rounded-md"
+            className="md:hidden mt-4 px-6 py-2 bg-mo text-white rounded-md"
+            onClick={() => setShowMobileFilters(false)}
           >
-            OK
+            Apply Filters
           </button>
         </div>
       </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium">Tags</label>
-        <input
-          type="text"
-          name="tags"
-          value={localFilters.tags?.join(", ")}
-          onChange={handleInputChange}
-          placeholder="Comma-separated tags"
-          className="mt-1 block w-full px-3 py-[8px] border border-gray-300 rounded-md"
-        />
-        <button
-          onClick={handleTagsSubmit}
-          className="mt-2 px-4 py-[7px] bg-fade text-white rounded-md"
-        >
-          Submit
-        </button>
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium">Sort By</label>
-        <select
-          name="sort"
-          value={localFilters.sort}
-          onChange={handleInputChange}
-          className="mt-1 block w-full px-3 py-[8px] border border-gray-300 rounded-md"
-        >
-          <option value="">Relevance</option>
-          <option value="price_asc">Price: Low to High</option>
-          <option value="price_desc">Price: High to Low</option>
-          <option value="popularity">Popularity</option>
-          <option value="rating">Rating</option>
-        </select>
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium">Results Limit</label>
-        <div className="flex space-x-2">
-          {[10, 20, 35, 50].map((limit) => (
-            <button
-              key={limit}
-              onClick={() => handleLimitChange(limit)}
-              className={`px-3 py-1 rounded-md ${
-                localFilters.limit === limit
-                  ? "bg-fade text-white"
-                  : "bg-gray-200 text-gray-700"
-              }`}
-            >
-              {limit}
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 

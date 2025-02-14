@@ -45,9 +45,8 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
   }, [product, user]);
 
   const handleReply = (parentId: string) => {
-    // Toggle the reply box
     if (replayTo === parentId) {
-      setReplayTo(""); // Close the reply box
+      setReplayTo("");
     } else {
       setQandfInput({
         message: "",
@@ -67,17 +66,11 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
       if (!user?.name) {
         showToast(
           "error",
-          "You have to login and purchase the product to add a review",
+          "You have to login and purchase the product to add a review"
         );
         return;
       }
 
-      console.log(
-        product._id,
-        user?.name,
-        reviewInput.rating,
-        reviewInput.comment,
-      );
       await createOrUpdateReview({
         productId: product._id,
         username: user?.name,
@@ -86,15 +79,9 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
       }).unwrap();
 
       showToast("success", "Review submitted successfully!");
-      setReviewInput({ rating: 0, comment: "" }); // Reset form
-    } catch (error) {
-      showToast(
-        "error",
-        `${
-          (error as { data?: { message: { message?: string } } })?.data?.message
-            .message || "An error occurred while submitting the review."
-        }`,
-      );
+      setReviewInput({ rating: 0, comment: "" });
+    } catch {
+      showToast("error", "An error occurred while submitting the review.");
     }
   };
 
@@ -103,7 +90,7 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
       if (!qandfInput.message || !qandfInput.type) {
         showToast(
           "error",
-          "Please fill in the message field and select a type.",
+          "Please fill in the message field and select a type."
         );
         return;
       }
@@ -126,7 +113,7 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
       if (error) {
         showToast(
           "error",
-          "Failed to submit question/feedback. Please try again.",
+          "Failed to submit question/feedback. Please try again."
         );
       }
     }
@@ -134,41 +121,44 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
 
   const tabs: Record<TabKey, React.ReactNode> = {
     reviews: (
-      <div>
+      <div className="space-y-6">
         {product.buyers?.length ? (
-          <ul>
+          <ul className="space-y-4">
             {product.buyers.map((buyer: IBuyer, index: number) => (
-              <li key={index} className="mb-4">
-                <p className="font-semibold">{buyer.username}</p>
-
-                <div className="flex justify-between w-[120px] my-[8px]">
+              <li
+                key={index}
+                className="p-6 bg-white rounded-2xl shadow-sm border border-bl/5"
+              >
+                <p className="font-semibold text-lg text-bl">
+                  {buyer.username}
+                </p>
+                <div className="flex gap-2 my-3">
                   {tstar.map((ts, i) => {
                     const s = buyer.reviews?.rating || 0;
-                    const src: string =
+                    const src =
                       s >= ts
                         ? "/icons/fstar.svg"
                         : ts - 1 < s && s < ts
                           ? "/icons/hstar.svg"
                           : "/icons/zstar.svg";
-
                     return (
-                      <div key={i} className="w-[18px] ">
+                      <div key={i} className="w-6 h-6">
                         <Image
                           src={src}
                           alt=""
-                          width={500}
-                          height={500}
-                          className="w-[18px]"
+                          width={24}
+                          height={24}
+                          className="w-full h-full"
                         />
                       </div>
                     );
                   })}
                 </div>
-                <p className="text-gray-600">{buyer.reviews?.comment}</p>
-                <p className="text-sm text-gray-400">
+                <p className="text-bl/90">{buyer.reviews?.comment}</p>
+                <p className="text-sm text-bl/50 mt-2">
                   {buyer.reviews
                     ? new Date(
-                        buyer.reviews.updatedAt || buyer.reviews.createdAt,
+                        buyer.reviews.updatedAt || buyer.reviews.createdAt
                       ).toLocaleDateString()
                     : "No review date"}
                 </p>
@@ -176,106 +166,124 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
             ))}
           </ul>
         ) : (
-          <p>No reviews yet.</p>
+          <p className="text-bl/50">No reviews yet.</p>
         )}
 
         {/* Add Review Form */}
-        <div className="p-[20px] mt-[40px] border-[2px] border-bl rounded-[10px]">
-          <h3 className="text-lg font-semibold">
+        <div className="p-6 bg-white rounded-2xl shadow-sm border border-bl/5">
+          <h3 className="text-xl font-bold text-bl mb-6">
             {reviewd ? "Update My Review" : "Add Your Review"}
           </h3>
-          <div className="flex flex-col gap-[8px] my-[10px]">
-            <label className="block font-medium">Rating</label>
-            <div className="flex gap-[10px]">
-              {tstar.map((star) => {
-                const src =
-                  reviewInput.rating >= star
-                    ? "/icons/fstar.svg"
-                    : "/icons/zstar.svg";
-
-                return (
+          <div className="space-y-6">
+            <div>
+              <label className="block font-medium text-bl mb-3">Rating</label>
+              <div className="flex gap-3">
+                {tstar.map((star) => (
                   <button
                     key={star}
                     onClick={() =>
                       setReviewInput({ ...reviewInput, rating: star })
                     }
-                    className="w-[30px] h-[30px]"
+                    className="w-6 h-6 transition-transform hover:scale-110"
                   >
                     <Image
-                      src={src}
+                      src={
+                        reviewInput.rating >= star
+                          ? "/icons/fstar.svg"
+                          : "/icons/zstar.svg"
+                      }
                       alt={`Star ${star}`}
-                      width={500}
-                      height={500}
-                      className="w-[26px]"
+                      width={40}
+                      height={40}
+                      className="w-full h-full"
                     />
                   </button>
-                );
-              })}
+                ))}
+              </div>
             </div>
+            <div>
+              <label className="block font-medium text-bl mb-3">Comment</label>
+              <textarea
+                value={reviewInput.comment}
+                onChange={(e) =>
+                  setReviewInput({ ...reviewInput, comment: e.target.value })
+                }
+                className="w-full p-4 border border-bl/20 rounded-xl bg-bl/5 focus:ring-2 focus:ring-mo"
+                rows={4}
+              />
+            </div>
+            <button
+              onClick={handleAddReview}
+              className="w-full bg-mo text-white py-4 rounded-xl font-bold hover:bg-mo/90 transition-all"
+            >
+              Submit Review
+            </button>
           </div>
-          <div className="flex flex-col gap-[8px] mt-[20px]">
-            <label className="block font-medium">Comment</label>
-            <textarea
-              value={reviewInput.comment}
-              onChange={(e) =>
-                setReviewInput({ ...reviewInput, comment: e.target.value })
-              }
-              className="border p-2 rounded w-full"
-              rows={4}
-            ></textarea>
-          </div>
-          <button
-            onClick={handleAddReview}
-            className="mt-4 bg-mo text-white px-4 py-2 rounded"
-          >
-            Submit Review
-          </button>
         </div>
       </div>
     ),
-    description: <p>{product.description}</p>,
+    description: (
+      <p className="text-bl/90 text-lg leading-relaxed">
+        {product.description}
+      </p>
+    ),
     specifications: (
-      <ul>
+      <ul className="space-y-3 pl-5">
         {product.specifications?.map((spec: string, index: number) => (
-          <li key={index}>{spec}</li>
+          <li
+            key={index}
+            className="text-bl/90 relative pl-5 before:content-['•'] before:text-mo before:absolute before:left-0"
+          >
+            {spec}
+          </li>
         ))}
       </ul>
     ),
     qandf: (
-      <div>
+      <div className="space-y-6">
         {product.questionsAndFeedback?.length ? (
-          <ul>
+          <ul className="space-y-4">
             {product.questionsAndFeedback
               .slice()
               .reverse()
               .map((qf, index) => (
-                <li key={index} className="mb-4">
-                  <p className="font-semibold">{qf.username}</p>
-
-                  <div className="flex">
-                    <p className=" text-mo font-bold w-[30px]">
-                      {qf.type === "question" ? "Q" : "F"}
-                    </p>
+                <li
+                  key={index}
+                  className="p-6 bg-white rounded-2xl shadow-sm border border-bl/5"
+                >
+                  <p className="font-semibold text-lg text-bl">{qf.username}</p>
+                  <div className="flex items-start gap-4 mt-3">
+                    <div
+                      className={`w-8 h-8 flex items-center justify-center rounded-lg ${
+                        qf.type === "question" ? "bg-mo/10" : "bg-mg/10"
+                      }`}
+                    >
+                      <p
+                        className={`text-sm font-bold ${
+                          qf.type === "question" ? "text-mo" : "text-mg"
+                        }`}
+                      >
+                        {qf.type === "question" ? "Q" : "F"}
+                      </p>
+                    </div>
                     <div className="flex-1">
-                      <p className="text-gray-600">{qf.message}</p>
-                      <div className="flex justify-between">
+                      <p className="text-bl/90">{qf.message}</p>
+                      <div className="flex justify-between items-center mt-4">
                         {qf.type !== "replay" && (
                           <button
                             onClick={() => qf._id && handleReply(qf._id)}
-                            className="my-[12px] p-[6px] text-[14px] border-[1px] rounded-full border-mg text-mg font-bold"
+                            className="px-4 py-2 text-sm bg-bl/5 text-bl rounded-full hover:bg-bl/10 transition-colors"
                           >
                             Add Reply
                           </button>
                         )}
-                        <p className="text-sm text-gray-400">
-                          {new Date(
-                            qf.createdAt ? qf.createdAt : "",
-                          ).toLocaleDateString()}
+                        <p className="text-sm text-bl/50">
+                          {new Date(qf.createdAt || "").toLocaleDateString()}
                         </p>
                       </div>
 
                       {replayTo === qf._id && (
-                        <div className="flex items-end justify-between gap-[14px] my-[20px]">
+                        <div className="mt-6">
                           <textarea
                             value={qandfInput.message}
                             onChange={(e) =>
@@ -284,36 +292,42 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
                                 message: e.target.value,
                               })
                             }
-                            className="border p-2 rounded flex-1"
+                            className="w-full p-4 border border-bl/20 rounded-xl bg-bl/5 focus:ring-2 focus:ring-mo"
                             rows={3}
+                            placeholder="Write your reply..."
                           />
                           <button
                             onClick={handleAddQandF}
-                            className="mt-2 bg-mg text-white px-4 py-2 h-[40px] rounded-full"
+                            className="mt-4 bg-mo text-white px-6 py-3 rounded-xl font-medium hover:bg-mo/90 transition-colors"
                           >
-                            Submit
+                            Submit Reply
                           </button>
                         </div>
                       )}
+
                       {qf.replies && (
-                        <div className="grid grid-cols-3 gap-[16px]">
+                        <div className="mt-6 space-y-4">
                           {qf.replies
                             .slice()
                             .reverse()
                             .map((replay, index) => (
-                              <div key={index}>
-                                <div className="flex flex-col justify-between">
-                                  <p className="font-semibold">
+                              <div
+                                key={index}
+                                className="p-4 bg-bl/5 rounded-xl border border-bl/10"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <p className="font-medium text-bl">
                                     {replay.username}
                                   </p>
-
-                                  <p className="text-sm text-gray-400 my-[6px]">
+                                  <p className="text-sm text-bl/50">
                                     {new Date(
-                                      replay.createdAt && replay.createdAt,
+                                      replay.createdAt || ""
                                     ).toDateString()}
                                   </p>
                                 </div>
-                                <p className="text-[15px]">{replay.message}</p>
+                                <p className="mt-2 text-bl/90">
+                                  {replay.message}
+                                </p>
                               </div>
                             ))}
                         </div>
@@ -324,52 +338,55 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
               ))}
           </ul>
         ) : (
-          <p>No questions or feedback yet.</p>
+          <p className="text-bl/50">No questions or feedback yet.</p>
         )}
 
         {/* Add Question/Feedback Form */}
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold">
+        <div className="p-6 bg-white rounded-2xl shadow-sm border border-bl/5">
+          <h3 className="text-xl font-bold text-bl mb-6">
             Ask a Question or Leave Feedback
           </h3>
-          <div className="flex gap-[20px]">
-            <div className="mt-2">
-              <label className="block font-medium">Type</label>
+          <div className="space-y-6">
+            <div>
+              <label className="block font-medium text-bl mb-3">Type</label>
               <select
                 value={qandfInput.type}
                 onChange={(e) =>
                   setQandfInput({ ...qandfInput, type: e.target.value })
                 }
-                className="border p-2 rounded w-full"
+                className="w-full p-3 border border-bl/20 rounded-xl bg-bl/5 focus:ring-2 focus:ring-mo"
               >
                 <option value="question">Question</option>
                 <option value="feedback">Feedback</option>
               </select>
             </div>
-            <div className="flex-1">
-              <div className="mt-2 ">
-                <label className="block  font-medium">Message</label>
-                <textarea
-                  value={qandfInput.message}
-                  onChange={(e) =>
-                    setQandfInput({ ...qandfInput, message: e.target.value })
-                  }
-                  className="border p-2 rounded w-full"
-                  rows={4}
-                ></textarea>
-              </div>
-              <button
-                onClick={handleAddQandF}
-                className="mt-4 bg-mg text-white px-4 py-2 rounded-full"
-              >
-                Submit
-              </button>
+            <div>
+              <label className="block font-medium text-bl mb-3">Message</label>
+              <textarea
+                value={qandfInput.message}
+                onChange={(e) =>
+                  setQandfInput({ ...qandfInput, message: e.target.value })
+                }
+                className="w-full p-4 border border-bl/20 rounded-xl bg-bl/5 focus:ring-2 focus:ring-mo"
+                rows={4}
+                placeholder="Type your message here..."
+              />
             </div>
+            <button
+              onClick={handleAddQandF}
+              className="w-full bg-mo text-white py-4 rounded-xl font-bold hover:bg-mo/90 transition-all"
+            >
+              Submit
+            </button>
           </div>
         </div>
       </div>
     ),
-    store: <p>{product.storeDetails || "Not available"}</p>,
+    store: (
+      <p className="text-bl/90 text-lg">
+        {product.storeDetails || "Store information not available"}
+      </p>
+    ),
   };
 
   const tabLabels: Record<TabKey, string> = {
@@ -381,13 +398,15 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
   };
 
   return (
-    <div>
-      <div className="flex justify-around mt-[70px]">
+    <div className="mt-12">
+      <div className="flex flex-wrap gap-2 justify-center border-b border-bl/10">
         {Object.keys(tabs).map((tab) => (
           <button
             key={tab}
-            className={`px-1 py-2 font-medium ${
-              activeTab === tab ? "border-b-[4px] border-mo" : ""
+            className={`px-5 py-3 text-sm sm:text-base font-medium rounded-t-xl transition-colors ${
+              activeTab === tab
+                ? "bg-mo text-white shadow-lg"
+                : "text-bl/70 hover:bg-bl/5"
             }`}
             onClick={() => setActiveTab(tab as TabKey)}
           >
@@ -396,7 +415,7 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
         ))}
       </div>
 
-      <div className="mt-4 p-4 bg-bgt rounded-[4px] min-h-[400px]">
+      <div className="mt-2 p-6 bg-white rounded-2xl shadow-sm border border-bl/5">
         {tabs[activeTab]}
       </div>
     </div>

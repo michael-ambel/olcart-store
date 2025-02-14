@@ -129,106 +129,116 @@ const ProductDetailPage = () => {
   };
 
   return (
-    <div>
-      <div className="flex items-start justify-between w-full gap-[40px]">
-        <div className="flex  items-start justify-between gap-6">
-          <div className="relative flex items-start w-[340px] h-[340px] bg-white shadow-lg rounded-[12px] hover:shadow-2xl transition-shadow duration-300">
+    <div className="container mx-auto px-4 py-8">
+      {/* Main Product Container */}
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Image Section */}
+        <div className="w-full lg:w-[40%] xl:w-[35%]">
+          <div className="relative aspect-square bg-white shadow-xl rounded-2xl hover:shadow-2xl transition-all duration-300">
             <Image
               src={
                 typeof product.images[0] === "string" ? product.images[0] : ""
               }
               alt={product.name}
-              layout="fill"
-              objectFit="contain"
-              className="rounded-[12px] "
+              fill
+              sizes="(max-width: 1024px) 100vw, 35vw"
+              className="rounded-2xl object-contain p-4"
+              priority
             />
           </div>
         </div>
 
-        <div className="flex flex-col flex-1 h-[340px] justify-between ">
-          <h1 className="text-[26px] font-bold">{product.name}</h1>
-          <p>{product.description}</p>
-          <div className="flex   items-start justify-between">
+        {/* Product Info Section */}
+        <div className="flex-1 flex flex-col justify-between space-y-6 ">
+          <h1 className="text-3xl md:text-4xl font-bold ">{product.name}</h1>
+          <p className="text-bl/90 text-lg">{product.description}</p>
+
+          <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 text-base">
             <div className="flex items-center gap-2">
-              <div>{ratingStars(product.averageRating || 0)}</div>
-              <span className="font-medium">
-                {product.averageRating ? product.averageRating.toFixed(1) : ""}
+              {ratingStars(product.averageRating || 0)}
+              <span className="font-medium ">
+                {product.averageRating?.toFixed(1) || ""}
               </span>
             </div>
-            <p className="">{product.salesCount} sold</p>
-            <p className="text-[18] font-semibold">In Stock: {product.stock}</p>
+            <p className="text-bl/80">{product.salesCount} sold</p>
+            <p className="font-semibold text-mg">In Stock: {product.stock}</p>
           </div>
         </div>
 
-        <div className="flex flex-col h-[340px] justify-between w-[240px]">
-          <div className="">
-            <p className="text-[24px] font-bold">${product.price.toFixed(2)}</p>
-            <div className="flex text-[18px] justify-between">
-              <p className="">Shipping:</p>
-              <span>
-                {shippingPrice === 0 ? "Free" : shippingPrice.toFixed(2)}
-              </span>
-            </div>
-          </div>
+        {/* Price & Cart Section */}
+        <div className="w-full lg:w-[320px] xl:w-[280px] space-y-6">
+          <div className="bg-bl/5 p-6 rounded-2xl space-y-4 md:space-y-8 border border-bl/10">
+            <p className="text-3xl font-bold text-bl">
+              ${product.price.toFixed(2)}
+            </p>
 
-          <div className="flex items-center justify-between font-semibold">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2 font-semibold">
+                <button
+                  onClick={handleDecrease}
+                  className="px-4 py-2 bg-bl/5 text-bl rounded-xl hover:bg-bl/10 disabled:opacity-40"
+                  disabled={quantity <= 1}
+                >
+                  -
+                </button>
+                <input
+                  type="number"
+                  value={quantity}
+                  onChange={handleInputChange}
+                  className="w-16 py-2 text-center border border-bl/20 rounded-xl bg-white"
+                  min="1"
+                  max={product.stock}
+                />
+                <button
+                  onClick={handleIncrease}
+                  className="px-4 py-2 bg-bl/5 text-bl rounded-xl hover:bg-bl/10 disabled:opacity-40"
+                  disabled={quantity >= product.stock}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-3 text-bl/90">
+              <div className="flex justify-between">
+                <span>Item Price:</span>
+                <span className="font-medium">${itemPrice.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Shipping:</span>
+                <span className="font-medium">
+                  {shippingPrice === 0
+                    ? "Free"
+                    : `$${shippingPrice.toFixed(2)}`}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>Discount:</span>
+                <span className="font-medium text-mg">
+                  -${discount.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between text-2xl pt-3 border-t border-bl/10">
+                <span className="font-bold text-bl">Total:</span>
+                <span className="font-bold text-bl">${total.toFixed(2)}</span>
+              </div>
+            </div>
+
             <button
-              onClick={handleDecrease}
-              className="px-4 py-2 bg-fade rounded-md disabled:opacity-50"
-              disabled={quantity <= 1}
+              onClick={addToCartHandler}
+              disabled={buttonAnimation}
+              className="w-full py-4 bg-mo text-white rounded-xl hover:bg-mo/90 transition-all font-bold disabled:opacity-80"
             >
-              -
-            </button>
-            <input
-              type="number"
-              value={quantity}
-              onChange={handleInputChange}
-              className="py-[10px]  text-center border border-fade rounded-md"
-              min="1"
-              max={product.stock}
-            />
-            <button
-              onClick={handleIncrease}
-              className="px-4 py-2 bg-fade rounded-md disabled:opacity-50"
-              disabled={quantity >= product.stock}
-            >
-              +
+              {buttonAnimation ? "Adding..." : "Add to Cart"}
             </button>
           </div>
-
-          <div className=" text-[17px]">
-            <div className="flex  justify-between">
-              <p className="">Item Price:</p>
-              <span className="font-semibold">${itemPrice.toFixed(2)}</span>
-            </div>
-            <div className="flex  justify-between">
-              <p className=" ">Shipping: </p>
-              <span className="font-semibold">
-                ${shippingPrice === 0 ? "Free" : shippingPrice.toFixed(2)}
-              </span>
-            </div>
-            <div className="flex  justify-between">
-              <p className=" ">Discount: </p>
-              <span className="font-semibold">${discount.toFixed(2)}</span>
-            </div>
-            <div className="flex  mt-4 justify-between">
-              <p className=" font-bold ">Total:</p>
-              <span className="font-bold">${total.toFixed(2)}</span>
-            </div>
-          </div>
-
-          <button
-            onClick={addToCartHandler}
-            disabled={buttonAnimation}
-            className="w-full  py-2 bg-mo text-bg rounded-[2px] outline-none"
-          >
-            {buttonAnimation ? <span> Adding</span> : <span>Add to Cart</span>}
-          </button>
         </div>
       </div>
 
       {/* Tabs Section */}
-      <TabsSection product={product} />
+      <div className="mt-12">
+        <TabsSection product={product} />
+      </div>
     </div>
   );
 };

@@ -8,7 +8,7 @@ import { setFilters } from "@/store/slices/productSlice";
 
 const SearchResultsDisplay: React.FC = () => {
   const { searchQuery, filters } = useSelector(
-    (state: RootState) => state.product,
+    (state: RootState) => state.product
   );
   const dispatch = useDispatch();
 
@@ -45,40 +45,42 @@ const SearchResultsDisplay: React.FC = () => {
 
   if (!data || data.products.length === 0) {
     return (
-      <div className="flex w-full h-[400px] items-center justify-center text-center text-[22px] text-mg font-bald">
+      <div className="flex w-full h-[400px] items-center justify-center text-center text-[22px] text-mg font-bold">
         No products found.
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="grid grid-cols-1 items-start justify-center w-full sm:grid-cols-2 lg:grid-cols-4 gap-[40px] p-[40px]">
+    <div className="w-full md:pl-[270px]">
+      {/* Product Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-2 md:p-4">
         {data.products.map((product) => (
           <Card key={product._id} product={product} />
         ))}
       </div>
 
-      <div className="flex justify-center items-center gap-4 py-6">
+      {/* Pagination */}
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-3 py-6">
         <button
-          className={`px-4 py-2 rounded-md ${
-            page > 1
-              ? "bg-fades"
-              : "bg-gray-100 text-gray-400 cursor-not-allowed"
+          className={`px-4 py-2 rounded-md text-sm ${
+            page > 1 ? "bg-mo text-white" : "bg-gray-200 cursor-not-allowed"
           }`}
           onClick={() => handlePageChange(page - 1)}
           disabled={page <= 1}
         >
           Previous
         </button>
-        <span className="font-semibold">
+
+        <span className="text-sm font-medium">
           Page {page} of {data.pagination.totalPages}
         </span>
+
         <button
-          className={`px-4 py-2 rounded-md ${
+          className={`px-4 py-2 rounded-md text-sm ${
             page < data.pagination.totalPages
-              ? "bg-fades"
-              : "bg-gray-100 text-fade cursor-not-allowed"
+              ? "bg-mo text-white"
+              : "bg-gray-200 cursor-not-allowed"
           }`}
           onClick={() => handlePageChange(page + 1)}
           disabled={page >= data.pagination.totalPages}

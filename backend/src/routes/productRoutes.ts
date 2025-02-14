@@ -33,9 +33,9 @@ router.post(
 router.get("/topselling-rated", getTopSellingAndTopRatedProducts);
 router.get("/userfeed", getUserFeed);
 router.patch("/carted", protectCustomer, updateCartedItem);
-router.post("/cart", protectCustomer, getProductsByIds);
+router.post("/cart", getProductsByIds);
 router.get("/:id", getProduct);
 router.put("/:id", protectAdmin, validateAndUploadProductUpdate, updateProduct);
-router.delete("/:id", deleteProduct);
+router.delete("/:id", protectAdmin, deleteProduct);
 
 export default router;

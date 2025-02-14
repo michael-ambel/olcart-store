@@ -35,7 +35,7 @@ const EventCard = () => {
   };
 
   const slideInRight = {
-    initial: { x: 100, opacity: 0 },
+    initial: { x: 100, y: -30, opacity: 0 },
     animate: {
       x: 0,
       opacity: 1,
@@ -43,6 +43,7 @@ const EventCard = () => {
     },
     exit: {
       x: -100,
+      y: -30,
       opacity: 1,
       transition: { duration: 1, ease: "easeInOut" },
     },
@@ -61,7 +62,7 @@ const EventCard = () => {
           animate={currentEvent === index ? "animate" : "exit"}
           exit="exit"
           transition={{ duration: 1 }}
-          className={`absolute w-full h-full flex justify-between items-center p-6`}
+          className={` w-full h-full flex justify-between items-center p-6`}
         >
           {/* Text and Button */}
           {currentEvent === index && (
@@ -69,7 +70,9 @@ const EventCard = () => {
               variants={fadeIn}
               className="flex-1 text-left space-y-4 max-w-sm text-white"
             >
-              <h2 className="text-4xl font-bold">{event.title}</h2>
+              <h2 className="text-4xl font-bold drop-shadow-md">
+                {event.title}
+              </h2>
               <p className="text-lg">{event.description}</p>
               <button className="px-4 py-2 bg-white text-black rounded-lg">
                 Shop Now
@@ -81,13 +84,13 @@ const EventCard = () => {
           {currentEvent === index && (
             <motion.div
               variants={slideInTop}
-              className={`absolute ${event.image1Style}`}
+              className="absolute top-[-100px] left-[15%] md:left-[25%] flex w-[500px]"
             >
               <Image
                 src={event.image1}
                 alt={event.title}
-                width={500}
-                height={500}
+                layout="fill"
+                objectFit="contain"
                 className="object-cover"
               />
             </motion.div>
@@ -97,13 +100,13 @@ const EventCard = () => {
           {currentEvent === index && (
             <motion.div
               variants={slideInRight}
-              className={`absolute ${event.image2Style}`}
+              className="absolute top-[400px] right-[6%] flex w-[500px]"
             >
               <Image
                 src={event.image2}
                 alt={event.title}
-                width={500}
-                height={500}
+                layout="fill"
+                objectFit="contain"
                 className="object-cover"
               />
             </motion.div>

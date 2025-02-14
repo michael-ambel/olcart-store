@@ -80,190 +80,158 @@ const Navbar: FC = () => {
   };
 
   return (
-    <nav className="flex z-50 fixed top-0 bg-white flex-col items-center justify-between xl:h-[110px] xxl:h-[132px] pt-[20px] w-full px-[10px] md:px-[40px] border-b border-mo/10">
-      <div className="flex flex-col gap-4 md:flex-row justify-between w-full items-end">
-        <div className="flex  justify-between md:block items-center w-full md:w-[104px]">
+    <nav className="fixed top-0 z-50 w-full bg-white shadow-lg ">
+      <div className="container mx-auto px-4 sm:px-[0px]">
+        {/* Main Navbar Section */}
+        <div className="h-14 md:h-[120px] flex items-center justify-between">
           {/* Logo */}
-          <div className="items-baseline w-[104px] md:w-[104px] ">
+          <div className="flex-shrink-0">
             <Link href="/">
               <Image
                 src="/logo.svg"
                 alt="LOGO"
                 width={500}
                 height={500}
-                className="w-[94px]  md:w-[104px] hover:scale-105 transition-transform duration-300"
+                className="w-20 md:w-24 hover:scale-105 transition-transform duration-300"
               />
             </Link>
           </div>
 
-          {/* Cart and Menu */}
-          <div className="flex flex-1 md:hidden justify-between  pl-[6%] items-center ">
-            <div className="flex justify-around flex-1">
-              <button onClick={cartBtnHandler}>
-                <div className="relative w-[50px] mr-[20px] h-[36px] mx-[20px] hover:scale-110 transition-transform duration-300">
+          {/* Desktop Search Bar */}
+          <div className="hidden md:flex md:px-[8%] flex-1 max-w-2xl mx-6 lg:mx-8">
+            <form onSubmit={handleSearchSubmit} className="w-full">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search anything..."
+                  onChange={handleInputChange}
+                  value={searchTerm}
+                  className="w-full h-10 px-6 py-2 border-2 rounded-full border-bl/40 focus:border-bl outline-none transition-all duration-300"
+                />
+                <button
+                  type="submit"
+                  className="absolute right-3 top-2 w-6 h-6 hover:scale-110 transition-transform duration-300"
+                >
                   <Image
-                    src="/icons/cart.svg"
-                    alt="Cart Icon"
-                    width={500}
-                    height={500}
-                    className="w-[34px]"
+                    src="/icons/search.svg"
+                    alt="Search Icon"
+                    width={24}
+                    height={24}
+                    className="w-full h-full"
                   />
-                  <span className="absolute bottom-0 right-0 w-[21px] h-[21px] flex items-center justify-center text-sm text-white bg-mo font-semibold rounded-[7px]">
-                    {cart}
-                  </span>
-                </div>
-              </button>
+                </button>
+              </div>
+            </form>
+          </div>
 
-              <Link href="/notifications">
-                <div className="relative w-[44px] h-[36px] mx-[20px] hover:scale-110 transition-transform duration-300">
-                  <Image
-                    src="/icons/bell.svg"
-                    alt="Notifications Icon"
-                    width={500}
-                    height={500}
-                    className="w-[30px]"
-                  />
-                  <span className="absolute bottom-0 right-0 w-[21px] h-[21px] flex items-center justify-center text-sm text-white bg-mo font-semibold rounded-[7px]">
-                    0
-                  </span>
-                </div>
-              </Link>
-            </div>
+          {/* Icons Section */}
+          <div className="flex flex-1 justify-between pl-[12%] md:pl-0 items-center gap-2 md:gap-4">
+            {/* Cart Icon */}
+            <button
+              onClick={cartBtnHandler}
+              className="p-1.5 hover:scale-110 transition-transform duration-300 relative"
+            >
+              <Image
+                src="/icons/cart.svg"
+                alt="Cart Icon"
+                width={24}
+                height={24}
+                className="w-[32px] h-[32px] md:w-[42px] md:h-[42px]"
+              />
+              {cart > 0 ? (
+                <span className="absolute bottom-1 -right-1 w-5 h-5 md:w-6 md:h-6 flex items-center justify-center font-semibold text-[12px] md:text-[14px] text-white bg-mo  rounded-[6px]">
+                  {cart}
+                </span>
+              ) : (
+                <span className="absolute bottom-1 -right-1 w-5 h-5 md:w-6 md:h-6 flex items-center justify-center text-[12px] md:text-[14px] text-white bg-mo font-semibold rounded-[6px]">
+                  0
+                </span>
+              )}
+            </button>
+
+            {/* Notifications Icon */}
+            <Link
+              href="/notifications"
+              className="p-1.5 pr-2 hover:scale-110 transition-transform duration-300 relative"
+            >
+              <Image
+                src="/icons/bell.svg"
+                alt="Notifications Icon"
+                width={24}
+                height={24}
+                className="w-[32px] h-[32px] md:w-[38px] md:h-[38px]"
+              />
+              <span className="absolute bottom-1 -right-1 w-5 h-5 md:w-6 md:h-6 flex items-center justify-center text-[12px] md:text-[14px] text-white bg-mo font-semibold rounded-[6px]">
+                0
+              </span>
+            </Link>
 
             {/* Profile Section */}
             <div
               ref={menuRef}
-              className="relative flex items-center gap-[16px]"
+              className="flex items-center gap-2 md:gap-6 pl-2"
             >
               {user && (
-                <span className="text-mo font-medium">
+                <span className="hidden md:block text-mo font-medium text-md md:text-[18px]">
                   Hi, {user.name.split(" ")[0]}
                 </span>
               )}
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="p-2  bg-mo/10 rounded-xl transition-all duration-300"
+                className="p-1.5 bg-mo/10 rounded-lg hover:bg-mo/20 transition-colors duration-300"
               >
                 {isMenuOpen ? (
-                  <X className="w-[34px] h-[30px] text-mo" />
+                  <X className="w-8 h-8 md:w-10 md:h-10 text-mo" />
                 ) : (
-                  <Menu className="w-[34px] h-[30px] text-mo" />
+                  <Menu className="w-8 h-8 md:w-10 md:h-10 text-mo" />
                 )}
               </button>
 
               {!user && (
                 <button
                   onClick={() => router.push("/login")}
-                  className="text-mo font-semibold whitespace-nowrap"
+                  className="text-mo font-semibold p-[8px] rounded-[4px] bg-bl/10 md:text-[18px] whitespace-nowrap"
                 >
                   Log In
                 </button>
               )}
-
-              <SliderMenu
-                isOpen={isMenuOpen}
-                onClose={() => setIsMenuOpen(false)}
-                logout={logout}
-              />
             </div>
           </div>
         </div>
 
-        {/* Search Bar */}
-        <div className="flex w-full md:flex-1 md:min-w-[280px] xl:pl-[4%] md:mx-[40px] items-end pb-[10px]">
-          <form
-            onSubmit={handleSearchSubmit}
-            className="flex items-center justify-between w-full"
-          >
-            <input
-              type="text"
-              placeholder="Search anything..."
-              onChange={handleInputChange}
-              value={searchTerm}
-              className="border-[2px] w-full rounded-full h-[42px] xxl:w-[408px] outline-none px-[26px] border-bl/40 focus:border-bl   transition-all duration-300"
-            />
-            <button
-              type="submit"
-              className="ml-[22px] w-[34px] h-[34px] hover:scale-110 transition-transform duration-300"
-            >
-              <Image
-                src="/icons/search.svg"
-                alt="Search Icon"
-                width={500}
-                height={500}
-                className="w-[34px]"
+        {/* Mobile Search Bar */}
+        <div className="md:hidden pb-3">
+          <form onSubmit={handleSearchSubmit} className="w-full">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search anything..."
+                onChange={handleInputChange}
+                value={searchTerm}
+                className="w-full h-10 px-4 py-2 border-2 rounded-full border-bl/40 focus:border-bl outline-none transition-all duration-300"
               />
-            </button>
+              <button
+                type="submit"
+                className="absolute right-3 top-2 w-6 h-6 hover:scale-110 transition-transform duration-300"
+              >
+                <Image
+                  src="/icons/search.svg"
+                  alt="Search Icon"
+                  width={24}
+                  height={24}
+                  className="w-full h-full"
+                />
+              </button>
+            </div>
           </form>
         </div>
-
-        {/* Cart and Menu */}
-        <div className="hidden md:flex justify-between items-center pl-[4%]  w-[38%] md:min-w-[280px] pb-[10px]">
-          <button onClick={cartBtnHandler}>
-            <div className="relative w-[50px] h-[36px] hover:scale-110 transition-transform duration-300">
-              <Image
-                src="/icons/cart.svg"
-                alt="Cart Icon"
-                width={500}
-                height={500}
-                className="w-[34px]"
-              />
-              <span className="absolute bottom-0 right-0 w-[21px] h-[21px] flex items-center justify-center text-sm text-white bg-mo font-semibold rounded-[7px]">
-                {cart}
-              </span>
-            </div>
-          </button>
-
-          <Link href="/notifications">
-            <div className="relative w-[44px] h-[36px] hover:scale-110 transition-transform duration-300">
-              <Image
-                src="/icons/bell.svg"
-                alt="Notifications Icon"
-                width={500}
-                height={500}
-                className="w-[30px]"
-              />
-              <span className="absolute bottom-0 right-0 w-[21px] h-[21px] flex items-center justify-center text-sm text-white bg-mo font-semibold rounded-[7px]">
-                0
-              </span>
-            </div>
-          </Link>
-
-          {/* Profile Section */}
-          <div ref={menuRef} className="relative flex items-center gap-[30px]">
-            {user && (
-              <span className="text-mo font-medium">
-                Hi, {user.name.split(" ")[0]}
-              </span>
-            )}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2  bg-mo/10 rounded-xl transition-all duration-300"
-            >
-              {isMenuOpen ? (
-                <X className="w-[34px] h-[30px] text-mo" />
-              ) : (
-                <Menu className="w-[34px] h-[30px] text-mo" />
-              )}
-            </button>
-
-            {!user && (
-              <button
-                onClick={() => router.push("/login")}
-                className="text-mo font-semibold whitespace-nowrap"
-              >
-                Log In
-              </button>
-            )}
-
-            <SliderMenu
-              isOpen={isMenuOpen}
-              onClose={() => setIsMenuOpen(false)}
-              logout={logout}
-            />
-          </div>
-        </div>
       </div>
+
+      <SliderMenu
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        logout={logout}
+      />
     </nav>
   );
 };

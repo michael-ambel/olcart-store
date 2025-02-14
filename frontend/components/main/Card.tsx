@@ -60,10 +60,10 @@ const Card: FC<CardProp> = ({ product }) => {
   };
 
   return (
-    <div className="flex flex-col w-[190px] h-auto text-[14px] group relative">
+    <div className="flex flex-col w-full sm:w-[190px] h-auto text-[12px] sm:text-[14px] group relative">
       {/* Image Container */}
-      <div className="relative flex items-center justify-center w-[190px] h-[190px] bg-bg rounded-[12px] shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-        <div className="relative flex items-center justify-center w-[190px] h-[190px] rounded-[12px] overflow-hidden">
+      <div className="relative flex items-center justify-center w-full sm:w-[190px] aspect-square bg-bg rounded-[12px] shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+        <div className="relative flex items-center justify-center w-full h-full rounded-[12px] overflow-hidden">
           <Link href={`/product/${product._id}`} className="w-full h-full">
             <Image
               src={
@@ -79,19 +79,20 @@ const Card: FC<CardProp> = ({ product }) => {
           </Link>
         </div>
 
-        {/* Cart Button with Uniform Color Icon */}
+        {/* Cart Button */}
         <button
           onClick={addCartHandler}
           disabled={isLoading || cartedIsLoading}
           className="absolute bottom-[6px] right-[10px] transition-all duration-300 
-          hover:scale-110 active:scale-95 bg-white/90 backdrop-blur-sm rounded-full p-1.5"
+          hover:scale-110 active:scale-95 bg-white/90 backdrop-blur-sm rounded-full p-1
+          sm:p-1.5"
         >
           {buttonAnimation ? (
-            <div className="w-[30px] h-[30px] border-[5px] border-gray-200 border-t-mo rounded-full animate-spin" />
+            <div className="w-[24px] h-[24px] sm:w-[30px] sm:h-[30px] border-[4px] sm:border-[5px] border-gray-200 border-t-mo rounded-full animate-spin" />
           ) : (
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="w-6 h-6 text-mo hover:text-mg transition-colors"
+              className="w-5 h-5 sm:w-6 sm:h-6 text-mo hover:text-mg transition-colors"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -108,7 +109,7 @@ const Card: FC<CardProp> = ({ product }) => {
       </div>
 
       {/* Product Name */}
-      <p className="my-[6px] text-mg font-semibold transition-colors">
+      <p className="my-[6px] text-mg font-semibold transition-colors line-clamp-2 sm:line-clamp-1">
         {product.name?.slice(0, 20)}
         {product.name && product.name.length > 20 && "..."}
       </p>
@@ -126,7 +127,7 @@ const Card: FC<CardProp> = ({ product }) => {
             return (
               <div
                 key={i}
-                className="w-[15px] hover:scale-110 transition-transform duration-150"
+                className="w-[12px] sm:w-[15px] hover:scale-110 transition-transform duration-150"
               >
                 <Image
                   src={src}
@@ -139,25 +140,25 @@ const Card: FC<CardProp> = ({ product }) => {
             );
           })}
         </div>
-        <p className="text-sm hover:scale-[1.02] transition-transform">
+        <p className="text-xs sm:text-sm hover:scale-[1.02] transition-transform">
           {product.salesCount} sold
         </p>
       </div>
 
-      {/* Price Section with Unified Delivery Icons */}
+      {/* Price Section */}
       <div className="flex justify-between my-[4px] items-baseline">
         <div className="flex items-baseline gap-1">
-          <span className="text-[10px] font-semibold">US</span>
-          <span className="text-[16px] font-semibold hover:scale-[1.02] transition-transform">
+          <span className="text-[8px] sm:text-[10px] font-semibold">US</span>
+          <span className="text-[14px] sm:text-[16px] font-semibold hover:scale-[1.02] transition-transform">
             ${product.price}
           </span>
         </div>
-        <div className="flex items-center gap-1 text-sm hover:translate-x-1 transition-transform">
+        <div className="flex items-center gap-1 text-xs sm:text-sm hover:translate-x-1 transition-transform">
           {product.shippingPrice === 0 ? (
             <div className="flex items-center gap-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5 text-bl"
+                className="w-4 h-4 sm:w-5 sm:h-5 text-bl"
                 viewBox="0 0 24 24"
                 fill="currentColor"
               >
@@ -170,7 +171,7 @@ const Card: FC<CardProp> = ({ product }) => {
             <div className="flex items-center gap-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5 text-bl"
+                className="w-4 h-4 sm:w-5 sm:h-5 text-bl"
                 viewBox="0 0 24 24"
                 fill="currentColor"
               >
