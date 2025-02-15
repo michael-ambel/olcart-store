@@ -88,7 +88,7 @@ const Navbar: FC = () => {
     <nav className="fixed top-0 z-50 w-full bg-white shadow-lg ">
       <div className="container mx-auto px-4 sm:px-[30px] lg:px-[40px]">
         {/* Main Navbar Section */}
-        <div className="h-14 md:h-[120px] flex items-center justify-between">
+        <div className="h-14 mx-auto md:h-[120px] flex items-center justify-between">
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/">
@@ -134,7 +134,7 @@ const Navbar: FC = () => {
             {/* Cart Icon */}
             <button
               onClick={cartBtnHandler}
-              className="p-1.5 hover:scale-110 transition-transform duration-300 relative"
+              className="p-1.5 hover:scale-110 transition-transform duration-300 sm:min-w-[38px] sm:min-h-[38px]  relative"
             >
               <Image
                 src="/icons/cart.svg"
@@ -157,7 +157,7 @@ const Navbar: FC = () => {
             {/* Notifications Icon */}
             <Link
               href="/notifications"
-              className="p-1.5 pr-2 hover:scale-110 transition-transform duration-300 relative"
+              className="p-1.5 mr-2 sm:min-w-[38px] sm:min-h-[38px]   hover:scale-110 transition-transform duration-300 relative"
             >
               <Image
                 src="/icons/bell.svg"
