@@ -97,7 +97,7 @@ const Navbar: FC = () => {
                 alt="LOGO"
                 width={500}
                 height={500}
-                className="w-[76px] md:w-[100px] hover:scale-105 transition-transform duration-300"
+                className="w-[82px] md:w-[104px] hover:scale-105 transition-transform duration-300"
               />
             </Link>
           </div>

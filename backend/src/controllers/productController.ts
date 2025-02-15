@@ -366,7 +366,7 @@ export const getTopSellingAndTopRatedProducts: RequestHandler = async (
 export const createOrUpdateReview: RequestHandler = async (req, res) => {
   try {
     const { productId, rating, username, comment } = req.body;
-    const userId = req.user?._id; // Assuming `req.user` contains the authenticated user
+    const userId = req.user?._id;
 
     if (!productId || !rating || !userId) {
       res.status(400).json({ message: "Invalid request data" });
@@ -397,9 +397,9 @@ export const createOrUpdateReview: RequestHandler = async (req, res) => {
       return;
     }
 
-    if (buyer.status !== "Delivered") {
+    if (buyer.status !== "Delivered" && !buyer.reviews?.isReviewed) {
       res.status(400).json({
-        message: "You can only review a product after it has been delivered",
+        message: "Review after delivery only!",
       });
       return;
     }

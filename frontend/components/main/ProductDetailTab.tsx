@@ -32,7 +32,8 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
   const user = useSelector((state: RootState) => state.user.user);
   const tstar: number[] = [1, 2, 3, 4, 5];
 
-  const [createOrUpdateReview] = useCreateOrUpdateReviewMutation();
+  const [createOrUpdateReview, { isLoading: reviewLoading }] =
+    useCreateOrUpdateReviewMutation();
   const [createOrUpdateQandF] = useCreateOrUpdateQuestionAndFeedbackMutation();
 
   useEffect(() => {
@@ -71,17 +72,23 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
         return;
       }
 
-      await createOrUpdateReview({
+      const res = await createOrUpdateReview({
         productId: product._id,
         username: user?.name,
         rating: reviewInput.rating,
         comment: reviewInput.comment,
       }).unwrap();
 
-      showToast("success", "Review submitted successfully!");
+      showToast("success", res.message);
       setReviewInput({ rating: 0, comment: "" });
-    } catch {
-      showToast("error", "An error occurred while submitting the review.");
+    } catch (error) {
+      if (error && typeof error === "object" && "data" in error) {
+        const err = (
+          error as unknown as { data: { message: { message: string } } }
+        ).data?.message;
+
+        showToast("error", err.message);
+      }
     }
   };
 
@@ -216,7 +223,7 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
               onClick={handleAddReview}
               className="w-full bg-mo text-white py-4 rounded-xl font-bold hover:bg-mo/90 transition-all"
             >
-              Submit Review
+              {reviewLoading ? "Submitting " : "Submit Review"}
             </button>
           </div>
         </div>
