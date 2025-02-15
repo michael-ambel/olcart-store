@@ -38,111 +38,123 @@ const Footer: FC = () => {
 
   return (
     <footer
-      className={`flex flex-col bg-bgs px-[20px] md:px-[35px] pt-[40px] md:pt-[60px] pb-[80px] md:pb-[80px]${
+      className={`relative flex flex-col bg-bgs px-[20px] md:px-[35px] pt-[40px] md:pt-[60px] pb-[80px] md:pb-[80px] ${
         pathname.includes("/search")
           ? "hidden"
           : "w-full mt-[60px] md:mt-[120px]"
       }`}
     >
-      <div className="flex flex-col md:flex-row w-full">
+      <div className="relative flex flex-col md:flex-row w-full z-10">
         <div className="flex flex-col w-full md:w-[70%] ">
-          <h2 className="text-[20px] md:text-[24px] font-bold mb-[20px] md:mb-[30px]">
-            Lets connect...
+          <h2 className="text-[24px] md:text-[28px] font-bold mb-6 md:mb-8">
+            Let&apos;s Connect
           </h2>
 
           <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 w-full">
             {/* Footer Sections */}
-            <div className="flex flex-col gap-2 text-[14px]">
-              <h3 className="text-[14px] md:text-[16px] font-bold">About</h3>
-              <p>company info</p>
-              <p>news</p>
-              <p>policies</p>
-              <p>programs</p>
-            </div>
-
-            <div className="flex flex-col gap-2 text-[14px]">
-              <h3 className="text-[14px] md:text-[16px] font-bold">Sell</h3>
-              <p>start selling</p>
-              <p>how to start</p>
-              <p>policies</p>
-            </div>
-
-            <div className="flex flex-col gap-2 text-[14px]">
-              <h3 className="text-[14px] md:text-[16px] font-bold">Buy</h3>
-              <p>register</p>
-              <p>how to buy</p>
-              <p>stores</p>
-            </div>
-
-            <div className="flex flex-col gap-2 text-[14px]">
-              <h3 className="text-[14px] md:text-[16px] font-bold">
-                Social links
-              </h3>
-              <p>facebook</p>
-              <p>twitter</p>
-              <p>blogs</p>
-            </div>
-
-            <div className="flex flex-col gap-2 text-[14px]">
-              <h3 className="text-[14px] md:text-[16px] font-bold">Contacts</h3>
-              <p>info@olcart.store</p>
-              <p>phone</p>
-              <p>address</p>
-            </div>
+            {[
+              {
+                title: "About",
+                items: ["Company Info", "Newsroom", "Policies", "Programs"],
+              },
+              {
+                title: "Sell",
+                items: ["Start Selling", "How to Start", "Seller Policies"],
+              },
+              {
+                title: "Buy",
+                items: ["Register", "How to Buy", "Store Locator"],
+              },
+              {
+                title: "Social",
+                items: ["Instagram", "Twitter", "LinkedIn", "Blog"],
+              },
+              {
+                title: "Contact",
+                items: [
+                  "info@olcart.store",
+                  "+1 (555) 123-4567",
+                  "New York, NY",
+                ],
+              },
+            ].map((section, index) => (
+              <div key={index} className="flex flex-col gap-3">
+                <h3 className="text-[14px] md:text-[16px] font-semibold text-bl mb-1">
+                  {section.title}
+                </h3>
+                {section.items.map((item, itemIndex) => (
+                  <a
+                    key={itemIndex}
+                    href="#"
+                    className="text-[13px] text-bl/70 hover:text-mo transition-all duration-300 hover:pl-2"
+                  >
+                    {item}
+                  </a>
+                ))}
+              </div>
+            ))}
           </div>
         </div>
-        {/* Feedback Form - spans 2 columns on large screens */}
-        <div className="mt-4 md:mt-0 w-full md:w-[30%]">
-          <h2 className=":text-[16px] font-bold mb-2">
-            We value your feedback
-          </h2>
-          <form
-            onSubmit={handleSubmit}
-            className="flex flex-col gap-1 text-[14px] "
-          >
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Name - optional"
-              className="w-full h-[26px] px-3 rounded-lg border border-bl"
-            />
 
-            <input
-              type="text"
-              id="contact"
-              name="contact"
-              value={formData.contact}
-              onChange={handleChange}
-              placeholder="Email or Phone - optional"
-              className="w-full h-[26px] px-3 rounded-lg border border-bl"
-            />
-
-            <textarea
-              id="message"
-              name="message"
-              value={formData.message}
-              onChange={handleChange}
-              className="w-full h-[100px] px-3 rounded-lg border border-bl"
-              placeholder="Message..."
-            />
-
-            <button
-              type="submit"
-              className=" w-[110px] h-[30px] bg-mo text-white rounded-lg"
+        {/* Feedback Form */}
+        <div className="mt-8 md:mt-0 md:ml-8 w-full md:w-[30%]">
+          <div className="md:border-l-2 md:border-mg md:pl-8 h-full">
+            <h2 className="text-[18px] font-semibold mb-4 ">
+              Share Your Thoughts
+            </h2>
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col gap-3 text-[14px]"
             >
-              Send Message
-            </button>
-          </form>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Your name (optional)"
+                className="w-full h-10 px-4 rounded-lg border border-bl/20 focus:border-mo focus:ring-2 ring-mo/20 transition-all duration-300"
+              />
+
+              <input
+                type="text"
+                id="contact"
+                name="contact"
+                value={formData.contact}
+                onChange={handleChange}
+                placeholder="Email or phone (optional)"
+                className="w-full h-10 px-4 rounded-lg border border-bl/20 focus:border-mo focus:ring-2 ring-mo/20 transition-all duration-300"
+              />
+
+              <textarea
+                id="message"
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                className="w-full h-32 px-4 py-2 rounded-lg border border-bl/20 focus:border-mo focus:ring-2 ring-mo/20 transition-all duration-300"
+                placeholder="Your message..."
+              />
+
+              <button
+                type="submit"
+                className="w-fit px-6 h-10 bg-mo  text-white rounded-lg hover:shadow-lg transition-all duration-300 hover:scale-[1.02] font-medium"
+              >
+                Send Message
+              </button>
+            </form>
+          </div>
         </div>
       </div>
 
-      <p className="text-sm mt-[60px]">
-        &copy;{new Date().getFullYear()} All rights reserved. | Designed &
-        Developed by <span className="font-semibold">Michael Ambel</span>
-      </p>
+      <div className="relative z-10 mt-12 pt-8 border-t border-bl/10">
+        <p className="text-sm text-bl/70 text-center">
+          &copy;{new Date().getFullYear()} All rights reserved. | Designed and
+          Developed by{" "}
+          <span className="font-semibold bg-gradient-to-r from-mo to-mg bg-clip-text text-transparent">
+            Michael Ambel
+          </span>
+        </p>
+      </div>
     </footer>
   );
 };

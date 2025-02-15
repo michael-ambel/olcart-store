@@ -54,7 +54,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-[440px] mx-auto px-[38px] py-[74px] mt-20  rounded-[10px]">
+    <div className="max-w-[440px] mx-auto px-[38px] py-[74px] mt-20  rounded-[10px]">
       <h1 className="text-2xl ml-[41px] font-bold mb-[30px]">Login</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col w-full gap-[22px]">

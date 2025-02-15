@@ -136,18 +136,20 @@ const ShippingAddress = () => {
   if (isError) return <p>Failed to load addresses</p>;
 
   return (
-    <div className="container w-full mx-auto  py-[120px]">
-      <h1 className="text-[18px] font-semibold mb-4">Shipping Addresses</h1>
-      <div className="flex flex-wrap justify justify-between gap-2">
+    <div className="container w-full mx-auto py-[120px] px-4 md:px-6">
+      <h1 className="text-lg md:text-xl font-semibold mb-6">
+        Shipping Addresses
+      </h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 text-[14px]">
         {addresses.map((address: IShippingAddress) => (
           <div
             key={address._id}
-            className={`relative flex flex-col justify-between text-[14px] gap-1 p-4 mb-2 w-[360px] border-[1.5px] rounded-[8px] bg-bl/10 border-bg`}
+            className="relative p-3 border rounded-lg bg-bl/5"
           >
             <label className="flex  items-center">
               <input
                 type="checkbox"
-                className={`absolute right-[18px] top-[16px] h-[22px] w-[22px] appearance-none rounded-md border-2 border-bl cursor-pointer focus:outline-none 
+                className={`absolute right-[18px] top-[20px] h-[22px] w-[22px] appearance-none rounded-md border-2 border-bl cursor-pointer focus:outline-none 
     flex items-center justify-center
  
     ${
@@ -159,8 +161,8 @@ const ShippingAddress = () => {
                 onChange={() => handleSelectAddress(address)}
               />
 
-              <div className="flex flex-col gap-2 w-full text-mb">
-                <p className="bg-bg mr-[34px] p-2 rounded-[10px]">
+              <div className="flex flex-col gap-1 w-full text-mb">
+                <p className="bg-bg mr-[40px] p-2 rounded-[10px]">
                   Name:
                   <span className="text-bl font-semibold"> {address.name}</span>
                 </p>
@@ -230,8 +232,8 @@ const ShippingAddress = () => {
         ))}
       </div>
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-bl bg-opacity-50">
-          <div className="bg-bg p-6 rounded-[16px] shadow-lg w-[400px] text-[15px] mt-[90px]">
+        <div className="fixed inset-0 flex items-center justify-center bg-bl/50">
+          <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md mx-4">
             <h2 className="text-lg font-bold mb-4">
               {isEditing ? "Edit Address" : "Add New Address"}
             </h2>
@@ -320,9 +322,9 @@ const ShippingAddress = () => {
           </div>
         </div>
       )}
-      <div className="flex justify-between my-[70px] px-[20px]">
+      <div className="flex flex-row justify-between items-center mt-8 gap-4 px-4">
         <button
-          className="mb-4 px-[26px] py-2 bg-mb text-white rounded-full"
+          className="w-auto px-6 py-2 bg-mb text-white rounded-full"
           onClick={() => handleOpenModal(false)}
           disabled={isAdding || isUpdating || isDeleting}
         >

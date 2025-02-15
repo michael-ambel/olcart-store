@@ -46,8 +46,8 @@ const MainCard: FC = () => {
 
   const fadeIn = {
     initial: { opacity: 0 },
-    animate: { opacity: 1, transition: { duration: 3, easeIn } },
-    exit: { opacity: 0, transition: { duration: 1, easeOut } },
+    animate: { opacity: 1, transition: { duration: 1, easeIn } },
+    exit: { opacity: 0, transition: { duration: 2, easeOut } },
   };
 
   // Unified animations for both screens
@@ -87,7 +87,7 @@ const MainCard: FC = () => {
           initial="initial"
           animate={currentEvent === index ? "animate" : "exit"}
           exit="exit"
-          className="absolute inset-0 flex flex-col-reverse md:flex-row gap-8 px-4 md:px-[60px] pb-[30px] md:py-0"
+          className="absolute inset-0 flex flex-col-reverse md:flex-row gap-8 px-1 md:px-[60px] pb-[30px] md:py-0"
         >
           <motion.div
             variants={fadeIn}
@@ -114,7 +114,7 @@ const MainCard: FC = () => {
           <div className="relative w-full md:w-[65%] h-1/2 md:h-full flex  justify-center items-center gap-4">
             <motion.div
               variants={slideInTop}
-              className="absolute left-[6%] top-[-80px] w-[200px] h-[200px] md:w-[300px] md:h-[300px]"
+              className="absolute left-[1%] md:left-[6%] top-[-80px] w-[240px] h-[240px] md:w-[360px] md:h-[360px]"
             >
               <Image
                 src={event.image1}
@@ -126,7 +126,7 @@ const MainCard: FC = () => {
 
             <motion.div
               variants={slideInRight}
-              className="absolute right-[6%]  md:bottom-[40px] w-[200px] h-[200px] md:w-[300px] md:h-[300px]"
+              className="absolute right-[1%] md:right-[6%]  md:bottom-[-80px] w-[240px] h-[240px] md:w-[360px] md:h-[360px]"
             >
               <Image
                 src={event.image2}

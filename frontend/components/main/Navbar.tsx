@@ -57,7 +57,12 @@ const Navbar: FC = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      const sliderMenu = document.querySelector(".slider-menu-container");
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        !sliderMenu?.contains(event.target as Node)
+      ) {
         setIsMenuOpen(false);
       }
     };
@@ -81,7 +86,7 @@ const Navbar: FC = () => {
 
   return (
     <nav className="fixed top-0 z-50 w-full bg-white shadow-lg ">
-      <div className="container mx-auto px-4 sm:px-[0px]">
+      <div className="container mx-auto px-4 sm:px-[30px] lg:px-[40px]">
         {/* Main Navbar Section */}
         <div className="h-14 md:h-[120px] flex items-center justify-between">
           {/* Logo */}
@@ -92,7 +97,7 @@ const Navbar: FC = () => {
                 alt="LOGO"
                 width={500}
                 height={500}
-                className="w-20 md:w-24 hover:scale-105 transition-transform duration-300"
+                className="w-[76px] md:w-[100px] hover:scale-105 transition-transform duration-300"
               />
             </Link>
           </div>
@@ -125,7 +130,7 @@ const Navbar: FC = () => {
           </div>
 
           {/* Icons Section */}
-          <div className="flex flex-1 justify-between pl-[12%] md:pl-0 items-center gap-2 md:gap-4">
+          <div className="flex flex-1 justify-between pl-[14%] md:pl-0 items-center gap-2 md:gap-4">
             {/* Cart Icon */}
             <button
               onClick={cartBtnHandler}
@@ -136,7 +141,7 @@ const Navbar: FC = () => {
                 alt="Cart Icon"
                 width={24}
                 height={24}
-                className="w-[32px] h-[32px] md:w-[42px] md:h-[42px]"
+                className="w-[30px] h-[30px] md:w-[34px] xl:w-[38px] md:h-[34px] xl:h-[38px]"
               />
               {cart > 0 ? (
                 <span className="absolute bottom-1 -right-1 w-5 h-5 md:w-6 md:h-6 flex items-center justify-center font-semibold text-[12px] md:text-[14px] text-white bg-mo  rounded-[6px]">
@@ -159,7 +164,7 @@ const Navbar: FC = () => {
                 alt="Notifications Icon"
                 width={24}
                 height={24}
-                className="w-[32px] h-[32px] md:w-[38px] md:h-[38px]"
+                className="w-[30px] h-[30px] md:w-[34px] xl:w-[38px] md:h-[34px] xl:h-[38px]"
               />
               <span className="absolute bottom-1 -right-1 w-5 h-5 md:w-6 md:h-6 flex items-center justify-center text-[12px] md:text-[14px] text-white bg-mo font-semibold rounded-[6px]">
                 0
@@ -181,16 +186,16 @@ const Navbar: FC = () => {
                 className="p-1.5 bg-mo/10 rounded-lg hover:bg-mo/20 transition-colors duration-300"
               >
                 {isMenuOpen ? (
-                  <X className="w-8 h-8 md:w-10 md:h-10 text-mo" />
+                  <X className="w-7 h-7 md:w-8 md:h-8 xxl:w-10 xxl:h-10 text-mo" />
                 ) : (
-                  <Menu className="w-8 h-8 md:w-10 md:h-10 text-mo" />
+                  <Menu className="w-7 h-7 md:w-8 md:h-8 xxl:w-10 xxl:h-10 text-mo" />
                 )}
               </button>
 
               {!user && (
                 <button
                   onClick={() => router.push("/login")}
-                  className="text-mo font-semibold p-[8px] rounded-[4px] bg-bl/10 md:text-[18px] whitespace-nowrap"
+                  className="text-mo font-semibold px-[8px] py-[6px] rounded-[4px] bg-bl/10 md:text-[18px] whitespace-nowrap"
                 >
                   Log In
                 </button>

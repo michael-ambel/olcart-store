@@ -20,22 +20,26 @@ const OrderItem: React.FC<OrderItemProps> = ({
   price,
   quantity,
 }) => (
-  <div className="flex items-center max-w-[260px] space-x-4">
-    <div className="flex items-center justify-center w-[90px] object-cover ">
+  <div className="flex items-center w-full sm:w-auto space-x-4 p-2 sm:p-0">
+    <div className="flex items-center justify-center w-[80px] h-[80px] sm:w-[120px] sm:h-[120px]">
       <Image
         src={image}
         alt={name}
-        height={100}
-        width={100}
-        className=" rounded-md shadow-sm"
+        width={120}
+        height={120}
+        className="object-contain w-full h-full p-1"
       />
     </div>
 
     <div className="flex-1">
-      <h4 className="font-semibold text-bl">{name}</h4>
-      <p className="text-sm text-fade">Unit Price: ${price.toFixed(2)}</p>
-      <p className="text-sm text-fade">Quantity: {quantity}</p>{" "}
-      <p className="font-semibold text-gray-700">${price * quantity}</p>
+      <h4 className="font-semibold text-bl text-sm sm:text-base">{name}</h4>
+      <p className="text-xs sm:text-sm text-fade">
+        Unit Price: ${price.toFixed(2)}
+      </p>
+      <p className="text-xs sm:text-sm text-fade">Quantity: {quantity}</p>
+      <p className="font-semibold text-gray-700 text-sm sm:text-base">
+        ${(price * quantity).toFixed(2)}
+      </p>
     </div>
   </div>
 );
@@ -52,37 +56,37 @@ const CategorizedOrders: React.FC<CategorizedOrdersProps> = ({ orders }) => {
   };
 
   return (
-    <div className="flex flex-col gap-[60px]  mt-[40px]">
+    <div className="flex flex-col gap-6 md:gap-8 mt-6 ">
       {Object.entries(categorizedOrders).map(([status, filteredOrders]) => (
-        <div key={status}>
-          <h3 className="text-[22px] font-bold text-mg mb-3">{status}</h3>
+        <div key={status} className="space-y-4">
+          <h3 className="text-lg md:text-xl font-bold text-mg">{status}</h3>
           {filteredOrders.length > 0 ? (
-            <ul className="space-y-6">
+            <ul className="space-y-4">
               {filteredOrders.map((order) => (
                 <li
                   key={order._id}
-                  className="p-6 bg-white shadow-md rounded-lg border hover:shadow-lg transition"
+                  className="p-4 sm:p-6 bg-white shadow-sm sm:shadow-md rounded-lg border"
                 >
                   <div className="mb-4">
-                    <h4 className="font-bold text-[18px] text-bl">
-                      Order #{order._id}
+                    <h4 className="font-bold text-base sm:text-lg text-bl">
+                      Order #{order._id?.slice(-8)}....
                     </h4>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-xs sm:text-sm text-gray-500 mt-1">
                       Placed on:{" "}
                       {order.createdAt
                         ? new Date(order.createdAt).toLocaleDateString()
                         : "Unknown"}
                     </p>
-                    <p className="text-bl font-semibold mt-2">
+                    <p className="text-bl font-semibold mt-2 text-sm sm:text-base">
                       Total: ${order.totalAmount.toFixed(2)}
                     </p>
                   </div>
-                  <div className="grid grid-cols-4 gap-[30px]">
+                  <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 gap-4">
                     {order.items.map((item) => (
                       <OrderItem
                         key={item._id}
                         name={item.name}
-                        image={item.images[0] || "/path/to/default/image.jpg"}
+                        image={item.images[0] || "/default-product.jpg"}
                         price={item.price}
                         quantity={item.quantity}
                       />
@@ -91,7 +95,7 @@ const CategorizedOrders: React.FC<CategorizedOrdersProps> = ({ orders }) => {
                   <div className="mt-4 text-right">
                     <Link
                       href={`/order/${order._id}`}
-                      className=" text-mg  py-[6px] px-[13px]"
+                      className="inline-block text-sm sm:text-base text-mg hover:text-mg/80 px-3 py-1 rounded-md"
                     >
                       View Details
                     </Link>
@@ -100,7 +104,9 @@ const CategorizedOrders: React.FC<CategorizedOrdersProps> = ({ orders }) => {
               ))}
             </ul>
           ) : (
-            <p className="text-gray-600">No orders under {status}.</p>
+            <p className="text-gray-600 text-sm sm:text-base">
+              No {status.toLowerCase()} orders
+            </p>
           )}
         </div>
       ))}
@@ -116,30 +122,34 @@ const ProcessingOrders: React.FC = () => {
   } = useGetUserProcessingOrdersQuery();
 
   return (
-    <div className="bg-bgt min-h-screen flex flex-col justify-start w-full ">
+    <div className="bg-bgt min-h-screen w-full">
       <CheckOutProgress
         cart={true}
         shippingInfo={true}
         paymentMethod={true}
-        processing={true}
+        processing={false}
         processed={false}
       />
-      <div className="flex flex-col justify-start mx-[84px]  mt-[120px]">
-        <div className="flex justify-between">
-          <h1 className="text-[28px] font-bold  text-bl ">Processing Orders</h1>
 
-          <Link href="/" className="bg-mg text-white py-3 px-8 rounded-full">
-            Go to Home Page
+      <div className="px-4 sm:px-6 lg:px-8 py-8 max-w-7xl mx-auto mt-[100px]">
+        <div className="flex justify-between items-start sm:items-center gap-4 mb-8">
+          <h1 className="text-2xl  font-bold text-bl">Processing Orders</h1>
+          <Link
+            href="/"
+            className="sm:w-auto text-center bg-mg text-white text-md sm:text-base py-[9px] px-8 rounded-full hover:bg-mg/90 transition-colors"
+          >
+            Home
           </Link>
         </div>
+
         {isLoading ? (
-          <div className="flex items-center justify-center">
-            <div className="animate-spin text-blue-500 text-3xl">
+          <div className="flex justify-center items-center h-48 mt-[100px]">
+            <div className="animate-spin text-mg text-[80px]">
               <AiOutlineLoading3Quarters />
             </div>
           </div>
         ) : isError ? (
-          <p className="text-red-500">Failed to load processing orders.</p>
+          <p className="text-red-500 text-center">Error loading orders</p>
         ) : (
           <CategorizedOrders orders={processingOrders || []} />
         )}

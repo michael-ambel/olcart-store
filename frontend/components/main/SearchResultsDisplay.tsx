@@ -32,13 +32,17 @@ const SearchResultsDisplay: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div className="text-center py-4 text-red-500">Loading...</div>;
+    return (
+      <div className="text-center text-[18px] py-[80px] text-red-500">
+        Loading...
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div className="text-center py-4 text-red-500">
-        Error: {error.toString()}
+      <div className="text-center py-12 text-red-500">
+        Error: {"status" in error ? error.status : error.message}
       </div>
     );
   }
@@ -54,7 +58,7 @@ const SearchResultsDisplay: React.FC = () => {
   return (
     <div className="w-full md:pl-[270px]">
       {/* Product Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-2 md:p-4">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xxl:grid-cols-5 gap-4 p-2 md:p-4">
         {data.products.map((product) => (
           <Card key={product._id} product={product} />
         ))}

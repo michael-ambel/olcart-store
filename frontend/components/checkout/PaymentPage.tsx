@@ -110,10 +110,10 @@ export default function PaymentPage() {
   }
 
   return (
-    <div className="flex flex-col z-10 mt-[96px] mx-[0px] items-center">
-      <div className="flex gap-[26px] mt-8">
-        <div className="space-y-6 ml-[20px] mr-[460px]">
-          <h1 className="text-xl font-bold mb-6 text-center">Order Summary</h1>
+    <div className="flex flex-col gap-6  ">
+      <div className="flex-1 space-y-6 ">
+        <h1 className="text-xl font-bold ml-[40px]">Order Summary</h1>
+        <div className="grid grid-cols-1 xxl:grid-cols-2 gap-4 mx-[10px] md:ml-[40px] md:mr-[300px] lg:mr-[480px]">
           {orders?.map((order: IOrder) => {
             const paymentOrder: IPaymentOrder = {
               ...order,
@@ -126,31 +126,34 @@ export default function PaymentPage() {
             return (
               <div
                 key={paymentOrder._id}
-                className={`relative p-6 border border-gray-300 rounded-lg shadow-sm ${
+                className={`relative p-4 border rounded-lg  border-gray-300 shadow-sm ${
                   selectedOrders.includes(paymentOrder) ? "bg-bg" : ""
                 }`}
               >
                 <div className="flex items-center space-x-4 mb-4">
                   <input
                     type="checkbox"
-                    className={`absolute right-[30px] h-[22px] w-[22px] appearance-none rounded-md border-2 border-bl cursor-pointer focus:outline-none 
-    flex items-center justify-center
- 
-    ${
-      selectedOrders.some((o) => o._id === paymentOrder._id)
-        ? "after:content-['✔'] after:absolute after:right-0 after:font-bold after:text-[18px] after:text-mo after:pointer-events-none after:h-full after:w-full after:flex after:items-center after:justify-center"
-        : ""
-    }`}
+                    className={`absolute right-[30px] top-[20px] h-[22px] w-[22px] appearance-none rounded-md border-2 border-bl cursor-pointer focus:outline-none 
+                        flex items-center justify-center
+                    
+                        ${
+                          selectedOrders.some((o) => o._id === paymentOrder._id)
+                            ? "after:content-['✔'] after:absolute after:right-0 after:font-bold after:text-[18px] after:text-mo after:pointer-events-none after:h-full after:w-full after:flex after:items-center after:justify-center"
+                            : ""
+                        }`}
                     checked={selectedOrders.some(
                       (o) => o._id === paymentOrder._id
                     )}
                     onChange={() => handleOrderSelect(paymentOrder)}
                   />
-                  <h2 className="text-lg font-semibold">
-                    Order ID: {paymentOrder._id}
-                  </h2>
+                  <div>
+                    <h2 className="text-lg font-semibold">Order ID:</h2>
+                    <h2 className="text-lg font-semibold">
+                      {paymentOrder._id}
+                    </h2>
+                  </div>
                 </div>
-                <div className="grid grid-cols-3 gap-6">
+                <div className="grid grid-cols-1  lg:grid-cols-3  gap-6">
                   {paymentOrder.items.map((item) => (
                     <div
                       key={item._id}
@@ -214,9 +217,9 @@ export default function PaymentPage() {
           })}
         </div>
 
-        <div className="fixed right-[30px] top-[140px] w-[400px] p-6 border border-gray-300 rounded-lg shadow-sm space-y-6">
-          <h2 className="text-[22px] font-bold mb-2">Select Payment Option</h2>
-          <div className="flex flex-col text-[16px] font-medium gap-2 mb-4">
+        <div className="md:fixed md:top-[180px] md:right-[40px] lg:self-start w-full md:w-[300px] lg:w-[400px] p-6 border rounded-lg shadow-md">
+          <h2 className="text-xl font-bold mb-4">Select Payment Option</h2>
+          <div className="space-y-6">
             <p className="">Selected Orders: {selectedOrders.length}</p>
             <p className="">
               Shipping Total: ${calculateTotal().shippingPrice}

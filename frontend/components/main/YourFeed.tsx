@@ -38,8 +38,8 @@ const YourFeed: FC = () => {
   }, [isLoading, data]);
 
   return (
-    <div className="w-full my-10 min-h-[400px] px-4">
-      <div className="flex flex-col w-full mx-auto bg-white rounded-3xl shadow-xl p-6">
+    <div className="w-full my-10 min-h-[400px] md:px-4">
+      <div className="flex flex-col w-full mx-auto bg-white rounded-3xl shadow-xl p-4 md:p-6">
         <div className="flex items-center justify-between mb-[40px]">
           <h2 className="text-[24px] font-bold ">Personalized Feed</h2>
         </div>

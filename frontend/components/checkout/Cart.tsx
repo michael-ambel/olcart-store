@@ -45,7 +45,7 @@ const Cart = () => {
     if (fetchedProducts) {
       const updatedProducts = cartList.map((cartItem) => {
         const productDetail = fetchedProducts.find(
-          (product) => product._id === cartItem._id,
+          (product) => product._id === cartItem._id
         );
 
         if (productDetail) {
@@ -95,7 +95,7 @@ const Cart = () => {
   const handleCheckboxChange = (index: number) => {
     setProducts((prevProducts) => {
       const updatedProducts = prevProducts.map((product, i) =>
-        i === index ? { ...product, checked: !product.checked } : product,
+        i === index ? { ...product, checked: !product.checked } : product
       );
       updateOrderItems(updatedProducts);
       return updatedProducts;
@@ -105,7 +105,7 @@ const Cart = () => {
   const handleQuantityChange = (index: number, value: number) => {
     setProducts((prevProducts) => {
       const updatedProducts = prevProducts.map((product, i) =>
-        i === index ? { ...product, quantity: value } : product,
+        i === index ? { ...product, quantity: value } : product
       );
       updateOrderItems(updatedProducts);
       return updatedProducts;
@@ -172,109 +172,125 @@ const Cart = () => {
   }
 
   return (
-    <div className="flex justify-between w-full py-[26px] px-[46px] my-[80px] bg-bg gap-[6px]">
-      <div className="flex flex-1 flex-col mr-[280px]">
-        <div className="flex justify-between w-full my-[15px] h-[44px]">
-          <div className="flex w-[4%] justify-center p-[6px]"></div>
-          <div className="flex w-[74px] justify-start p-[6px]">Item</div>
-          <div className="flex-1 min-w-[26%] justify-start p-[6px]"></div>
-          <div className="flex w-[14%] justify-start p-[6px]">Quantity</div>
-          <div className="flex w-[14%] justify-start p-[6px]">Unit Price</div>
-          <div className="flex w-[14%] justify-start p-[6px]">Shipping</div>
-          <div className="flex w-[14%] justify-start p-[6px]">Total Price</div>
+    <div className="flex flex-col lg:flex-row w-full pt-[80px] px-[10px] md:px-8 my-8 bg-bg gap-4">
+      <div className="flex-1 flex flex-col">
+        {/* Header Row */}
+        <div className="hidden sm:flex justify-between w-full my-4 h-auto">
+          <div className="w-[4%] p-2"></div>
+          <div className="w-20 p-2">Item</div>
+          <div className="flex-1 min-w-[26%] p-2"></div>
+          <div className="w-[14%] p-2">Quantity</div>
+          <div className="w-[14%] p-2">Price</div>
+          <div className="w-[14%] p-2">Shipping</div>
+          <div className="w-[14%] p-2">Total</div>
         </div>
 
-        {products.map((product, index) => {
-          const totalPrice =
-            (product.price + product.shippingPrice) * product.quantity;
-          return (
-            <div
-              key={product._id}
-              className="flex justify-between w-full my-[5px] h-[74px] gap-[4px]"
-            >
-              <div className="flex w-[4%] justify-center p-[6px]">
+        {/* Cart Items */}
+        {products.map((product, index) => (
+          <div
+            key={product._id}
+            className="flex flex-col sm:flex-row items-stretch w-full my-2 gap-2"
+          >
+            {/* Checkbox */}
+            <div className="sm:w-[4%] flex items-center justify-center p-2">
+              <label className="inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
                   checked={product.checked}
                   onChange={() => handleCheckboxChange(index)}
+                  className="hidden"
                 />
-              </div>
-              <div className="flex items-center justify-center w-[74px] bg-bgt rounded-[6px]">
-                {product.image ? (
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    width={120}
-                    height={120}
-                    className="p-[6px]"
-                  />
-                ) : (
-                  <div>No image</div>
-                )}
-              </div>
-              <div className="flex-1 min-w-[26%] justify-start p-[6px] bg-bgt rounded-[6px]">
-                {product.name}
-              </div>
-              <div className="flex w-[14%] justify-start p-[6px] bg-bgt rounded-[6px]">
-                <button
-                  onClick={() =>
-                    handleQuantityChange(index, product.quantity - 1)
-                  }
-                  disabled={product.quantity <= 1}
-                  className={`flex w-[40px] justify-center ${
-                    product.quantity <= 1 ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
-                >
-                  -
-                </button>
-                <span>{product.quantity}</span>
-                <button
-                  onClick={() =>
-                    handleQuantityChange(index, product.quantity + 1)
-                  }
-                  disabled={product.quantity >= product.stock}
-                  className={`flex w-[40px] justify-center ${
-                    product.quantity >= product.stock
-                      ? "opacity-50 cursor-not-allowed"
-                      : ""
-                  }`}
-                >
-                  +
-                </button>
-              </div>
-              <div className="flex w-[14%] justify-start p-[6px] bg-bgt rounded-[6px]">
-                ${product.price}
-              </div>
-              <div className="flex w-[14%] justify-start p-[6px] bg-bgt rounded-[6px]">
-                ${product.shippingPrice}
-              </div>
-              <div className="flex w-[14%] justify-start p-[6px] bg-bgt rounded-[6px]">
-                ${totalPrice}
-              </div>
+                <span
+                  className={`w-5 h-5 flex items-center justify-center border-2 rounded ${
+                    product.checked ? "border-mo bg-mo" : "border-mo bg-white"
+                  } transition-all duration-200`}
+                ></span>
+              </label>
             </div>
-          );
-        })}
+
+            {/* Product Image */}
+            <div className="sm:w-20 h-20 bg-bgt rounded-lg overflow-hidden">
+              {product.image ? (
+                <Image
+                  src={product.image}
+                  alt={product.name}
+                  width={120}
+                  height={120}
+                  className="object-contain w-full h-full p-1"
+                />
+              ) : (
+                <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                  No image
+                </div>
+              )}
+            </div>
+
+            {/* Product Details */}
+            <div className="flex-1 sm:min-w-[26%] p-2 bg-bgt rounded-lg">
+              <p className="font-medium line-clamp-2">{product.name}</p>
+            </div>
+
+            {/* Quantity Controls */}
+            <div className="sm:w-[14%] p-2 bg-bgt rounded-lg flex items-center justify-between gap-2">
+              <button
+                onClick={() =>
+                  handleQuantityChange(index, product.quantity - 1)
+                }
+                disabled={product.quantity <= 1}
+                className="w-8 h-8 flex items-center justify-center bg-bl/10 rounded"
+              >
+                -
+              </button>
+              <span>{product.quantity}</span>
+              <button
+                onClick={() =>
+                  handleQuantityChange(index, product.quantity + 1)
+                }
+                disabled={product.quantity >= product.stock}
+                className="w-8 h-8 flex items-center justify-center bg-bl/10 rounded"
+              >
+                +
+              </button>
+            </div>
+
+            {/* Prices */}
+            <div className="flex items-center justify-between sm:w-[14%] p-2 bg-bgt rounded-lg">
+              <span className="sm:hidden">Price</span>${product.price}
+            </div>
+            <div className="flex items-center justify-between sm:w-[14%] p-2 bg-bgt rounded-lg">
+              <span className="sm:hidden">Shipping</span>$
+              {product.shippingPrice}
+            </div>
+            <div className="flex items-center justify-between sm:w-[14%] p-2 bg-bgt rounded-lg font-semibold">
+              <span className="sm:hidden">Total</span>$
+              {(product.price + product.shippingPrice) * product.quantity}
+            </div>
+          </div>
+        ))}
       </div>
+
       {/* Calculator Box */}
-      <div className="flex flex-col items-center fixed right-[46px] top- w-[260px] justify-end">
-        <div className="flex justify-between w-[240px] my-[10px]">
-          <div className="flex justify-start">Subtotal:</div>
-          <div className="flex justify-end font-semibold">${subtotal}</div>
+      <div className="lg:sticky lg:top-[200px] lg:self-start w-full lg:w-80 bg-white p-4 rounded-lg shadow-md">
+        <div className="space-y-3">
+          <div className="flex justify-between">
+            <span>Subtotal:</span>
+            <span className="font-semibold">${subtotal}</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Shipping:</span>
+            <span className="font-semibold">${totalShipping}</span>
+          </div>
+          <div className="flex justify-between border-t pt-3">
+            <span>Total:</span>
+            <span className="font-semibold text-lg">${totalPrice}</span>
+          </div>
+          <button
+            onClick={handleCheckout}
+            className="w-full py-3 bg-mo text-white rounded-lg hover:bg-mo/90 transition-colors"
+          >
+            Checkout
+          </button>
         </div>
-        <div className="flex justify-between w-[240px]">
-          <div className="flex justify-start">Total Shipping:</div>
-          <div className="flex justify-end font-semibold">${totalShipping}</div>
-        </div>
-        <div className="flex justify-between w-[240px] my-[10px]">
-          <div className="flex justify-start">Total Price:</div>
-          <div className="flex justify-end font-semibold">${totalPrice}</div>
-        </div>
-        <button
-          onClick={handleCheckout}
-          className="flex my-[20px] w-[240px] py-[10px] justify-center rounded-[8px] bg-mo text-bg"
-        >
-          Checkout
-        </button>
       </div>
     </div>
   );

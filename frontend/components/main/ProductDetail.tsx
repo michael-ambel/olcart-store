@@ -14,6 +14,8 @@ import { CartResp } from "@/store/types/userTypes";
 import { useUpdateCartMutation } from "@/store/apiSlices/userApiSlice";
 
 import TabsSection from "./ProductDetailTab";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 const ProductDetailPage = () => {
   const { id } = useParams() as { id: string };
@@ -22,6 +24,8 @@ const ProductDetailPage = () => {
 
   const [quantity, setQuantity] = useState(1);
   const [buttonAnimation, setButtonAnimation] = useState(false);
+
+  const user = useSelector((state: RootState) => state.user.user);
 
   const [updateCartMutation] = useUpdateCartMutation();
   const [updateCartedItem] = useUpdateCartedItemMutation();
@@ -119,8 +123,10 @@ const ProductDetailPage = () => {
       });
 
       showToast("success", `${updatedCart.message}`);
-    } catch (error) {
-      if (error) {
+    } catch {
+      if (!user) {
+        showToast("error", "Please login to add to cart!");
+      } else {
         showToast("error", "Failed to Cart!");
       }
     } finally {

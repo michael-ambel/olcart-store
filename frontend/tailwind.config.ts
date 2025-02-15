@@ -23,7 +23,7 @@ export default {
         fades: "#B8B8B8",
         mo: "#E52F06",
         mb: "#13265C",
-        mg: "#015724",
+        mg: "#044700",
         bl: "#1f2939",
         mp: "#E52F06",
         shopp: "#FFD5CC",

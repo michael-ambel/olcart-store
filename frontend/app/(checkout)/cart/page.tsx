@@ -6,7 +6,7 @@ export default function Home() {
     <div>
       <main className="flex flex-col z-10 mt-[20px]  items-center ">
         <CheckOutProgress
-          cart={true}
+          cart={false}
           shippingInfo={false}
           paymentMethod={false}
           processing={false}

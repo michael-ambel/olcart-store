@@ -139,7 +139,7 @@ const FilterComponent: React.FC = () => {
     <>
       {/* Mobile Filter Button */}
       <button
-        className="fixed md:hidden bottom-4 right-4 z-40 px-6 py-3 bg-mo text-white rounded-full shadow-lg"
+        className="fixed lg:hidden bottom-4 right-4 z-40 px-6 py-3 bg-mo text-white rounded-full shadow-lg"
         onClick={() => setShowMobileFilters(!showMobileFilters)}
       >
         {showMobileFilters ? "Close Filters" : "Show Filters"}
@@ -147,21 +147,21 @@ const FilterComponent: React.FC = () => {
 
       {/* Filter Content */}
       <div
-        className={`fixed  top-[110px] z-50 left-0 md:top-[140px] md:left-[20px] h-screen md:h-[75%]  md:w-[260px] p-4 md:py-[24px] md:px-[14px] bg-white md:bg-gray-100  md:rounded-[12px] overflow-y-auto transition-transform duration-300 ${
+        className={`fixed  top-[110px] z-50 left-0 md:top-[140px] md:left-[20px] h-screen md:h-[75%]  md:w-[260px] p-4 md:py-[24px] md:px-[14px] bg-white md:bg-gray-100  md:rounded-[12px] overflow-y-scroll transition-transform duration-300 ${
           showMobileFilters
             ? "translate-x-0"
             : "-translate-x-full md:translate-x-0"
         }`}
       >
-        <div className="md:fixed flex flex-col gap-1">
+        <div className="lg:fixed flex flex-col gap-1">
           {/* Category Selectors */}
-          <div className="md:mb-4">
+          <div className="mb-2">
             <label className="block text-sm font-medium">Category</label>
             {isCategoriesLoading ? <p>Loading...</p> : renderSelectors()}
           </div>
 
           {/* Price Range */}
-          <div className="mb-4">
+          <div className="mb-2">
             <label className="block text-sm font-medium">Price Range</label>
             <div className="flex gap-2">
               <input
@@ -190,7 +190,7 @@ const FilterComponent: React.FC = () => {
           </div>
 
           {/* Tags */}
-          <div className="mb-4">
+          <div className="mb-2">
             <label className="block text-sm font-medium">Tags</label>
             <input
               type="text"
@@ -209,7 +209,7 @@ const FilterComponent: React.FC = () => {
           </div>
 
           {/* Sort By */}
-          <div className="mb-4">
+          <div className="mb-2">
             <label className="block text-sm font-medium">Sort By</label>
             <select
               name="sort"
@@ -226,7 +226,7 @@ const FilterComponent: React.FC = () => {
           </div>
 
           {/* Results Limit */}
-          <div className="mb-4">
+          <div className="mb-2">
             <label className="block text-sm font-medium">Results Limit</label>
             <div className="flex gap-2">
               {[10, 20, 35, 50].map((limit) => (

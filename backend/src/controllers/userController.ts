@@ -210,7 +210,7 @@ export const updateCart: RequestHandler = async (req, res) => {
         quantity,
         price: product.price,
         shippingPrice: product.shippingPrice,
-        checked: true,
+        checked: false,
       });
       message = "Item added";
     }
