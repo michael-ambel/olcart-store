@@ -33,8 +33,8 @@ const SearchResultsDisplay: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="text-center text-[18px] py-[80px] text-red-500">
-        Loading...
+      <div className="text-center text-[18px] h-svh flex items-center justify-center text-mg font-bold">
+        Loading products...
       </div>
     );
   }

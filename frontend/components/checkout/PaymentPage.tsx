@@ -84,7 +84,13 @@ export default function PaymentPage() {
   };
 
   if (isLoading) {
-    return <p className="text-center text-gray-600">Loading orders...</p>;
+    return (
+      <div className="flex h-svh items-center justify-center">
+        <p className="text-center text-mg text-[18px font-bold]">
+          Loading orders...
+        </p>
+      </div>
+    );
   }
 
   if (isError) {

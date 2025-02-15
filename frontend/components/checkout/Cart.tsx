@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { IOrderItem } from "@/store/types/orderTypes";
 import { useDispatch } from "react-redux";
 import { showToast } from "../ToastNotifications";
+import Link from "next/link";
 
 const Cart = () => {
   const [cartList, setCartList] = useState<ICartItem[]>([]);
@@ -211,13 +212,15 @@ const Cart = () => {
             {/* Product Image */}
             <div className="sm:w-20 h-20 bg-bgt rounded-lg overflow-hidden">
               {product.image ? (
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  width={120}
-                  height={120}
-                  className="object-contain w-full h-full p-1"
-                />
+                <Link href={`/product/${product._id}`}>
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    width={120}
+                    height={120}
+                    className="object-contain w-full h-full p-1"
+                  />
+                </Link>
               ) : (
                 <div className="w-full h-full bg-gray-200 flex items-center justify-center">
                   No image

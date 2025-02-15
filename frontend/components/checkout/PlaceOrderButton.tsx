@@ -32,8 +32,15 @@ const PlaceOrderButton = () => {
       await placeOrder(orderData).unwrap();
       showToast("success", "Order placed successfully!");
       setTimeout(() => router.push("/payment-method"), 2000);
-    } catch {
-      showToast("error", "Failed to place order!");
+    } catch (error) {
+      if (error && typeof error === "object" && "data" in error) {
+        const err = (
+          error as unknown as { data: { message: { message: string } } }
+        ).data?.message;
+        showToast("error", err.message);
+      } else {
+        showToast("error", "An unknown error occurred.");
+      }
     }
   };
   return (

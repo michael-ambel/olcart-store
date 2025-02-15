@@ -21,7 +21,6 @@ function handleApiError(error: unknown) {
     axios.isAxiosError(error) && error.response
       ? error.response.data
       : (error as Error).message;
-  console.log(message);
   return NextResponse.json({ message }, { status: 500 });
 }
 
