@@ -6,6 +6,9 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { IOrder } from "@/store/types/orderTypes";
 import Image from "next/image";
 import Link from "next/link";
+import EmptyCheckoutAccess from "@/components/checkout/EmptyCheckoutAccess";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 interface OrderItemProps {
   name: string;
@@ -121,40 +124,50 @@ const ProcessingOrders: React.FC = () => {
     isError,
   } = useGetUserProcessingOrdersQuery();
 
+  const user = useSelector((state: RootState) => state.user.user);
+
   return (
-    <div className="bg-bgt min-h-screen w-full">
+    <>
       <CheckOutProgress
         cart={true}
         shippingInfo={true}
         paymentMethod={true}
-        processing={false}
+        processing={true}
         processed={false}
       />
 
-      <div className="px-4 sm:px-6 lg:px-8 py-8 max-w-7xl mx-auto mt-[100px]">
-        <div className="flex justify-between items-start sm:items-center gap-4 mb-8">
-          <h1 className="text-2xl  font-bold text-bl">Processing Orders</h1>
-          <Link
-            href="/"
-            className="sm:w-auto text-center bg-mg text-white text-md sm:text-base py-[9px] px-8 rounded-full hover:bg-mg/90 transition-colors"
-          >
-            Home
-          </Link>
+      {!user ? (
+        <div className="flex justify-center items-center h-screen mt-[20px] flex-col">
+          <EmptyCheckoutAccess />
         </div>
-
-        {isLoading ? (
-          <div className="flex justify-center items-center h-48 mt-[100px]">
-            <div className="animate-spin text-mg text-[80px]">
-              <AiOutlineLoading3Quarters />
+      ) : (
+        <div className="bg-bgt min-h-screen w-full">
+          <div className="px-4 sm:px-6 lg:px-8 py-8 max-w-7xl mx-auto mt-[100px]">
+            <div className="flex justify-between items-start sm:items-center gap-4 mb-8">
+              <h1 className="text-xl  font-bold text-bl">Processing Orders</h1>
+              <Link
+                href="/"
+                className="sm:w-auto text-center bg-mg text-white text-md sm:text-base py-[9px] px-8 rounded-full hover:bg-mg/90 transition-colors"
+              >
+                Home
+              </Link>
             </div>
+
+            {isLoading ? (
+              <div className="flex justify-center items-center h-48 mt-[100px]">
+                <div className="animate-spin text-mg text-[80px]">
+                  <AiOutlineLoading3Quarters />
+                </div>
+              </div>
+            ) : isError ? (
+              <p className="text-red-500 text-center">Error loading orders</p>
+            ) : (
+              <CategorizedOrders orders={processingOrders || []} />
+            )}
           </div>
-        ) : isError ? (
-          <p className="text-red-500 text-center">Error loading orders</p>
-        ) : (
-          <CategorizedOrders orders={processingOrders || []} />
-        )}
-      </div>
-    </div>
+        </div>
+      )}
+    </>
   );
 };
 

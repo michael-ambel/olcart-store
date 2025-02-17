@@ -11,11 +11,16 @@ import { IOrderItem } from "@/store/types/orderTypes";
 import { useDispatch } from "react-redux";
 import { showToast } from "../ToastNotifications";
 import Link from "next/link";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import EmptyCheckoutAccess from "@/components/checkout/EmptyCheckoutAccess";
 
 const Cart = () => {
   const [cartList, setCartList] = useState<ICartItem[]>([]);
   const [products, setProducts] = useState<ICartDetail[]>([]);
   const [orderItems, setOrderItems] = useState<IOrderItem[]>([]);
+
+  const user = useSelector((state: RootState) => state.user.user);
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -150,12 +155,29 @@ const Cart = () => {
 
   const totalPrice = subtotal + totalShipping;
 
+  // If no user is logged in, show the EmptyCheckoutAccess component
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center h-screen  flex-col">
+        <EmptyCheckoutAccess />
+      </div>
+    );
+  }
+
   if (isCartLoading || isProductsLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen font-bold text-[22px] text-mg flex-col">
+        Loading...
+      </div>
+    );
   }
 
   if (isCartError || isProductsError) {
-    return <div>Error loading cart or products. Please try again later.</div>;
+    return (
+      <div className="flex justify-center items-center h-screen font-bold text-[22px] text-mo flex-col">
+        Error loading cart or products. Please try again later.
+      </div>
+    );
   }
 
   if (!cart || cart.length === 0) {

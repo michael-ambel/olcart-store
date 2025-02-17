@@ -12,6 +12,7 @@ import { showToast } from "../ToastNotifications";
 import Link from "next/link";
 import { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
+import { Loader2 } from "lucide-react";
 
 interface CardProp {
   product: Partial<Product>;
@@ -67,14 +68,14 @@ const CardTopSelling: FC<CardProp> = ({ product }) => {
         {/* Add to Cart Button */}
         <button
           onClick={addCartHandler}
-          className="absolute bottom-2 right-2 p-1.5 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:scale-110"
+          className="absolute bottom-2 right-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:scale-110"
         >
           {buttonAnimation ? (
-            <div className="w-6 h-6 border-[3px] border-gray-200 border-t-mo rounded-full animate-spin" />
+            <Loader2 className="w-6 h-6 m-1 sm:w-7 sm:h-7 animate-spin text-mo stroke-[3px]" />
           ) : (
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="w-6 h-6 text-mo hover:text-mg transition-colors"
+              className="w-6 h-6 text-mo m-1.5 hover:text-mg transition-colors"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"

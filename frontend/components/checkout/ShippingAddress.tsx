@@ -12,6 +12,7 @@ import {
 import { setCurrentAddress } from "@/store/slices/orderSlice";
 import { IShippingAddress } from "@/store/types/userTypes";
 import { RootState } from "@/store/store";
+import EmptyCheckoutAccess from "@/components/checkout/EmptyCheckoutAccess";
 
 import PlaceOrderButton from "./PlaceOrderButton";
 import { showToast } from "../ToastNotifications";
@@ -28,6 +29,8 @@ const ShippingAddress = () => {
     useUpdateShippingAddressMutation();
   const [deleteShippingAddress, { isLoading: isDeleting }] =
     useDeleteShippingAddressMutation();
+
+  const user = useSelector((state: RootState) => state.user.user);
 
   const selectedAddress = useSelector(
     (state: RootState) => state.order.currentAddress
@@ -132,14 +135,30 @@ const ShippingAddress = () => {
     }
   };
 
-  if (isLoading) return <p>Loading addresses...</p>;
-  if (isError) return <p>Failed to load addresses</p>;
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center h-screen  flex-col">
+        <EmptyCheckoutAccess />
+      </div>
+    );
+  }
+
+  if (isLoading)
+    return (
+      <div className="flex justify-center items-center h-screen font-bold text-[22px] text-mg flex-col">
+        Loading...
+      </div>
+    );
+  if (isError)
+    return (
+      <div className="flex justify-center items-center h-screen font-bold text-[22px] text-mo flex-col">
+        Error loading adress info. Please try again later.
+      </div>
+    );
 
   return (
     <div className="container w-full mx-auto py-[120px] px-4 md:px-6">
-      <h1 className="text-lg md:text-xl font-semibold mb-6">
-        Shipping Addresses
-      </h1>
+      <h1 className="text-lg md:text-xl font-bold mb-6">Shipping Addresses</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 text-[14px]">
         {addresses.map((address: IShippingAddress) => (
           <div

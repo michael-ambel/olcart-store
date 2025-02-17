@@ -9,6 +9,9 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { showToast } from "../ToastNotifications";
 import { IPaymentOrder, IOrder } from "@/store/types/orderTypes";
+import EmptyCheckoutAccess from "@/components/checkout/EmptyCheckoutAccess";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 export default function PaymentPage() {
   const [selectedOrders, setSelectedOrders] = useState<IPaymentOrder[]>([]);
@@ -17,6 +20,8 @@ export default function PaymentPage() {
   >(null); // Track active payment method
   const [createPaymentSession, { isLoading: isPaying }] =
     useCreatePaymentSessionMutation();
+
+  const user = useSelector((state: RootState) => state.user.user);
 
   const { data: orders, isLoading, isError } = useGetUserOrdersQuery();
   const router = useRouter();
@@ -83,10 +88,18 @@ export default function PaymentPage() {
     }
   };
 
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center h-screen pt-[140px] flex-col ">
+        <EmptyCheckoutAccess />
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="flex h-svh items-center justify-center">
-        <p className="text-center text-mg text-[18px font-bold]">
+        <p className="text-center text-mg font-bold text-[22px]">
           Loading orders...
         </p>
       </div>
@@ -95,9 +108,9 @@ export default function PaymentPage() {
 
   if (isError) {
     return (
-      <p className="text-center text-red-600">
+      <div className="flex justify-center items-center h-screen font-bold  text-[22px] text-mo flex-col">
         Failed to fetch orders. Please try again later.
-      </p>
+      </div>
     );
   }
 
@@ -116,7 +129,7 @@ export default function PaymentPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6  ">
+    <div className="flex flex-col gap-6 pt-[140px]">
       <div className="flex-1 space-y-6 ">
         <h1 className="text-xl font-bold ml-[40px]">Order Summary</h1>
         <div className="grid grid-cols-1 xxl:grid-cols-2 gap-4 mx-[10px] md:ml-[40px] md:mr-[300px] lg:mr-[480px]">
@@ -225,12 +238,19 @@ export default function PaymentPage() {
 
         <div className="md:fixed md:top-[180px] md:right-[40px] lg:self-start w-full md:w-[300px] lg:w-[400px] p-6 border rounded-lg shadow-md">
           <h2 className="text-xl font-bold mb-4">Select Payment Option</h2>
-          <div className="space-y-6">
-            <p className="">Selected Orders: {selectedOrders.length}</p>
-            <p className="">
-              Shipping Total: ${calculateTotal().shippingPrice}
-            </p>
-            <p className="">Grand Total: ${calculateTotal().totalAmount}</p>
+          <div className="space-y-4 pb-4 text-[16px] font-medium">
+            <div className="flex w-full justify-between">
+              <p className="">Selected Orders: </p>
+              <p className="font-bold"> {selectedOrders.length}</p>
+            </div>
+            <div className="flex w-full justify-between">
+              <p className="">Shipping Total:</p>
+              <p className="font-bold">${calculateTotal().shippingPrice}</p>
+            </div>
+            <div className="flex w-full justify-between">
+              <p className="">Grand Total: </p>
+              <p className="font-bold"> ${calculateTotal().totalAmount}</p>
+            </div>
           </div>
 
           <div className="flex flex-col gap-4 text-bg text-[18px]">

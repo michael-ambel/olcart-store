@@ -73,7 +73,7 @@ const Footer: FC = () => {
                 title: "Contact",
                 items: [
                   "info@olcart.store",
-                  "+1 (555) 123-4567",
+                  "+0 (000) 000-000",
                   "New York, NY",
                 ],
               },

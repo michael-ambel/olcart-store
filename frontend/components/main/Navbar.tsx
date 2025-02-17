@@ -42,11 +42,12 @@ const Navbar: FC = () => {
   };
 
   const cartBtnHandler = () => {
-    if (user) {
-      router.push("/cart");
-    } else {
-      showToast("error", "Please login to view cart!");
-    }
+    router.push("/cart");
+    // if (user) {
+    //   router.push("/cart");
+    // } else {
+    //   showToast("error", "Please login to view cart!");
+    // }
   };
 
   useEffect(() => {

@@ -34,7 +34,8 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
 
   const [createOrUpdateReview, { isLoading: reviewLoading }] =
     useCreateOrUpdateReviewMutation();
-  const [createOrUpdateQandF] = useCreateOrUpdateQuestionAndFeedbackMutation();
+  const [createOrUpdateQandF, { isLoading: qandfLoading }] =
+    useCreateOrUpdateQuestionAndFeedbackMutation();
 
   useEffect(() => {
     const buyer = product.buyers?.find((buyer) => buyer._id === user?._id);
@@ -64,7 +65,7 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
         return;
       }
 
-      if (!user?.name) {
+      if (!user) {
         showToast(
           "error",
           "You have to login and purchase the product to add a review"
@@ -102,7 +103,7 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
         return;
       }
 
-      if (!user?.name) {
+      if (!user) {
         showToast("error", "You have to login to add Question/Feedback");
         return;
       }
@@ -223,7 +224,7 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
               onClick={handleAddReview}
               className="w-full bg-mo text-white py-4 rounded-xl font-bold hover:bg-mo/90 transition-all"
             >
-              {reviewLoading ? "Submitting " : "Submit Review"}
+              {reviewLoading ? "Submitting..." : "Submit Review"}
             </button>
           </div>
         </div>
@@ -307,7 +308,7 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
                             onClick={handleAddQandF}
                             className="mt-4 bg-mo text-white px-6 py-3 rounded-xl font-medium hover:bg-mo/90 transition-colors"
                           >
-                            Submit Reply
+                            {qandfLoading ? "Submitting..." : "Submit Reply"}
                           </button>
                         </div>
                       )}
@@ -383,7 +384,7 @@ const TabsSection: React.FC<TabsSectionProps> = ({ product }) => {
               onClick={handleAddQandF}
               className="w-full bg-mo text-white py-4 rounded-xl font-bold hover:bg-mo/90 transition-all"
             >
-              Submit
+              {qandfLoading ? "Submitting..." : "Submit"}
             </button>
           </div>
         </div>

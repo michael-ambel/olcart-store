@@ -11,6 +11,7 @@ import { useUpdateCartedItemMutation } from "@/store/apiSlices/productApiSlice";
 import { showToast } from "../ToastNotifications";
 import Link from "next/link";
 import { RootState } from "@/store/store";
+import { Loader2 } from "lucide-react";
 
 interface CardProp {
   product: Product;
@@ -52,7 +53,7 @@ const Card: FC<CardProp> = ({ product }) => {
       showToast("success", `${updatedCart.message}`);
     } catch (error) {
       if (error) {
-        showToast("error", "Failed to Cart!");
+        showToast("error", "Failed to Cart Item!");
       }
     } finally {
       setButtonAnimation(false);
@@ -84,15 +85,15 @@ const Card: FC<CardProp> = ({ product }) => {
           onClick={addCartHandler}
           disabled={isLoading || cartedIsLoading}
           className="absolute bottom-[6px] right-[10px] transition-all duration-300 
-          hover:scale-110 active:scale-95 bg-white/90 backdrop-blur-sm rounded-full p-1
-          sm:p-1.5"
+          hover:scale-110 active:scale-95 bg-white/90 backdrop-blur-sm rounded-full"
         >
           {buttonAnimation ? (
-            <div className="w-[24px] h-[24px] sm:w-[30px] sm:h-[30px] border-[4px] sm:border-[5px] border-gray-200 border-t-mo rounded-full animate-spin" />
+            <Loader2 className="w-6 h-6 sm:w-7 sm:h-7 m-1 animate-spin text-mo stroke-[3px]" />
           ) : (
+            // <div className="w-[24px] h-[24px] sm:w-[30px] sm:h-[30px] border-[4px] sm:border-[5px] border-gray-200 border-t-mo rounded-full animate-spin" />
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="w-5 h-5 sm:w-6 sm:h-6 text-mo hover:text-mg transition-colors"
+              className="w-5 h-5 sm:w-6 sm:h-6 m-1.5 text-mo hover:text-mg transition-colors"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
