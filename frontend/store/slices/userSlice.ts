@@ -29,7 +29,6 @@ const userSlice = createSlice({
     },
 
     updateCart(state, action: PayloadAction<ICartItem[]>) {
-      // Replace the entire cart with the updated cart received from the backend
       state.cart = action.payload;
     },
 

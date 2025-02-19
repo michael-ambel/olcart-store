@@ -132,7 +132,7 @@ const ProcessingOrders: React.FC = () => {
         cart={true}
         shippingInfo={true}
         paymentMethod={true}
-        processing={true}
+        processing={false}
         processed={false}
       />
 
